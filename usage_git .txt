@@ -1,0 +1,34 @@
+git 사용법
+
+1. 다음 위치로 이동한다.
+   (자신의계정으로 이동) --> C:\Users\wooyoung
+
+2. 폴더를 생성한다.(git repository로 이용하기 위함)
+
+ --> mkdir gitMng
+
+3. 생성한 폴더로 이동한다.
+
+ --> cd gitMng
+
+4. git init
+   - gitMng 디렉토리를  Git 저장소로 만들기 위함
+
+5. gitMng 디렉토리에 파일생성후 
+
+   - git add daillog_login.xml
+    : daillog_login.xml 파일을 로컬저장소에 add 한다.
+
+6. git commit -m 'Test commit' 
+    : 위 파일을 실제저장소에 전송하기 위한 작업 끝
+
+7. git status
+    : 상태확인
+
+8. 두가지 존재.
+   최초..
+   git remote add origin https://github.com/susoft/test.git
+    : 실제로 위 url로 저장된다.
+   
+   최초 이후..
+   git push
