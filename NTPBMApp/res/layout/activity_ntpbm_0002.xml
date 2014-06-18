@@ -1,0 +1,155 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+		
+        <TextView
+	        android:id="@+id/nameTxtNm"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/name_txt_nm"
+	        style="@style/textTitle20dp_3" />
+          
+        <TextView
+            android:id="@+id/nameEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+          
+        <TextView
+            android:id="@+id/idTxtNm"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+            android:text="@string/id_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/idEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+		
+        <TextView
+            android:id="@+id/emailTxtNm"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+            android:text="@string/email_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/emailEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+		<TextView
+            android:id="@+id/hpnumTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hpnum_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/hpnumEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+        <TextView
+            android:id="@+id/phonenumTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/phonenum_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/phonenumEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+        <TextView
+            android:id="@+id/faxnumTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/faxnum_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/faxnumEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+        <TextView
+            android:id="@+id/addrTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addr_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/addrEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+        <TextView
+            android:id="@+id/homepageTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/homepage_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <TextView
+            android:id="@+id/homepageEdtVal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:padding="5dip"
+            style="@style/text15dp" />
+        
+        <TextView
+            android:id="@+id/signatureTxtNm"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/signature_txt_nm"
+            style="@style/textTitle20dp_3" />
+
+        <ImageView
+            android:id="@+id/signatureImgVal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:contentDescription="@string/image"
+            android:src="@drawable/ntpbm_0200" />
+        
+    </LinearLayout>
+
+</ScrollView>

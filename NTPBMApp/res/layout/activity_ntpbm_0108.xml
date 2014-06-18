@@ -1,0 +1,135 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+	
+    <LinearLayout
+        android:id="@+id/ntpbm_0108_linearLayout00"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal" >
+        
+        <Spinner
+            android:id="@+id/ntpbm_0108_spnr01"
+            android:layout_width="match_parent"
+            android:layout_height="38dip"
+            android:gravity="center_vertical" />
+            
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/ntpbm_0108_linearLayout01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/ntpbm_0108_linearLayout00"
+        android:orientation="horizontal" >
+        
+        <EditText
+             android:id="@+id/nameEdtVal"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_weight="1"
+             android:inputType="text"
+             android:ems="10" >
+        </EditText>
+        <Button
+	        android:id="@+id/ntpbm_0108_btn01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_weight="1"
+	        android:text="@string/ntpbm_0108_btn01"
+	        style="@style/btnStyleBeige" />
+
+    </LinearLayout>
+    
+    <TableLayout
+		android:id="@+id/header"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:layout_marginLeft="2dp"
+		android:background="@android:color/black"
+		android:layout_below="@id/ntpbm_0108_linearLayout01">
+		<TableRow
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="1dp"
+			android:layout_marginBottom="1dp"
+			android:background="@android:color/black" >
+			
+			<TextView
+			    android:textColor="@android:color/black"
+			    android:gravity="center_horizontal"
+			    android:layout_weight="1"
+			    android:layout_marginRight="1dp"
+			    android:background="#ffcccccc"
+			    android:text="@string/ntpbm_0300_trtxtnm01" />
+			<TextView
+			    android:textColor="@android:color/black"
+			    android:gravity="center_horizontal"
+			    android:layout_width="100dp"
+			    android:background="#ffcccccc"
+			    android:text="@string/ntpbm_0300_trtxtnm02" />
+		</TableRow>
+	</TableLayout>
+ 
+    <ScrollView
+		android:id="@+id/table_scroll"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="2dp"
+		android:layout_below="@id/header" >
+		
+		<TableLayout
+			android:id="@+id/maintable"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="@android:color/black" >
+   					
+			
+		</TableLayout>
+    </ScrollView>
+    
+    <LinearLayout
+        android:id="@+id/ntpbm_0108_linearLayout03"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/table_scroll"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+        
+        <Button
+	        android:id="@+id/ntpbm_0108_btn02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/ntpbm_0108_btn02"
+	        style="@style/btnStyleBeige" />
+        <Button
+	        android:id="@+id/ntpbm_0108_btn03"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_weight="1"
+	        android:text="@string/ntpbm_0108_btn03"
+	        style="@style/btnStyleBeige" />
+		<Button
+	        android:id="@+id/ntpbm_0108_btn04"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_weight="1"
+	        android:text="@string/ntpbm_0108_btn04"
+	        style="@style/btnStyleBeige" />
+    </LinearLayout>
+    
+</RelativeLayout>

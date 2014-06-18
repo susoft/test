@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    
+    android:layout_width="fill_parent"    
+    android:layout_height="fill_parent" >       
+    
+    <ImageView        
+        android:id="@+id/list_view03_imgview"        
+        android:layout_width="60dp"        
+        android:layout_height="60dp"    
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/image"        
+        android:paddingLeft="5dp"        
+        android:paddingRight="5dp" />       
+    <LinearLayout
+        android:id="@+id/list_view03_linear01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/list_view03_imgview"
+        android:layout_marginLeft="1dp"
+        android:orientation="vertical" >
+           
+	    <TextView
+	        android:id="@+id/list_view03_txt01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view03_txt02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view03_txt03"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view03_txt04"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/text15dp" />
+	</LinearLayout>
+	<LinearLayout
+        android:id="@+id/list_view03_linear02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+           
+	    <Button
+	        android:id="@+id/list_view03_btn01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginBottom="1dp"
+	        android:text="@string/list_view03_btn01"
+	        style="@style/btnStyleBeige" />
+	
+	    <Button
+	        android:id="@+id/list_view03_btn02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="1dp"
+	        android:layout_marginBottom="1dp"
+	        android:text="@string/list_view03_btn02"
+	        style="@style/btnStyleBeige" />
+	</LinearLayout>
+	
+</RelativeLayout>

@@ -1,0 +1,118 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearlayout0400"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+	    <LinearLayout
+	        android:id="@+id/linearlayout0401"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.7"
+	        android:orientation="vertical" >
+	        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" >
+	        
+				<TextView
+			        android:id="@+id/ntpbm_0400_txtNm00"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/ntpbm_0400_txtNm00"
+			        style="@style/text15dp" />
+			
+			    <EditText
+			        android:id="@+id/ntpbm_0400_txtNm01"
+			        android:layout_width="0dp"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:layout_marginLeft="3dp"
+			        android:text="jinsanInfo.co.kr"
+			        android:ems="10"
+			        android:inputType="text"
+			        style="@style/text15dp" >
+					
+			    </EditText>
+		    </LinearLayout>
+		    
+	    	<LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" >
+	            
+			    <TextView
+			        android:id="@+id/ntpbm_0400_txtNm02"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/ntpbm_0400_txtNm02"
+			        style="@style/text15dp" />
+			    
+			    <EditText
+			        android:id="@+id/ntpbm_0400_txtNm03"
+			        android:layout_width="0dp"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:layout_marginLeft="3dp"
+			        android:text="12345"
+			        android:ems="10"
+			        android:inputType="text"
+			        style="@style/text15dp" >
+					
+			    </EditText>
+			</LinearLayout>
+	    </LinearLayout>
+	    
+	    <Button
+	        android:id="@+id/regiItemBtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="fill_parent"
+	        android:text="@string/ntpbm_0400_btn01"
+	        android:onClick="regiItem" />
+    </LinearLayout>
+    
+    <ListView android:id="@+id/ntpbm_0400_list"
+ 		android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:fastScrollEnabled="true"
+ 		android:dividerHeight="2dp"
+ 		android:divider="#b5b5ae" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp" >
+
+	    <Button
+	        android:id="@+id/loginBtn1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginRight="3dp"
+	        android:text="@string/ntpbm_0400_btn02"
+	        android:onClick="callSend"
+	        style="@style/btnStyleBeige" />
+	
+	    <Button
+	        android:id="@+id/cancelBtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginLeft="3dp"
+	        android:text="@string/cancel_btn_nm"
+	        android:onClick="callCancel"
+	        style="@style/btnStyleBeige" />
+    </LinearLayout>
+	
+</LinearLayout>

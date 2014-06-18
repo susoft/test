@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearlayout0100"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+	    <Button
+	        android:id="@+id/ntpbm_0100_btn01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginRight="3dp"
+	        android:text="@string/ntpbm_0100_btn01"
+	        style="@style/btnStyleSeagull" />
+	    <Button
+	        android:id="@+id/ntpbm_0100_btn02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginLeft="3dp"
+	        android:text="@string/ntpbm_0100_btn02"
+	        style="@style/btnStyleSeagull" />
+	</LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/linearlayout0100" >
+        <LinearLayout
+        	android:id="@+id/ntpbm_0100_page1"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:visibility="visible" >
+		    <TextView
+		        android:id="@+id/scan_format"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textIsSelectable="true" />
+		    <TextView
+		        android:id="@+id/scan_content"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textIsSelectable="true" />
+		</LinearLayout>
+			
+		<LinearLayout
+            android:id="@+id/ntpbm_0100_page2"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical"
+	        android:visibility="invisible" >
+			<LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical" >
+               	<TextView
+                   	android:id="@+id/barcodeTxtNm"
+                   	android:layout_width="wrap_content"
+                   	android:layout_height="wrap_content"
+                   	android:text="@string/barcode_txt_nm" />
+			    <EditText
+			        android:id="@+id/barcodeVal"
+			        android:layout_width="fill_parent"
+			        android:layout_height="0dp"
+			        android:layout_weight="1"
+			        android:text="12345"
+			        android:ems="12"
+			        android:inputType="text"
+			        style="@style/text15dp" >
+			    </EditText>
+			</LinearLayout>
+				
+	    	<LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="10dp" >
+			    <Button
+			        android:id="@+id/ntpbm_0100_btn03"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="0.5"
+			        android:layout_marginRight="3dp"
+			        android:text="@string/searchbarcode_btn_nm"
+			        style="@style/btnStyleBeige" />
+			    <Button
+			        android:id="@+id/ntpbm_0100_btn04"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="0.5"
+			        android:layout_marginLeft="3dp"
+			        android:text="@string/searchcancel_btn_nm"
+			        style="@style/btnStyleBeige" />
+			</LinearLayout>
+		</LinearLayout>
+    </FrameLayout>
+</RelativeLayout>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+    <string name="app_name">NT-PBM</string>
+    
+    <string name="title_activity_ntpbm0001">Login</string>
+    <string name="server_txt_nm">서버</string>
+	<string name="id_txt_nm">아이디</string>
+	<string name="pwd_txt_nm">비번</string>
+	<string name="login_btn_nm">인 증</string>
+	<string name="cancel_btn_nm">취 소</string>
+	
+	<string name="title_activity_ntpbm0002">개인정보</string>
+	<string name="image">Image thumbnail</string>
+	<string name="name_txt_nm">성명</string>
+	
+	<string name="email_txt_nm">이메일</string>
+	<string name="hpnum_txt_nm">휴대전화</string>
+	<string name="phonenum_txt_nm">대표전화</string>
+	<string name="faxnum_txt_nm">대표팩스</string>
+	<string name="addr_txt_nm">주소</string>
+	<string name="homepage_txt_nm">홈페이지</string>
+	<string name="signature_txt_nm">서명</string>
+	
+	<string name="title_activity_ntpbm0100">설치확인</string>
+	<string name="ntpbm_0100_btn01">바코드인식</string>
+	<string name="ntpbm_0100_btn02">직접입력</string>
+	<string name="ntpbm_0100_btn03">Scan</string>
+	<string name="ntpbm_0100_btn04">바코드 조회하기</string>
+	
+	<string name="barcode_txt_nm">바코드번호</string>
+	<string name="searchbarcode_btn_nm">확 인</string>
+	<string name="searchcancel_btn_nm">취 소</string>
+	
+	<string name="title_activity_ntpbm0101">제품정보</string>
+	<string name="servertxtnm01">브랜드</string>
+	<string name="servertxtnm03">모델명</string>
+	<string name="servertxtnm05">식별자</string>
+	<string name="servertxtnm07">시리얼번호</string>
+	
+	<string name="title_activity_ntpbm0102">제품상세정보</string>
+	<string name="ntpbm_0102_img01">장치사진</string>
+	<string name="ntpbm_0102_txt_nm01">제조번호</string>
+	<string name="ntpbm_0102_txt_nm03">제조일자</string>
+	<string name="ntpbm_0102_txt_nm05">제조회사</string>
+	<string name="ntpbm_0102_txt_nm07">제조국</string>
+	<string name="ntpbm_0102_txt_nm09">구입처명</string>
+	<string name="ntpbm_0102_txt_nm11">구입처주소</string>
+	<string name="ntpbm_0102_txt_nm13">구입처담당자</string>
+	<string name="ntpbm_0102_txt_nm15">구입처연락처</string>
+	
+	<string name="title_activity_ntpbm0103">악세사리정보</string>
+	<string name="ntpbm_0103_btn01">확인</string>
+	<string name="ntpbm_0103_btn02">취소</string>
+	
+	<string name="title_activity_ntpbm0104">설치장소</string>
+	<string name="ntpbm_0104_btn01">확인</string>
+	<string name="ntpbm_0104_btn02">취소</string>
+	
+	<string name="title_activity_ntpbm0105">현장사진</string>
+	<string name="ntpbm_0105_btn01">사진추가</string>
+	<string name="ntpbm_0105_btn02">사진삭제</string>
+	
+	<string name="title_activity_ntpbm0106">메모</string>
+	<string name="ntpbm_0106_imgbtn01">편집 or 쓰기</string>
+	<string name="ntpbm_0106_btn01">저장</string>
+	<string name="ntpbm_0106_btn02">취소</string>
+	
+	<string name="title_activity_ntpbm0107">설치확인</string>
+	<string name="ntpbm_0107_btn01">고객확인</string>
+	<string name="ntpbm_0107_btn02">전송</string>
+	<string name="ntpbm_0107_img01">상세보기</string>
+	<string name="ntpbm_0107_img02">고객사인이미지</string>
+	
+	<string name="title_activity_ntpbm0108">보관함</string>
+	<string name="ntpbm_0108_btn01">조회</string>
+	<string name="ntpbm_0108_btn02">추가</string>
+	<string name="ntpbm_0108_btn03">수정</string>
+	<string name="ntpbm_0108_btn04">삭제</string>
+	
+	<string name="title_activity_ntpbm0109">고객서명</string>
+	<string name="ntpbm_0109_btn01">인증</string>
+	<string name="ntpbm_0109_btn03">Reset</string>
+	<string name="ntpbm_0109_btn02">취소</string>
+	
+	<string name="title_activity_ntpbm0200">장치조회</string>
+	
+	<string name="title_activity_ntpbm0300">재고조회</string>
+	<string name="ntpbm_0300_btn01">조회</string>
+	<string name="ntpbm_0300_txtNm01">중분류</string>
+	<string name="ntpbm_0300_txtNm02">소분류</string>
+	<string name="ntpbm_0300_trtxtnm01">품명</string>
+	<string name="ntpbm_0300_trtxtnm02">모델명</string>
+	<string name="ntpbm_0300_trtxtnm03">수량</string>
+	
+	<string name="title_activity_ntpbm0400">견적서</string>
+	<string name="ntpbm_0400_txtNm00">견적업체</string>
+	<string name="ntpbm_0400_txtNm02">견적금액</string>
+	<string name="ntpbm_0400_btn01">품목등록</string>
+	<string name="ntpbm_0400_btn02">전송</string>
+	
+	<string name="title_activity_ntpbm0401">품목등록</string>
+	<string name="ntpbm_0401_btn01">조회</string>
+	<string name="ntpbm_0401_txtNm00">대분류</string>
+	<string name="ntpbm_0401_txtNm01">중분류</string>
+	<string name="ntpbm_0401_txtNm02">소분류</string>
+	<string name="ntpbm_0401_trtxtnm01">품명</string>
+	<string name="ntpbm_0401_trtxtnm02">모델명</string>
+	<string name="ntpbm_0401_trtxtnm03">수량</string>
+	
+	<string name="list_view03_btn01">수정</string>
+	<string name="list_view03_btn02">삭제</string>
+	
+	<!-- menu's String -->
+    <string name="action_login">로그인</string>
+    <string name="action_logout">로그아웃</string>
+    <string name="action_personinfo">개인정보</string>
+    
+    <!-- server connect page... -->
+    <string name="domainUrl">http://nanoomtech.iptime.org:8054/</string>
+    <string name="domainUrl1">http://119.200.166.131:8054/</string>
+    
+    <string name="ntpbmPath">NtpbmWebService/ntpbmWeb/</string>
+    
+    <string name="ntpbm_0001">ntpbm0001.jsp</string>
+    <string name="ntpbm_0002">ntpbm0002.jsp</string>
+    
+    <string name="ntpbmPath0100">NtpbmWebService/ntpbmWeb/ntpbm0100/</string>
+    <string name="ntpbm_0101">ntpbm0101.jsp</string>
+    <string name="ntpbm_0102">ntpbm0102.jsp</string>
+    <string name="ntpbm_0103">ntpbm0103.jsp</string>
+    <string name="ntpbm_0104">ntpbm0104.jsp</string>
+    <string name="ntpbm_0105">ntpbm0105.jsp</string>
+    <string name="ntpbm_0106">ntpbm0106.jsp</string>
+    <string name="ntpbm_0107">ntpbm0107.jsp</string>
+    
+    <string name="ntpbmPath0300">NtpbmWebService/ntpbmWeb/ntpbm0300/</string>
+    <string name="ntpbm_0300">ntpbm0300.jsp</string>
+    
+    <string name="ntpbmPath0400">NtpbmWebService/ntpbmWeb/ntpbm0400/</string>
+    <string name="ntpbm_0400">ntpbm0400.jsp</string>
+    <string name="ntpbm_0401">ntpbm0401.jsp</string>
+</resources>

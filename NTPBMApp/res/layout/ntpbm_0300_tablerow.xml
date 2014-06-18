@@ -1,0 +1,24 @@
+
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_marginBottom="1dp"
+	android:background="@android:color/black" >
+	<TextView 
+	    android:id="@+id/ntpbm_0300_tv1"
+		android:layout_weight="1"
+	    android:layout_marginRight="1dp"
+	    android:background="@android:color/white"
+	    android:textColor="@android:color/black" />
+	<TextView
+	    android:id="@+id/ntpbm_0300_tv2"
+		android:layout_width="100dp"
+		android:layout_marginRight="1dp"
+		android:background="@android:color/white"
+		android:textColor="@android:color/black" />
+	<TextView 
+	    android:id="@+id/ntpbm_0300_tv3"
+		android:layout_width="60dp"
+		android:background="@android:color/white"
+		android:textColor="@android:color/black" />
+</TableRow>
