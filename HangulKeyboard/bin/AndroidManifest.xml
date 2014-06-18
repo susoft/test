@@ -15,4 +15,4 @@
         </service>
         <uses-library android:required="true" android:name="android.test.runner"/> 
 	</application>
-</manifest> 
+</manifest>  
