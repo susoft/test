@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    
+    tools:context="com.myitem.myitemapp.MyItem002Activity$PlaceholderFragment" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+    <SlidingDrawer
+        android:id="@+id/slidingDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:content="@+id/content"
+        android:gravity="center_horizontal"
+        android:handle="@+id/handle"
+        android:orientation="horizontal"
+        android:rotation="180" >
+
+        <LinearLayout
+            android:id="@+id/handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:rotation="180"
+                android:src="@drawable/ic_launcher" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FF0000"
+            android:rotation="180"
+            android:src="@drawable/ic_launcher" />
+    </SlidingDrawer>
+
+</RelativeLayout>
