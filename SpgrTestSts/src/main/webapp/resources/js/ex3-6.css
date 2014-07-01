@@ -1,0 +1,83 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	font-size: 1em;
+	color: #333;
+	font-family: "맑은 고딕";
+}
+header, article, footer, #sidemenu {
+	border: 1px solid #999;
+	margin:5px;
+	padding:10px;
+	text-align:center;
+}
+header {
+	height: 100px;
+	background-color: #FC0;
+}
+article {
+	float:right;
+	width:70%;
+	height:200px;
+	line-height: 1.5em;
+}
+
+figure {
+	float:right;
+	margin:5px;	
+}
+
+figure img {
+	border:1px solid #666;
+	box-shadow:#CCC 5px 5px 5px;
+}
+
+figcaption {
+	text-align:center;
+}
+
+section {
+	width:95%;
+	height:100px;
+	padding:10px;
+	background-color: #FF9;
+	clear:both;
+}
+
+#sidemenu {
+	float:left;
+	width:20%;
+	height:200px;
+}
+
+#sidemenu ul {
+	list-style:none;
+}
+
+footer {
+	clear:both;
+	height:100px;
+	background-color: #6CF;
+}
+
+nav ul {
+	list-style:none;
+	float:right;
+}
+
+nav ul li {
+	float:left;
+	margin:0 20px;
+}
+
+aside {
+	width:90%;
+	height:30px;
+	border:1px solid #09F;
+}
+
+hgroup {
+	border-bottom: 1px solid #F90;
+
+}

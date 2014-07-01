@@ -1,0 +1,416 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".MainActivity" >
+    
+    <LinearLayout 
+        android:id="@+id/hfmb_005_linear_01"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentTop="true"
+    	android:layout_margin="10dp"
+    	android:orientation="vertical" >
+    	
+        <LinearLayout 
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:orientation="horizontal" >
+	        
+            <RelativeLayout 
+		    	android:layout_width="100dp"
+		    	android:layout_height="wrap_content"
+		    	android:orientation="vertical" >
+		        
+                <ImageView        
+			        android:id="@+id/hfmb_005_photo"
+			        android:layout_width="100dp"        
+			        android:layout_height="100dp"
+			        android:layout_alignParentTop="true"
+			        
+			        android:padding="2dp"
+			        android:scaleType="centerCrop"
+			        
+			        android:background="#000000"
+			        android:contentDescription="@string/app_name"
+			        android:src="@drawable/empty_photo" />
+	                
+		        <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_below="@+id/hfmb_005_photo"
+			        android:layout_marginLeft="2dp"
+			        android:text="사진을추가하세요"
+			        style="@style/text12dp" />
+		    </RelativeLayout>
+	        
+	        <LinearLayout 
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="wrap_content"
+		    	android:layout_marginLeft="10dp"
+		    	android:orientation="vertical" >
+		        
+		        <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:text="교류회명"
+			        style="@style/textTitle17dp" />
+		        
+		        <EditText        
+			        android:id="@+id/hfmb_005_edit_01"     
+			        android:layout_width="fill_parent"        
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="2dp"
+			        android:layout_marginLeft="10dp"
+			        android:inputType="text"
+			        android:maxLength="40"
+			        android:text=""
+			        android:background="@drawable/round_border_gray" />
+		    </LinearLayout>
+	    </LinearLayout>
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="1dp"
+	        android:orientation="horizontal"
+	        android:background = "#FAFAD2" />
+	    
+	    <TextView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="5dp"
+	        android:text="회장"
+	        style="@style/textTitle17dp" />
+	    
+        <RelativeLayout 
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginTop="2dp" >
+            <LinearLayout 
+                android:id="@+id/hfmb_005_linear_02" 
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:layout_alignParentLeft="true"
+		    	android:layout_marginLeft="10dp"
+		    	android:orientation="vertical" >
+		        <TextView
+			        android:id="@+id/hfmb_005_text_02"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:text="성명 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_03"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:text="업체명 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_04"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:text="연락처 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_05"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:visibility="invisible"
+			        android:text="연락처 "
+			        style="@style/textTitle15dp_1" />
+	        </LinearLayout>
+	        
+            <LinearLayout 
+                android:id="@+id/hfmb_005_linear_03"
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:layout_alignParentRight="true"
+		    	android:layout_toRightOf="@+id/hfmb_005_linear_02"
+		    	android:layout_marginLeft="10dp"
+		    	android:orientation="vertical" >
+		        <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_02"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_02"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_02"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>  
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_03"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_03"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_03"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>  
+			    
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_04"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_04"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_04"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>
+			    
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_05"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_05"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_05"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>
+            </LinearLayout>
+	        
+	    </RelativeLayout>
+	    
+        <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="1dp"
+	        android:orientation="horizontal"
+	        android:background = "#FAFAD2" />
+        
+        <TextView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="총무"
+	        style="@style/textTitle17dp" />
+	    
+        
+        <RelativeLayout 
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginTop="2dp" >
+            <LinearLayout 
+                android:id="@+id/hfmb_005_linear_04" 
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:layout_alignParentLeft="true"
+		    	android:layout_marginLeft="10dp"
+		    	android:orientation="vertical" >
+		        <TextView
+			        android:id="@+id/hfmb_005_text_06"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:text="성명 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_07"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:text="업체명 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_08"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:text="연락처 "
+			        style="@style/textTitle15dp_1" />
+		        
+		        <TextView
+			        android:id="@+id/hfmb_005_text_09"  
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="1dp"
+			        android:visibility="invisible"
+			        android:text="연락처 "
+			        style="@style/textTitle15dp_1" />
+	        </LinearLayout>
+	        
+            <LinearLayout 
+                android:id="@+id/hfmb_005_linear_05"
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:layout_alignParentRight="true"
+		    	android:layout_toRightOf="@+id/hfmb_005_linear_04"
+		    	android:layout_marginLeft="10dp"
+		    	android:orientation="vertical" >
+		        <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_06"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_06"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_06"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>  
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_07"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_07"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_07"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>  
+			    
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_08"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_08"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_08"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>
+			    
+			    <RelativeLayout 
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content" >
+			        <TextView        
+				        android:id="@+id/hfmb_005_edit_09"  
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_toLeftOf="@+id/hfmb_005_srch_09"
+				        android:layout_centerVertical="true"
+				        android:text=""
+				        style="@style/text15dp_2" />
+			        
+			        <ImageView        
+				        android:id="@+id/hfmb_005_srch_09"
+				        android:layout_width="wrap_content"        
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentRight="true"
+				        android:contentDescription="@string/app_name"
+				        android:visibility="invisible"
+				        android:src="@drawable/search" />
+			    </RelativeLayout>
+            </LinearLayout>
+	        
+	    </RelativeLayout>
+	    
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/hfmb_005_linear_02"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentBottom="true"
+    	android:layout_margin="10dp"
+    	android:orientation="horizontal" >
+    	
+        <Button 
+		    android:id="@+id/hfmb_005_btn01"
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginRight="1dp"
+	        android:text="저장"
+	        style="@style/btnStyleBeige" />
+		<Button 
+		    android:id="@+id/hfmb_005_btn02"
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_marginLeft="1dp"
+	        android:text="취소"
+	        style="@style/btnStyleBeige" />
+		
+    </LinearLayout>
+</RelativeLayout>

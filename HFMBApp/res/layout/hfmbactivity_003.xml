@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       android:id="@+id/hfmb_003_linearlayout_02"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center_vertical|center_horizontal"
+       android:background="#ffffff"
+       android:orientation="horizontal" >
+    <ImageView        
+        android:id="@+id/icon1"
+        android:layout_width="60dp"        
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_vertical"
+        android:background="#ffffff"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/action_settings" />
+    <LinearLayout
+        android:id="@+id/linearlayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:background="#ffffff"
+        android:orientation="vertical" >
+	    <TextView        
+	        android:id="@+id/title1"        
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        style="@style/text12dp_bold" />
+	    <TextView        
+	        android:id="@+id/title2"        
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        style="@style/text12dp" />
+	    <TextView        
+	        android:id="@+id/title3"        
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        style="@style/text12dp" />
+	    <TextView        
+	        android:id="@+id/title4"        
+	        android:layout_width="match_parent"        
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        style="@style/text12dp" />
+	</LinearLayout>
+</LinearLayout>
