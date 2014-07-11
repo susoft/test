@@ -100,7 +100,7 @@ public class HomeController {
 	public @ResponseBody Map<?,?> testDb(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		model.put("test", mainService.getToday());
 		return model;
-	}
+	} 
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
