@@ -1,5 +1,6 @@
 package com.spgr.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.spgr.dao.MainDao;
@@ -25,6 +26,12 @@ public class MainServiceImpl implements MainService {
 		// TODO Auto-generated method stub
 		
 		return mainDao.writeProc(paramMap);
+	}
+
+	@Override
+	public List<Map<String, String>> getMeetingList() {
+		// TODO Auto-generated method stub
+		return mainDao.getMeetingList();
 	}
 
 }

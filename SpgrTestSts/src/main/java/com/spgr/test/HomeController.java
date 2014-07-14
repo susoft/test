@@ -3,9 +3,11 @@ package com.spgr.test;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,18 +46,32 @@ public class HomeController {
 	}
 	
 	//Search App....
-	@RequestMapping(value = "/hfmp_0003.do", method = RequestMethod.POST)
-	public String hfmp_0003(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
+	@RequestMapping(value = "/hfmp_0003.do", method = RequestMethod.GET)
+	public String hfmp_0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "hfmp_0003.do");
 		
 		return "hfmp/hfmp_0003";
+	}
+	
+	//Search App....
+	@RequestMapping(value = "/getHfmp0003.do", method = RequestMethod.GET)
+	public @ResponseBody Map<?,?> getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "getHfmp0003.do");
+		
+		List<Map<String, String>> rtnList = mainService.getMeetingList();
+		
+		logger.info("{} count inputed....", rtnList.size());
+		
+		//return information...
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("test1", "value1");
+		mapinfo.put("test2", "value2");
+		mapinfo.put("test3", "value3");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return model;
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.spgr.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
@@ -20,5 +21,11 @@ public class MainDaoImpl extends SqlSessionDaoSupport implements MainDao  {
 		// TODO Auto-generated method stub
 		
 		return getSqlSession().insert("main.writeProc", paramMap);
+	}
+
+	@Override
+	public List<Map<String, String>> getMeetingList() {
+		// TODO Auto-generated method stub
+		return getSqlSession().selectList("main.getMeetingList");
 	}
 }

@@ -42,7 +42,7 @@ table.tableList td.notselected {  }
 	}
 }
 </style>
-
+<script type="text/JavaScript" src="./resources/js/jquery-1.11.1.js"></script>
 <script type="text/javascript">
 
 /* function fnClick(obj){
@@ -67,21 +67,7 @@ $.ajax({
 }); */
 
 function fnClick(gubun){
-	$.ajax( {
-			type : "GET"
-		,	url  : "/hfmp_0003.do"
-		,	dataType : "json"
-		,	data : ""
-		,	success : function (result) {
-				$.each(result, function(key) {
-					var list = result[key];
-					alert("list1 = " + list.test1);
-					alert("list2 = " + list.test2);
-					alert("list3 = " + list.test3);
-				});
-			}
-		}
-	);
+	location.href = "hfmp_0003.do";
 }
 </script>
 </head>

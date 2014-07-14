@@ -11,5 +11,11 @@
 	<insert id="writeProc" parameterType="java.util.Map">
 		insert into Test_Table(subject,context) values(#{subject},#{context})
 	</insert>
+	
+	<select id="getMeetingList" resultType="hashmap">
+		SELECT 
+			   subject, context
+		  FROM Test_Table
+	</select>
 </mapper>
 
