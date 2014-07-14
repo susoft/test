@@ -9,7 +9,7 @@
 	<bean id="propertyPlaceholderConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
-			<value>/WEB-INF/mybatis/jdbc.properties</value>
+			<value>/WEB-INF/mybatis/jdbc_mysql.properties</value>
 		</property>
 	</bean>
 
