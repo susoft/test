@@ -67,7 +67,7 @@ $.ajax({
 }); */
 
 function fnClick(gubun){
-	location.href = "hfmp_0003.do";
+	location.href = "getHfmp0003.do";
 }
 </script>
 </head>

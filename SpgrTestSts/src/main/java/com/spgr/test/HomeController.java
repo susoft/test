@@ -55,7 +55,7 @@ public class HomeController {
 	
 	//Search App....
 	@RequestMapping(value = "/getHfmp0003.do", method = RequestMethod.GET)
-	public @ResponseBody Map<?,?> getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+	public String getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "getHfmp0003.do");
 		
 		List<TestDto> rtnList = mainService.getMeetingList();
@@ -64,7 +64,21 @@ public class HomeController {
 		
 		model.addAttribute("result", rtnList);
 		
-		return model;
+		return "hfmp/hfmp_0003";
+	}
+	
+	//Search App....
+	@RequestMapping(value = "/getHfmp0004.do", method = RequestMethod.GET)
+	public String getHfmp0004(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "getHfmp0004.do");
+		
+		List<TestDto> rtnList = mainService.getMeetingList();
+		
+		logger.info("{} count inputed....", rtnList.size());
+		
+		model.addAttribute("result", rtnList);
+		
+		return "hfmp/hfmp_0004";
 	}
 	
 	
