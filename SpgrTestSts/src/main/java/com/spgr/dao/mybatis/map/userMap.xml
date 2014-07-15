@@ -12,9 +12,11 @@
 		insert into Test_Table(subject,context) values(#{subject},#{context})
 	</insert>
 	
-	<select id="getMeetingList" resultType="hashmap">
+	
+	
+	<select id="getMeetingList" resultType="com.spgr.dto.TestDto">
 		SELECT 
-			   subject, context
+			   id, subject, context
 		  FROM Test_Table
 	</select>
 </mapper>

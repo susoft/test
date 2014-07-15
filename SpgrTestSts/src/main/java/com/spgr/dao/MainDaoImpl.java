@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 
+import com.spgr.dto.TestDto;
+
 public class MainDaoImpl extends SqlSessionDaoSupport implements MainDao  {
 	public String getToday() {
 		System.out.println("MainDaoImpl getToday");
@@ -24,7 +26,7 @@ public class MainDaoImpl extends SqlSessionDaoSupport implements MainDao  {
 	}
 
 	@Override
-	public List<Map<String, String>> getMeetingList() {
+	public List<TestDto> getMeetingList() {
 		// TODO Auto-generated method stub
 		return getSqlSession().selectList("main.getMeetingList");
 	}

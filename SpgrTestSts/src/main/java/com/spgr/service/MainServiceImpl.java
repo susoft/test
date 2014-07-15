@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spgr.dao.MainDao;
+import com.spgr.dto.TestDto;
 
 public class MainServiceImpl implements MainService {
 
@@ -29,7 +30,7 @@ public class MainServiceImpl implements MainService {
 	}
 
 	@Override
-	public List<Map<String, String>> getMeetingList() {
+	public List<TestDto> getMeetingList() {
 		// TODO Auto-generated method stub
 		return mainDao.getMeetingList();
 	}

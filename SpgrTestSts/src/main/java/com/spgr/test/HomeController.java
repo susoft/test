@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spgr.dto.TestDto;
 import com.spgr.service.MainService;
 
 /**
@@ -58,18 +58,11 @@ public class HomeController {
 	public @ResponseBody Map<?,?> getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "getHfmp0003.do");
 		
-		List<Map<String, String>> rtnList = mainService.getMeetingList();
+		List<TestDto> rtnList = mainService.getMeetingList();
 		
 		logger.info("{} count inputed....", rtnList.size());
 		
-		//return information...
-		Map<String, String> mapinfo = new HashMap<String, String>();
-		
-		mapinfo.put("test1", "value1");
-		mapinfo.put("test2", "value2");
-		mapinfo.put("test3", "value3");
-		
-		model.addAttribute("result", mapinfo);
+		model.addAttribute("result", rtnList);
 		
 		return model;
 	}
