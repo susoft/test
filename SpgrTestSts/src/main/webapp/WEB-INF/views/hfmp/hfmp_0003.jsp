@@ -46,15 +46,25 @@ table.tableList td.notselected {  }
 <script type="text/javascript">
 $.ajax( {
 		type : "GET"
-	,	url  : "/test/getHfmp0003.do"
+	,	url  : "getHfmp0003.do"
 	,	dataType : "json"
 	,	data : ""
 	,	success : function (result) {
+			console.log(result);
+			
 			$.each(result, function(key) {
 				var list = result[key];
-				alert("list1 = " + list.test1);
-				alert("list2 = " + list.test2);
-				alert("list3 = " + list.test3);
+				
+				var content = "<table>";
+				for (var i = 0; i < list.length; i++) {
+					content += "<tr>";
+					content += "<td> id : " + list[i].id + "</td>";
+					content += "<td> subject : " + list[i].subject + "</td>";
+					content += "<td> context : " + list[i].context + "</td>";
+					content += "</tr>";
+				}
+				content += "</table>";
+				$("#result").html(content);
 			});
 		}
 	}
@@ -65,6 +75,6 @@ $.ajax( {
 
 <body>
 	<img class="imgClass1" src="./resources/images/hfmp/hfmp_title.gif" alt="중소기업교류회타이틀" />
-	
+	<div id="result"></div>
 </body>
 </html>
