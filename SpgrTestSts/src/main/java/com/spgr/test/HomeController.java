@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.spgr.dto.TestDto;
 import com.spgr.service.MainService;
+import com.spgr.vo.HfmbInfoVo;
+import com.spgr.vo.MeetingVo;
 
 /**
  * Handles requests for the application home page.
@@ -53,12 +54,12 @@ public class HomeController {
 		return "hfmp/hfmp_0003";
 	}
 	
-	//Search App....
+	//Search App.... --> 사용안함.
 	@RequestMapping(value = "/getHfmp0003.do", method = RequestMethod.GET)
 	public String getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "getHfmp0003.do");
 		
-		List<TestDto> rtnList = mainService.getMeetingList();
+		List<MeetingVo> rtnList = mainService.getMeetingList();
 		
 		logger.info("{} count inputed....", rtnList.size());
 		
@@ -68,17 +69,44 @@ public class HomeController {
 	}
 	
 	//Search App....
-	@RequestMapping(value = "/getHfmp0004.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/getHfmp0004.do", method = RequestMethod.POST)
 	public String getHfmp0004(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "getHfmp0004.do");
+		logger.info("meetingCd = {}", paramMap.get("meetingCd"));
 		
-		List<TestDto> rtnList = mainService.getMeetingList();
+		List<HfmbInfoVo> rtnList = mainService.getHfmbInfoList(paramMap);
 		
 		logger.info("{} count inputed....", rtnList.size());
 		
 		model.addAttribute("result", rtnList);
 		
 		return "hfmp/hfmp_0004";
+	}
+	
+	//Search App....
+	@RequestMapping(value = "/regiHfmp0005.do", method = RequestMethod.POST)
+	public String regiHfmp0005(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "regiHfmp0005.do");
+		return "hfmp/hfmp_0005";
+	}
+	
+	//Search App....
+	@RequestMapping(value = "/saveHfmp0005.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> saveHfmp0005(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "saveHfmp0005.do");
+		logger.info("meetingNm = {}", paramMap.get("meetingNm"));
+		
+		int result = mainService.saveMeeting(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
 	}
 	
 	

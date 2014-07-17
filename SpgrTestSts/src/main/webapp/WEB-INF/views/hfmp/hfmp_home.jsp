@@ -67,12 +67,32 @@ $.ajax({
 }); */
 
 function fnClick(gubun){
-	location.href = "getHfmp0003.do";
+	var methodVar = "get";
+	var actionVar = "getHfmp0003.do";
+	
+	if (gubun == "3") {
+		methodVar = "get";
+		actionVar = "getHfmp0003.do";
+	} else if (gubun == "4") {
+		methodVar = "post";
+		actionVar = "getHfmp0004.do";
+	} else if (gubun == "5") {
+		methodVar = "post";
+		actionVar = "regiHfmp0005.do";
+	}
+	
+	document.frm.method = methodVar;
+	document.frm.action = actionVar;
+	document.frm.meetingCd.value = "";
+	document.frm.submit();
 }
 </script>
 </head>
 
 <body>
+<form name="frm">
+<input type=hidden name="meetingCd"/>
+</form>
 	<img class="imgClass1" src="./resources/images/hfmp/hfmp_title.gif" alt="중소기업교류회타이틀" />
 	<div class="wrapper">
 		<table class="tableList" style="width:100%">

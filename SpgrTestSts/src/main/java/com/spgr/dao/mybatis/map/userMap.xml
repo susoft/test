@@ -4,20 +4,77 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="main">
+	<select id="getMeetingList" resultType="com.spgr.vo.MeetingVo">
+		SELECT 
+		      a.meeting_cd meetingCd
+		     ,a.meeting_nm meetingNm 
+		     ,(SELECT photo FROM Member_Company WHERE a.meeting_cd = meeting_cd AND depth_div_cd = '1' AND del_yn = 'N') photo 
+		     ,(SELECT ceo_nm FROM Member_Company WHERE a.meeting_cd = meeting_cd AND depth_div_cd = '2' AND del_yn = 'N' AND Hfmb_duty_div_cd = '01') ceoNm1 
+		     ,(SELECT ceo_nm FROM Member_Company WHERE a.meeting_cd = meeting_cd AND depth_div_cd = '2' AND del_yn = 'N' AND Hfmb_duty_div_cd = '02') ceoNm2 
+		     ,(SELECT COUNT(*) FROM Member_Company WHERE a.meeting_cd = meeting_cd AND depth_div_cd = '2' AND del_yn = 'N') companyCount 
+		
+		  FROM Member_Company a 
+		 WHERE a.depth_div_cd = '1' 
+		   AND a.del_yn = 'N' 
+		 ORDER BY a.meeting_cd, a.meeting_nm 
+	</select>
+	
+	<select id="getHfmbInfoList" parameterType="com.spgr.vo.HfmbInfoVo" resultType="com.spgr.vo.HfmbInfoVo">
+		SELECT
+				id  
+				,meeting_cd  meetingCd--교류회코드
+				,ceo_nm  ceoNm--회사대표명
+				,company_cd  companyCd--회사코드
+				,company_nm  companyNm--회사코드명
+				,category_business_cd  categoryBusinessCd--업종코드
+				,category_business_nm  categoryBusinessNm--업종코드명
+				,addr  --주소
+				,phone1  --일반전화
+				,phone2  --핸드폰
+				,phone3  --팩스번호
+				,photo  --사진
+				,email  --이메일
+				,meeting_nm  meetingNm--교류회명
+				,depth_div_cd  depthDivCd--교류회회원사구분코드
+				,hfmb_organ_div_cd hfmbOrganDivCd --교류회조직구분코드
+				,hfmb_duty_div_cd  hfmbDutyDivCd--교류회직책구분코드
+				,auth_div_cd  authDivCd--권한구분코드
+				,del_yn  delYn--삭제여부
+				,gita1  --기타1
+				,gita2  --기타2
+				,gita3  --기타3
+				,input_dt  inputDt--입력일자
+				,input_tm  inputTm--입력시간
+				,update_dt  updateDt--수정일자
+				,update_tm  updateTm--수정시간
+		  FROM Member_Company  
+		 WHERE 1=1
+		   AND del_yn = 'N'  --삭제되지 않은 회원사만.
+		   AND depth_div_cd = '2'  --회원사만.
+		   <if test='meetingCd != null and !meetingCd.equals("")'>AND meeting_cd = #{meetingCd}  --교류회코드</if>
+		   <if test='ceoNm != null'>AND ceo_nm like CONCAT('%', #{ceoNm}, '%')  --대표명</if>
+		   <if test='categoryBusinessNm != null'>AND category_business_nm like CONCAT('%', #{categoryBusinessNm}, '%')  --업종명</if>
+		   <if test='companyNm != null'>AND company_nm like CONCAT('%', #{companyNm}, '%')  --회사명</if>
+		   
+	</select>
+	
+	<select id="getMeeting" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.Integer">
+		SELECT count(*) cnt FROM Member_Company 
+		 WHERE del_yn = 'N'  --삭제되지 않은 회원사만.
+		   AND depth_div_cd = '1'  --교류회만.
+		   AND meeting_nm = #{meetingNm}
+	</select>
+	
+	<select id="getNewMeetingCd" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.String">
+		SELECT MAX(meeting_cd) meetingCd FROM Member_Company 
+		 WHERE depth_div_cd = '1'  --교류회만.
+	</select>
+	
+	
+	
     <select id="getToday" resultType="java.lang.String">
 	    SELECT now()
 	</select>
 	
-	<insert id="writeProc" parameterType="java.util.Map">
-		insert into Test_Table(subject,context) values(#{subject},#{context})
-	</insert>
-	
-	
-	
-	<select id="getMeetingList" resultType="com.spgr.dto.TestDto">
-		SELECT 
-			   id, subject, context
-		  FROM Test_Table
-	</select>
 </mapper>
 

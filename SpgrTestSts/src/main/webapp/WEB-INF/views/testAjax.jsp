@@ -31,7 +31,8 @@ function goTest() { //v3.0
 Ajax
 <input type="button" value="test" onclick="goTest()">
 
-<div id="htmlAgax"/>
+<div id="htmlAgax">
+</div>
 
 </body>
 </html>

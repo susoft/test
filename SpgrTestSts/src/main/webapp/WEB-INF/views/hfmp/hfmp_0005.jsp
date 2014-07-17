@@ -48,51 +48,46 @@ table.tableList td.notselected {  }
 </style>
 <script type="text/javascript">
 
-function modifyInfo(id) {
-	alert(id);
+function saveInfo() {
+	
+	$.ajax( {
+		type : "POST"
+	,	url  : "saveHfmp0005.do"
+	,	dataType : "json"
+	,	data : {'meetingNm': 'test'}
+	,	success : function (result) {
+			console.log(result);
+			
+			$.each(result, function(key) {
+				$.mobile.changePage( "#dialog", { role: "dialog" } );
+			});
+		}
+	}
+	);
 }
 
-function deleteInfo(id) {
-	alert(id);
-}
 
 </script>
 </head>
 
 <body>
 	<div data-role="page" id="pageone">
-		<c:forEach items="${result}" var="result" step="1">
-			<div data-role="panel" id="${result.companyCd}">
-				<h2>${result.ceoNm}</h2>
-				<p>${result.companyNm}</p>
-				<p>${result.categoryBusinessNm}</p>
-				<p>회사 : ${result.phone1}</p>
-				<p>모바일 : ${result.phone2}</p>
-				<p>팩스 : ${result.phone3}</p>
-				<p>주소: ${result.addr}</p>
-				<p>이메일: ${result.email}</p>
-				<a href="#pageone" data-rel="close"
-					class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left">닫기</a>
-				<a href="javascript:modifyInfo('${result.companyCd}')" data-rel="edit"
-					class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-b ui-icon-edit ui-btn-icon-left">수정</a>
-			</div>
-		</c:forEach>
 		<div data-role="main" class="ui-content">
-			<h2>회원사</h2>
-			<ul data-role="listview" data-inset="true">
-				<c:forEach items="${result}" var="result" step="1">
-					<li><a href="#${result.companyCd}">
-							<img src="./resources/photo/${result.companyCd}.jpg">
-							<strong>${result.ceoNm}</strong> ${result.companyNm}<br>
-							${result.categoryBusinessNm}<br>
-							${result.phone1} ${result.phone2}<br>
-							${result.addr}<br>
-						</a>
-						<a href="javascript:deleteInfo('${result.companyCd}')"></a>
-					</li>
-				</c:forEach>
-			</ul>
+			<div class="ui-field-contain">
+				<label for="meetingNm">교류회명:</label> 
+				<input type="text" name="meetingNm" id="meetingNm"> 
+			</div>
+			<input type="button" data-inline="true" value="저장" onclick="javascript:saveInfo()">
 		</div>
 	</div>
+	<div data-role="dialog" id="dialog">
+		<div data-role="main" class="ui-content">
+			<p>교류회가 생성되었습니다.</p>
+			<a href="#"
+				class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-inline ui-mini"
+				data-rel="back">닫기</a>
+		</div>
+	</div>
+
 </body>
 </html>

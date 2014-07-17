@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.spgr.dao.MainDao;
-import com.spgr.dto.TestDto;
+import com.spgr.vo.HfmbInfoVo;
+import com.spgr.vo.MeetingVo;
 
 public class MainServiceImpl implements MainService {
 
@@ -30,9 +31,21 @@ public class MainServiceImpl implements MainService {
 	}
 
 	@Override
-	public List<TestDto> getMeetingList() {
+	public List<MeetingVo> getMeetingList() {
 		// TODO Auto-generated method stub
 		return mainDao.getMeetingList();
+	}
+
+	@Override
+	public List<HfmbInfoVo> getHfmbInfoList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.getHfmbInfoList(paramMap);
+	}
+
+	@Override
+	public int saveMeeting(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.saveMeeting(paramMap);
 	}
 
 }

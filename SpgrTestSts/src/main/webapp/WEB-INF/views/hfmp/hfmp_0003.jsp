@@ -46,7 +46,6 @@ table.tableList td.notselected {  }
 	}
 }
 </style>
-<script type="text/JavaScript" src="./resources/js/jquery-1.11.1.js"></script>
 <script type="text/javascript">
 /* $.ajax( {
 		type : "GET"
@@ -91,8 +90,9 @@ table.tableList td.notselected {  }
 		}
 	}
 ); */
-function fnClick(id) {
-	location.href = "getHfmp0004.do";
+function fnClick(meetingCd) {
+	document.frm.meetingCd.value = meetingCd;
+	document.frm.submit();
 }
 
 </script>
@@ -123,15 +123,19 @@ function fnClick(id) {
 	</table>
 	</div> --%>
 
+<form name="frm" action="getHfmp0004.do" method="post">
+<input type=hidden name="meetingCd"/>
+</form>
 	<div data-role="page" id="pageone">
 		<div data-role="main" class="ui-content">
 			<h2>교류회</h2>
 			<ul data-role="listview" data-inset="true">
 				<c:forEach items="${result}" var="result" step="1">
-					<li><a href="javascript:fnClick('${result.id}');">
-							ID : ${result.id}<br>
-							SUBJECT : ${result.subject}<br>
-							CONTEXT : ${result.context}<br>
+					<li><a href="javascript:fnClick('${result.meetingCd}');">
+							<strong> ${result.meetingNm} </strong><br>
+							회장 : ${result.ceoNm1}<br>
+							총무 : ${result.ceoNm2}<br>
+							회원수 : ${result.companyCount}<br>
 						</a>
 					</li>
 				</c:forEach>
