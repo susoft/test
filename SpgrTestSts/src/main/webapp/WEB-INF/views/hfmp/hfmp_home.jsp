@@ -72,8 +72,8 @@ function fnClick(gubun){
 	
 	if (gubun == "3") {
 		methodVar = "get";
-		//actionVar = "getHfmp0003.do";
-		actionVar = "hfmp_0003.do";
+		actionVar = "getHfmp0003.do";
+		//actionVar = "hfmp_0003.do";
 	} else if (gubun == "4") {
 		methodVar = "post";
 		actionVar = "getHfmp0004.do";
