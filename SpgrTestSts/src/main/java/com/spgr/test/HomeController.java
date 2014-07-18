@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spgr.service.MainService;
+import com.spgr.vo.CodeVo;
 import com.spgr.vo.HfmbInfoVo;
 import com.spgr.vo.MeetingVo;
 
@@ -113,17 +114,26 @@ public class HomeController {
 	@RequestMapping(value = "/regiHfmp0006.do", method = RequestMethod.POST)
 	public String regiHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "regiHfmp0006.do");
+		
+		//코드조회
+		List<CodeVo> rtnList = mainService.getCodeList(paramMap);
+		model.addAttribute("result", rtnList);
+		
+		//교류회조회
+		List<MeetingVo> rtnList1 = mainService.getMeetingList();
+		model.addAttribute("result1", rtnList1);
+		
 		return "hfmp/hfmp_0006";
 	}
 
 	//Search App....
-	@RequestMapping(value = "/saveHfmp0006.do", method = RequestMethod.POST)
-	public @ResponseBody Map<?,?> saveHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
-		logger.info("Welcome home! The client locale is {}.", "saveHfmp0006.do");
+	@RequestMapping(value = "/modifyMeeting.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> modifyMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "modifyMeeting.do");
 		logger.info("companyNm = {}", paramMap.get("companyNm"));
 		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
 		
-		int result = mainService.saveMeeting(paramMap);
+		int result = mainService.modifyMeeting(paramMap);
 		
 		logger.info("{} count inputed....", result);
 		
@@ -136,6 +146,62 @@ public class HomeController {
 		return mapinfo;
 	}
 
+	//Search App....
+	@RequestMapping(value = "/deleteMeeting.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> deleteMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "deleteMeeting.do");
+		logger.info("companyNm = {}", paramMap.get("companyNm"));
+		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
+		
+		int result = mainService.deleteMeeting(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
+	}
+
+	//Search App....
+	@RequestMapping(value = "/saveHfmp0006.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> saveHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "saveHfmp0006.do");
+		logger.info("companyNm = {}", paramMap.get("companyNm"));
+		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
+		
+		int result = mainService.saveCompany(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	///////Test....////////////////////////////////////////////
 	/**
 	 * Simply selects the home view to render by returning its name.

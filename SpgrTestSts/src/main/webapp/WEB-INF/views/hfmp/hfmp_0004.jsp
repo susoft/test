@@ -79,12 +79,12 @@ function deleteInfo(id) {
 							${result.phone1} ${result.phone2}<br>
 							${result.addr}<br>
 						</a>
-						<a href="javascript:deleteInfo('${result.companyCd}')"></a>
+						<a href="javascript:deleteInfo('${result.companyCd}')" data-icon="gear"></a>
 					</li>
 				</c:forEach>
 			</ul>
 		</div>
-		
+
 		<c:forEach items="${result}" var="result" step="1">
 			<div data-role="panel" id="${result.companyCd}">
 				<h2>${result.ceoNm}</h2>

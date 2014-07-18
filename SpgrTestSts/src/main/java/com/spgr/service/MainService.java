@@ -3,6 +3,7 @@ package com.spgr.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spgr.vo.CodeVo;
 import com.spgr.vo.HfmbInfoVo;
 import com.spgr.vo.MeetingVo;
 
@@ -17,4 +18,11 @@ public interface MainService {
 	
 	public int saveMeeting(Map<String, Object> paramMap);
 	
+	public List<CodeVo> getCodeList(Map<String, Object> paramMap);
+	
+	public int saveCompany(Map<String, Object> paramMap);
+	
+	public int modifyMeeting(Map<String, Object> paramMap);
+	
+	public int deleteMeeting(Map<String, Object> paramMap);
 }

@@ -66,9 +66,15 @@ function saveInfo() {
 	,	success : function (result) {
 			console.log(result);
 			
-			$.each(result, function(key) {
+			if (result.result == "1") {
+				$("#resultMessage").html('교류회가 생성되었습니다.');
+			} else {
+				$("#resultMessage").html('이미 등록된 교류회 명입니다.');
+			}
+			$.mobile.changePage( "#dialog", { role: "page" } );
+			/* $.each(result, function(key) {
 				$.mobile.changePage( "#dialog", { role: "page" } );
-			});
+			}); */
 		}
 	}
 	);
@@ -79,6 +85,11 @@ function saveInfo() {
 
 <body>
 	<div data-role="page" id="pageone">
+		<div data-role="header">
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+			<h1>교류회등록</h1>
+		</div>
 		<div data-role="main" class="ui-content">
 			<div class="ui-field-contain">
 				<label for="meetingNm">교류회명:</label> 
@@ -104,7 +115,7 @@ function saveInfo() {
 			<h1>교류회 등록 결과</h1>
 		</div>
 		<div data-role="main" class="ui-content">
-			<p>교류회가 생성되었습니다.</p>
+			<p id="resultMessage"></p>
 		</div>
 	</div>
 </body>

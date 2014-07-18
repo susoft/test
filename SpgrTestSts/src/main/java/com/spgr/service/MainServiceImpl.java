@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spgr.dao.MainDao;
+import com.spgr.vo.CodeVo;
 import com.spgr.vo.HfmbInfoVo;
 import com.spgr.vo.MeetingVo;
 
@@ -46,6 +47,30 @@ public class MainServiceImpl implements MainService {
 	public int saveMeeting(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return mainDao.saveMeeting(paramMap);
+	}
+
+	@Override
+	public List<CodeVo> getCodeList(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.getCodeList(paramMap);
+	}
+
+	@Override
+	public int saveCompany(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.saveCompany(paramMap);
+	}
+
+	@Override
+	public int modifyMeeting(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.modifyMeeting(paramMap);
+	}
+
+	@Override
+	public int deleteMeeting(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mainDao.deleteMeeting(paramMap);
 	}
 
 }

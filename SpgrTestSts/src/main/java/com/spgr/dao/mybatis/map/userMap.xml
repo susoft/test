@@ -65,12 +65,101 @@
 		   AND meeting_nm = #{meetingNm}
 	</select>
 	
-	<select id="getNewMeetingCd" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.String">
+	<select id="getLastMeetingCd" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.String">
 		SELECT MAX(meeting_cd) meetingCd FROM Member_Company 
 		 WHERE depth_div_cd = '1'  --교류회만.
 	</select>
 	
+	<select id="getCodeList" parameterType="com.spgr.vo.CodeVo" resultType="com.spgr.vo.CodeVo">
+		SELECT 
+		      a.code_Key     codeKey
+		     ,a.code         code
+		     ,a.code_Nm      codeNm
+		     ,a.code_Long_Nm codeLongNm
+		     ,a.depth        depth
+		     ,a.order_sort   orderSort
+		  FROM CodeTable a 
+		 WHERE a.depth = '2' 
+		 <if test='codeKey != null and !codeKey.equals("")'>AND code_Key = #{codeKey}</if>
+		 ORDER BY a.code_Key, a.order_sort 
+	</select>
 	
+	<insert id="insertMemberCompany" parameterType="com.spgr.vo.HfmbInfoVo">
+	    INSERT INTO Member_Company 
+			(meeting_cd     -- 교류회코드
+			,ceo_nm     -- 회사대표명
+			,company_cd     -- 회사코드
+			,company_nm     -- 회사코드명
+			,category_business_cd     -- 업종코드
+			,category_business_nm     -- 업종코드명
+			,addr     -- 주소
+			,phone1     -- 일반전화
+			,phone2     -- 핸드폰
+			,phone3     -- 팩스번호
+			,email     -- 이메일
+			,meeting_nm     -- 교류회명
+			,depth_div_cd     -- 교류회회원사구분코드
+			,hfmb_organ_div_cd     -- 교류회조직구분코드
+			,hfmb_duty_div_cd     -- 교류회직책구분코드
+			,auth_div_cd     -- 권한구분코드
+			,del_yn     -- 삭제여부
+			,gita1     -- 기타1
+			,gita2     -- 기타2
+			,gita3     -- 기타3
+			,input_dt     -- 입력일자
+			,input_tm     -- 입력시간
+			,update_dt     -- 수정일자
+			,update_tm)     -- 수정시간
+
+		VALUES (#{meetingCd}     -- 교류회코드
+				,#{ceoNm}     -- 회사대표명
+				,#{companyCd}     -- 회사코드
+				,#{companyNm}     -- 회사코드명
+				,#{categoryBusinessCd}     -- 업종코드
+				,#{categoryBusinessNm}     -- 업종코드명
+				,#{addr}     -- 주소
+				,#{phone1}     -- 일반전화
+				,#{phone2}     -- 핸드폰
+				,#{phone3}     -- 팩스번호
+				,#{email}     -- 이메일
+				,#{meetingNm}     -- 교류회명
+				,#{depthDivCd}     -- 교류회회원사구분코드
+				,#{hfmbOrganDivCd}     -- 교류회조직구분코드
+				,#{hfmbDutyDivCd}    -- 교류회직책구분코드
+				,#{authDivCd}     -- 권한구분코드
+				,#{delYn}     -- 삭제여부
+				,#{gita1}     -- 기타1
+				,#{gita2}     -- 기타2
+				,#{gita3}     -- 기타3
+				,#{inputDt}     -- 입력일자
+				,#{inputTm}     -- 입력시간
+				,#{updateDt}     -- 수정일자
+				,#{updateTm})     -- 수정시간
+	</insert>
+	
+	<select id="getCompany" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.Integer">
+		SELECT count(*) cnt FROM Member_Company 
+		 WHERE del_yn = 'N'  --삭제되지 않은 회원사만.
+		   AND depth_div_cd = '2'  --회원사만.
+		   AND meeting_cd = #{meetingCd}
+		   AND company_nm = #{companyNm}
+	</select>
+	
+	<select id="getLastCompanyCd" parameterType="com.spgr.vo.HfmbInfoVo" resultType="java.lang.String">
+		SELECT MAX(company_cd) companyCd FROM Member_Company 
+		 WHERE depth_div_cd = '2'  --회원사만.
+	</select>
+	
+	<update id="modifyMeeting" parameterType="com.spgr.vo.HfmbInfoVo">
+		UPDATE SET
+		       meeting_nm = #{meetingNm}  
+		 WHERE meeting_cd = #{meetingCd}  
+	</update>
+	
+	<update id="deleteMeeting" parameterType="com.spgr.vo.HfmbInfoVo">
+		DELETE FROM Member_Company
+		 WHERE meeting_cd = #{meetingCd}  
+	</update>
 	
     <select id="getToday" resultType="java.lang.String">
 	    SELECT now()
