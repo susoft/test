@@ -108,8 +108,34 @@ public class HomeController {
 		
 		return mapinfo;
 	}
-	
-	
+
+	//Search App....
+	@RequestMapping(value = "/regiHfmp0006.do", method = RequestMethod.POST)
+	public String regiHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "regiHfmp0006.do");
+		return "hfmp/hfmp_0006";
+	}
+
+	//Search App....
+	@RequestMapping(value = "/saveHfmp0006.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> saveHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "saveHfmp0006.do");
+		logger.info("companyNm = {}", paramMap.get("companyNm"));
+		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
+		
+		int result = mainService.saveMeeting(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
+	}
+
 	///////Test....////////////////////////////////////////////
 	/**
 	 * Simply selects the home view to render by returning its name.

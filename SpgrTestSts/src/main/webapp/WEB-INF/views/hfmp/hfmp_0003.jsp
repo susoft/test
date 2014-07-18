@@ -127,8 +127,15 @@ function fnClick(meetingCd) {
 <input type=hidden name="meetingCd"/>
 </form>
 	<div data-role="page" id="pageone">
+		<div data-role="header">
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+			<h1>교류회</h1>
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+		</div>
+
 		<div data-role="main" class="ui-content">
-			<h2>교류회</h2>
 			<ul data-role="listview" data-inset="true">
 				<c:forEach items="${result}" var="result" step="1">
 					<li><a href="javascript:fnClick('${result.meetingCd}');">

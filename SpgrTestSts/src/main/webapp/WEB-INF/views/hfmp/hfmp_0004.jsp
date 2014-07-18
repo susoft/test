@@ -61,6 +61,30 @@ function deleteInfo(id) {
 
 <body>
 	<div data-role="page" id="pageone">
+		<div data-role="header">
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+			<h1>회원사</h1>
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+		</div>
+		
+		<div data-role="main" class="ui-content">
+			<ul data-role="listview" data-inset="true">
+				<c:forEach items="${result}" var="result" step="1">
+					<li><a href="#${result.companyCd}">
+							<img src="./resources/photo/${result.companyCd}.jpg">
+							<strong>${result.ceoNm}</strong> ${result.companyNm}<br>
+							${result.categoryBusinessNm}<br>
+							${result.phone1} ${result.phone2}<br>
+							${result.addr}<br>
+						</a>
+						<a href="javascript:deleteInfo('${result.companyCd}')"></a>
+					</li>
+				</c:forEach>
+			</ul>
+		</div>
+		
 		<c:forEach items="${result}" var="result" step="1">
 			<div data-role="panel" id="${result.companyCd}">
 				<h2>${result.ceoNm}</h2>
@@ -77,22 +101,6 @@ function deleteInfo(id) {
 					class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-b ui-icon-edit ui-btn-icon-left">수정</a>
 			</div>
 		</c:forEach>
-		<div data-role="main" class="ui-content">
-			<h2>회원사</h2>
-			<ul data-role="listview" data-inset="true">
-				<c:forEach items="${result}" var="result" step="1">
-					<li><a href="#${result.companyCd}">
-							<img src="./resources/photo/${result.companyCd}.jpg">
-							<strong>${result.ceoNm}</strong> ${result.companyNm}<br>
-							${result.categoryBusinessNm}<br>
-							${result.phone1} ${result.phone2}<br>
-							${result.addr}<br>
-						</a>
-						<a href="javascript:deleteInfo('${result.companyCd}')"></a>
-					</li>
-				</c:forEach>
-			</ul>
-		</div>
 	</div>
 </body>
 </html>

@@ -49,23 +49,30 @@ table.tableList td.notselected {  }
 <script type="text/javascript">
 
 function saveInfo() {
+	var meetingNm = $("#meetingNm").val();
+	
+	if (meetingNm == "") {
+		$("#errorMessage").html('교류회명을 입력하세요!');
+		$("#inputErrorPopup").popup('open');
+		//$.mobile.changePage('#inputErrorPopup', {transition: 'pop', role: 'dialog'});
+		return;
+	}
 	
 	$.ajax( {
 		type : "POST"
 	,	url  : "saveHfmp0005.do"
 	,	dataType : "json"
-	,	data : {'meetingNm': 'test'}
+	,	data : {'meetingNm': meetingNm}
 	,	success : function (result) {
 			console.log(result);
 			
 			$.each(result, function(key) {
-				$.mobile.changePage( "#dialog", { role: "dialog" } );
+				$.mobile.changePage( "#dialog", { role: "page" } );
 			});
 		}
 	}
 	);
 }
-
 
 </script>
 </head>
@@ -79,15 +86,26 @@ function saveInfo() {
 			</div>
 			<input type="button" data-inline="true" value="저장" onclick="javascript:saveInfo()">
 		</div>
-	</div>
-	<div data-role="dialog" id="dialog">
-		<div data-role="main" class="ui-content">
-			<p>교류회가 생성되었습니다.</p>
-			<a href="#"
-				class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-inline ui-mini"
-				data-rel="back">닫기</a>
+
+		<div data-role="popup" id="inputErrorPopup">
+			<div data-role="header">
+				<h1>입력오류</h1>
+				<a href="#" data-rel="back"
+				class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+			</div>
+			<div data-role="main" class="ui-content">
+				<p id="errorMessage"></p>
+			</div>
 		</div>
 	</div>
-
+	
+	<div data-role="page" data-dialog="true" id="dialog">
+		<div data-role="header">
+			<h1>교류회 등록 결과</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<p>교류회가 생성되었습니다.</p>
+		</div>
+	</div>
 </body>
 </html>
