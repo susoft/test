@@ -9,43 +9,7 @@
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 
-<style type="text/css">
-body {
-	font-size: 0.95em;
-	color: #333;
-	font-family: "맑은 고딕";
-}
-.wrapper {
-	/* border: solid 1px #666;	 */
-	padding: 5px 10px;
-	margin: 50px 20px 20px 20px;
-}
-.viewing-copyright {
-	font-size: 0.75em;
-	color: #666;
-	text-align: center;
-}
 
-table.tableList { table-layout:fixed; border-top:2px #EA0000 solid; border-bottom:1px #CFCFCF solid; }
-table.tableList td.center { text-align:center; }
-table.tableList td.selected { background-color:pink; }
-table.tableList td.notselected {  }
-
-.imgClass1 {
-	width: 40%;
-}
-
-.imgClass2 {
-	width: 100%;
-}
-
-/* max-width */
-@media screen and (max-width: 600px) {
-	.one {
-		background: #F9C;
-	}
-}
-</style>
 <script type="text/javascript">
 
 function checkInputData(inputValue, errorMessage) {
@@ -87,12 +51,30 @@ function saveInfo() {
 
 <body>
 	<div data-role="page" id="pageone">
+		<div data-role="header">
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+			<h1>교류회</h1>
+			<a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+		</div>
+
 		<div data-role="main" class="ui-content">
 			<div class="ui-field-contain">
 				<label for="companyNm">회원사명:</label> 
 				<input type="text" name="companyNm" id="companyNm"> 
 				<label for="ceoNm">대표자명:</label> 
 				<input type="text" name="ceoNm" id="ceoNm"> 
+				
+				<label for="ceoNm1">업종:</label> 
+				<input type="text" name="ceoNm1" id="ceoNm1"> 
+				
+				<label for="telephone1">전화번호1:</label> 
+				<input type="text" name="telephone1" id="telephone1"> 
+				<label for="telephone2">전화번호2:</label> 
+				<input type="text" name="telephone2" id="telephone2"> 
+				<label for="telephone3">전화번호3:</label> 
+				<input type="text" name="telephone3" id="telephone3"> 
 			</div>
 			<input type="button" data-inline="true" value="저장" onclick="javascript:saveInfo()">
 		</div>
