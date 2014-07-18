@@ -135,10 +135,6 @@ function fnClick(meetingCd) {
 				class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
 		</div>
 		
-		<label for="search" class="ui-hidden-accessible">Search:</label>
-        <input type="search" name="search" id="search" placeholder="Search for content..."
-        	   class="ui-hidden-accessible">
-
 		<div data-role="main" class="ui-content">
 			<ul data-role="listview" data-inset="true">
 				<c:forEach items="${result}" var="result" step="1">
