@@ -4,49 +4,27 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Media Query Demos</title>
+<title>교류회 조회</title>
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 
-<style type="text/css">
-body {
-	font-size: 0.95em;
-	color: #333;
-	font-family: "맑은 고딕";
-}
-.wrapper {
-	/* border: solid 1px #666;	 */
-	padding: 5px 10px;
-	margin: 50px 20px 20px 20px;
-}
-.viewing-copyright {
-	font-size: 0.75em;
-	color: #666;
-	text-align: center;
-}
-
-table.tableList { table-layout:fixed; border-top:2px #EA0000 solid; border-bottom:1px #CFCFCF solid; }
-table.tableList td.center { text-align:center; }
-table.tableList td.selected { background-color:pink; }
-table.tableList td.notselected {  }
-
-.imgClass1 {
-	width: 40%;
-}
-
-.imgClass2 {
-	width: 100%;
-}
-
-/* max-width */
-@media screen and (max-width: 600px) {
-	.one {
-		background: #F9C;
-	}
-}
-</style>
 <script type="text/javascript">
+$(document).on("pagecreate","#pageone",function(){
+   $(document).scroll(function() {
+		console.log("► start of scroll");
+		
+		var documentHeight = $(document).height();
+	    var scrollDifference = $(window).height() + $(window).scrollTop();
+	    
+	    //console.log(documentHeight + "-" +  scrollDifference);
+	    
+	    if (documentHeight == scrollDifference) {
+	    	console.log("► End of scroll");
+	    }
+	});
+});
+
 function fnClick(meetingCd) {
 	document.frm.meetingCd.value = meetingCd;
 	document.frm.submit();
@@ -56,26 +34,31 @@ function choosePopup(meetingCd, meetingNm) {
 	meetingCd_temp = meetingCd;
 	meetingNm_temp = meetingNm;
 	
+	$("#meetingNm").val(meetingNm_temp);
+	$("#meetingCd").val(meetingCd_temp);
+	
 	$("#popupMenu").popup();
 	$('#popupMenu').popup('open');
 }
 
-function modifyMeeting(meetingCd, meetingNm) {
+function dialogModifyMeeting() {
 	
-	$("#meetingNm").val(meetingNm);
-	$("#meetingCd").val(meetingCd);
+	console.log("dialogModifyMeeting");
 	
 	$.mobile.changePage( "#dialogModify", { role: "dialog" } );
+	
+	// Dialog closed 
+	$('#dialogModify').on("pagehide", function() {
+		console.log($("#meetingCd").val());
+		console.log($("#meetingNm").val());
+		
+		modifyMeeting();
+	});
 }
 
-function saveInfo() {
+function modifyMeeting() {
 	var meetingCd = $("#meetingCd").val();
 	var meetingNm = $("#meetingNm").val();
-	$("#meetingNm").val(meetingNm);
-	$("#meetingCd").val(meetingCd);
-	
-	$("#dialogModify").popup();
-	$('#dialogModify').popup('close');
 	
 	$.ajax( {
 		type : "POST"
@@ -90,32 +73,32 @@ function saveInfo() {
 			} else {
 				$("#resultMessage").html('오류가 발생하였습니다.');
 			}
-			//$.mobile.changePage( "#dialog", { role: "page" } );
+			$.mobile.changePage( "#dialogResult", { role: "page" } );
 		}
 	}
 	);
 }
 
 function deleteMeeting() {
-	$('#popupMenu').popup('close');
+	//$('#popupMenu').popup('close');
 	
 	var meetingCd = meetingCd_temp;
 	console.log(meetingCd);
 	
 	$.ajax( {
 		type : "POST"
-	,	url  : "deletMeeting.do"
+	,	url  : "deleteMeeting.do"
 	,	dataType : "json"
 	,	data : {'meetingCd': meetingCd}
 	,	success : function (result) {
 			console.log(result);
 			
-			if (result.result == "1") {
+			if (result.result == "2") {
 				$("#resultMessage").html('정삭적으로 삭제되었습니다.');
 			} else {
 				$("#resultMessage").html('오류가 발생하였습니다.');
 			}
-			$.mobile.changePage( "#dialog", { role: "diolog" } );
+			$.mobile.changePage( "#dialogResult", { role: "diolog" } );
 		}
 	}
 	);
@@ -150,46 +133,44 @@ var meetingNm_temp;
 							총무 : ${result.ceoNm2}<br>
 							회원수 : ${result.companyCount}<br>
 						</a>
-						<a href="javascript:choosePopup('${result.meetingCd}', '${result.meetingNm}');" data-icon="gear"></a>
+						<a href="javascript:choosePopup('${result.meetingCd}', '${result.meetingNm}');" data-rel="popup" data-icon="gear"></a>
+						
 					</li>
 				</c:forEach>
-			</ul>
-		</div>
-
-		<div data-role="popup" id="popupMenu">
-			<ul data-role="listview" data-inset="true">
-				<li data-role="divider" data-theme="a">교류회 관리 목록</li>
-				<li><a href="#" onclick="javascript:modifyMeeting();">수정</a></li>
-				<li><a href="#" onclick="javascript:deleteMeeting();">삭제</a></li>
-			</ul>
-		</div>
-
-		<div data-role="page" data-dialog="true" id="dialogResult">
-			<div data-role="header">
-				<h1>교류회 변경 결과</h1>
-			</div>
-			<div data-role="main" class="ui-content">
-				<p id="resultMessage"></p>
+			</ul>				
+			<div data-role="popup" id="popupMenu">
+				<ul data-role="listview" data-inset="true">
+					<li data-role="divider" data-theme="a">교류회 관리 목록</li>
+					<li><a href="javascript:dialogModifyMeeting();">수정</a></li>
+					<li><a href="javascript:deleteMeeting();">삭제</a></li>
+				</ul>
 			</div>
 		</div>
-		
-		<div data-role="page" data-dialog="true" id="dialogModify">
-			<div data-role="header">
-				<a href="#"
-					class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
-				<h1>교류회수정</h1>
-			</div>
-			<div data-role="main" class="ui-content">
-				<div class="ui-field-contain">
-					<label for="meetingNm">교류회명:</label> 
-					<input type="text" name="meetingNm" id="meetingNm">
-					<input type="hidden" name="meetingCd" id="meetingCd">
-				</div>
-				<input type="button" data-inline="true" value="저장"
-					onclick="javascript:saveInfo()">
-			</div>
-		</div>
-		
 	</div>
+	
+	<div data-role="page" id="dialogModify" data-dialog="true">
+		<div data-role="header">
+			<h1>교류회 수정</h1>
+		</div>
+
+		<div data-role="main" class="ui-content">
+			<label for="meetingNm">교류회명:</label> <input type="text"
+				name="meetingNm" id="meetingNm"> <input type="hidden"
+				name="meetingCd" id="meetingCd"> <a href="#"
+				class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b ui-icon-back ui-btn-icon-right"
+				data-rel="back">Go Back</a>
+		</div>
+	</div>
+
+	<div data-role="page" id="dialogResult" data-dialog="true">
+		<div data-role="header">
+			<h1>교류회 변경 결과</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<p id="resultMessage"></p>
+		</div>
+	</div>
+		
+	
 </body>
 </html>

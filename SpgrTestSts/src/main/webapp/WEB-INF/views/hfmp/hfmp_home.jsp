@@ -45,16 +45,6 @@ table.tableList td.notselected {  }
 <script type="text/JavaScript" src="./resources/js/jquery-1.11.1.js"></script>
 <script type="text/javascript">
 
-/* function fnClick(obj){
-    var seltr = obj.parentNode;  //클릭된 td 의 상위 노드 즉 tr을 구한다.
-    var seltbl = seltr.parentNode;  // 구한 tr 의 상위 노드 즉 table 을 구한다.
-    for (var i = 0; i < seltbl.childNodes.length; i++){  // table의 자식 노드 즉 tr의 수 만큼 Loop
-        for (var j = 0; j < seltbl.childNodes[i].childNodes.length; j++){  // table의 자식 노드 즉 tr의 수 만큼 Loop
-        	seltbl.childNodes[i].childNodes[j].className = "center notselected";  // 각가의 tr을 선택하기 전으로 초기화
-        }
-    }
-    obj.className = "center selected";
-} */
 /* $(document).ready(function(){
 $.ajax({
   type: "POST",

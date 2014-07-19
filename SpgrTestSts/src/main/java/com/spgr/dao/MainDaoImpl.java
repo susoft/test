@@ -200,7 +200,7 @@ public class MainDaoImpl extends SqlSessionDaoSupport implements MainDao  {
 		
 		HfmbInfoVo hfmbInfoVo = new HfmbInfoVo();
 		hfmbInfoVo.setMeetingCd(meetingCd);
-		hfmbInfoVo.setCompanyNm(meetingNm);
+		hfmbInfoVo.setMeetingNm(meetingNm);
 		
 		return getSqlSession().update("main.modifyMeeting", hfmbInfoVo);
 	}
