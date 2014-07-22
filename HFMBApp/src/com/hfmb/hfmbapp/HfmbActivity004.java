@@ -8,6 +8,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -18,10 +19,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -32,46 +36,63 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 import com.hfmb.hfmbapp.util.SpinnerAdapter;
 
 public class HfmbActivity004 extends FragmentActivity {
 	
 	private static final String TAG = "HfmbActivity004";
+	
 	private HfmbListAdapter listAdapter;
+	private ListView listView;
 	private ProgressDialog dialog;
+	private View footer;
+	
+	public List<HashMap<String, String>> rowItems;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_hfmb_004);
 		
+		dialog = null;
+		searchFlag = true;
+		lastDataFlag = false;
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (!CommonUtil.searchYn) {
+		if (!DataUtil.searchYn) {
 			openDialogAlert("조회할 권한이 없습니다.");
-			//CommonUtil.showMessage(getApplicationContext(), "조회할 권한이 없습니다.");
 			return;
 		}
 		
+		//콤보박스 세팅.
 		setSpinner();
 		
+		//서치버튼
 		ImageView hfmb_srch = (ImageView) findViewById(R.id.hfmb_srch);
 		hfmb_srch.setOnClickListener(mOnClickListener);
 		hfmb_srch.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 		
-		List<HashMap<String, String>> rowItems = new ArrayList<HashMap<String, String>>();
+		//회원사 목록
+		listView = (ListView) findViewById(R.id.list);
 		
-		ListView listView = (ListView) findViewById(R.id.list);
-		listAdapter = new HfmbListAdapter(this, rowItems, R.layout.hfmbactivity_listview);
+		listAdapter = new HfmbListAdapter(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
 		listView.setAdapter(listAdapter);
 		
 		listView.setOnItemClickListener(mOnItemClickListener);
+		listView.setOnScrollListener(mOnScrollListener);
+		
 		//회원사 삭제는 admin, power 권한만 가능하다. 즉 사무국, 연합회, 교류회 직책을 가지고 있을때만.
-		if (CommonUtil.insertYn == 1 || CommonUtil.insertYn == 2) {
+		if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
 			listView.setOnItemLongClickListener(mOnItemLongClickListener);
 		}
+		
+		//회원사 목록 페이징 처리..
+		footer = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+				.inflate(R.layout.footer_progressbar, null, false);
 		
 		//자동조회한다.
 		searchInfo();
@@ -84,17 +105,8 @@ public class HfmbActivity004 extends FragmentActivity {
 	private String[] a13cds;
 	private SpinnerAdapter a13Adapter;
 	public void setSpinner() {
-		a13s = new String[4];
-		a13cds = new String[4];
-		
-		a13s[0] = "선택";
-		a13cds[0] = "0";
-		a13s[1] = "회원사명";
-		a13cds[1] = "1";
-		a13s[2] = "대표명";
-		a13cds[2] = "2";
-		a13s[3] = "업종명";
-		a13cds[3] = "3";
+		a13s = DataUtil.a13sArray;
+		a13cds = DataUtil.a13cdsArray;
 		
 		/** Android-13 , Custom Adapter 참조 , 임의의 String[] 배열 사용*/
 		a13Adapter = new SpinnerAdapter(this, android.R.layout.simple_spinner_item, a13s);
@@ -108,6 +120,7 @@ public class HfmbActivity004 extends FragmentActivity {
 		a13Adapter.setSelectedItem(a13s[0]);
 	}
 	
+	//콤보박스 선택 이벤트
 	public OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
 		@Override    
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -119,40 +132,76 @@ public class HfmbActivity004 extends FragmentActivity {
 			//Nothing....
 		}
 	};
-	
+
+	//서치 버튼 선택시 이벤트.
 	private OnClickListener mOnClickListener = new OnClickListener() {
-		//listview의 item 선택시.
 		@Override    
 		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.hfmb_srch:
+			int id = view.getId();
+			if (id == R.id.hfmb_srch) {
+				lastDataFlag = false;
+				searchFlag = true;
 				searchInfo();
-				break;
 			}
 	    }
 	};
 	
-	public List<HashMap<String, String>> rowItems;
+	
+	private boolean lastDataFlag = false;
+	private boolean threadFlag = false;
+	private boolean searchFlag = false;
+	private boolean scrollFlag = false;
+	
+	private StringBuffer resultInfo;
+	
+	private int offset = 1;
+	private int threadMaxTime = 0;
+	
+	private Thread threadgo;
 	
 	public void searchInfo() {
-		dialog = ProgressDialog.show(this, "", "잠시만 기다려 주세요 ...", true);
+		if (lastDataFlag) return;
 		
-		rowItems = null;
-		threadgo = new Thread(mRunnable);
-		threadgo.start();
+		if (searchFlag) {
+			offset = 0;
+			rowItems = null;
+			
+			dialog = ProgressDialog.show(this, "", "잠시만 기다려 주세요 ...", true);
+		} else {
+			listView.addFooterView(footer);
+		}
+		
+		try {
+			lastDataFlag = false;
+			threadMaxTime = 0;
+			threadgo = new Thread(mRunnable);
+			threadgo.start();
+		} catch (Exception e) {
+			Log.e("error", e.toString());
+		}
 	}
-	Thread threadgo;
+	
 	Runnable mRunnable = new Runnable() {           
         public void run() { 
+        	threadFlag = true;
             while (true) {   
                 try {
                 	searchData();
                 	Thread.sleep(1000);
-                	if (rowItems != null) {
+                	if (!threadFlag) {
                     	Message msg = handler.obtainMessage();
                         handler.sendMessage(msg);
                         break;
                 	}
+                	//쓰레드 4회 이상일떄 stop 처리.
+                	if (4 <= threadMaxTime) {
+                		Message msg = handler.obtainMessage();
+                		//rowItemData = null;
+                        handler.sendMessage(msg);
+                        break;
+                	}
+                    
+                	threadMaxTime++;
                 } catch (InterruptedException ie) {
                     ie.printStackTrace();
                 }
@@ -165,18 +214,20 @@ public class HfmbActivity004 extends FragmentActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             
-    		//CommonUtil.bitmap = new Bitmap[rowItems.size()];
-    		
             listAdapter.setRowItems(rowItems);
             listAdapter.notifyDataSetChanged();
             
-            dialog.dismiss();
+            if (dialog != null && dialog.isShowing()) dialog.dismiss();
+            if (listView.getFooterViewsCount() > 0) listView.removeFooterView(footer);
             
             try {
             	threadgo.join();
             } catch(InterruptedException e) {
             	Log.i("thread", "Thread  stopping...... enterrupted Exception...");
             }
+            
+            searchFlag = false;
+            scrollFlag = false;
         }
     };
 	
@@ -200,29 +251,63 @@ public class HfmbActivity004 extends FragmentActivity {
     	
     	strbuf.append("srch_gubun=" + itemcd);
 		strbuf.append("&srch_nm=" + hfmbSrchNm);
+		strbuf.append("&offset=" + offset);
 		
-		//Log.i("parameter ====== " , strbuf.toString()); 
+		Log.i("parameter ====== " , strbuf.toString()); 
 		
-    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_004.jsp");
+    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_SearchTest.jsp");//jwy_Hfmb_004.jsp");
     	
 		//server connecting... login check...
 		HttpConnectServer server = new HttpConnectServer();
-		StringBuffer resultInfo = server.sendByHttp(strbuf, urlbuf.toString());
 		
-		//Log.i("json:", resultInfo.toString());
+		resultInfo = server.sendByHttp(strbuf, urlbuf.toString());
 		
-		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-		String[] jsonName = {"id", "meeting_cd", "ceo_nm", "company_cd", "company_nm"
-				, "category_business_cd", "category_business_nm", "addr", "phone1", "phone2"
-				, "phone3", "photo", "email", "meeting_nm", "depth_div_cd"
-				, "hfmb_organ_div_cd", "hfmb_duty_div_cd", "auth_div_cd", "del_yn", "gita1"
-				, "gita2", "gita3", "input_dt", "input_tm", "update_dt"
-				, "update_tm"};	
+		Log.i("json:", "End........" + resultInfo);
 		
-		rowItems = server.jsonParserList(resultInfo.toString(), jsonName);
+		HashMap<String, String> resultMap = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameResult, "Result");
+		
+		if (resultMap != null) {
+			if (rowItems == null) {
+				rowItems = new ArrayList<HashMap<String, String>>();
+			}
+			if (resultMap.get(DataUtil.jsonNameResult[2]).equals("0")) {
+				lastDataFlag = true;
+			} else {
+				List<HashMap<String, String>> rowItems_temp;
+				rowItems_temp = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
+				
+				if (rowItems_temp != null) {
+					rowItems.addAll(rowItems_temp);
+				}
+				offset += DataUtil.offsetAdd;
+			}
+		}
+		threadFlag = false;
     }
 	
-	//그리드, 리스트에서 item을 길게선택하였을때.
+	//list view 의 스크롤 처리.
+	private OnScrollListener mOnScrollListener = new OnScrollListener() {
+		@Override
+		public void onScroll(AbsListView lw, final int firstVisibleItem,
+		                 final int visibleItemCount, final int totalItemCount) {
+
+			final int lastItem = firstVisibleItem + visibleItemCount;
+			if (lastItem == totalItemCount) {
+				if (!scrollFlag && !searchFlag) {
+					//lastDataFlag = false;
+					scrollFlag = true;
+					searchInfo();
+				}
+			}
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView arg0, int arg1) {
+			// TODO Auto-generated method stub
+		}
+	};
+	
+	//list view 에서 item을 길게 선택하였을때.
 	private OnItemLongClickListener mOnItemLongClickListener = new OnItemLongClickListener() {
 		//listview의 item 선택시.
 		@Override    
@@ -243,28 +328,26 @@ public class HfmbActivity004 extends FragmentActivity {
 		listView.setOnItemClickListener(mOnItemClickListener);
 	}
 	
-	//그리드, 리스트에서 item을 선택하였을때.
+	//list view 에서 item을 선택하였을때.
 	private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
-		//listview의 item 선택시.
 		@Override    
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			modifyInfoActivity(position);
 	    }
 	};
+	
 	//수정화면으로 이동.
 	public void modifyInfoActivity(int position) {
-		String tempPhone = rowItems.get(position).get("phone2");
+		String tempPhone = rowItems.get(position).get("phone2");//핸드폰 번호
 		tempPhone = tempPhone.replaceAll("-", "");
 
-		if (CommonUtil.insertYn == 3) {
-			if (!tempPhone.equals(CommonUtil.phoneNum)) {
-				//CommonUtil.showMessage(getApplicationContext(), "수정할 권한이 없습니다.");
+		if (DataUtil.insertYn == 3) {
+			if (!tempPhone.equals(DataUtil.phoneNum)) {
 				openDialogAlert("본인외 수정할 권한이 없습니다.");
 				return;
 			}
-		} else if (CommonUtil.insertYn == 2) {
-			if (!rowItems.get(position).get("meeting_cd").equals(CommonUtil.meetingCd)) {
-				//CommonUtil.showMessage(getApplicationContext(), "수정할 권한이 없습니다.");
+		} else if (DataUtil.insertYn == 2) {
+			if (!rowItems.get(position).get("meeting_cd").equals(DataUtil.meetingCd)) {
 				openDialogAlert("소속 교류회외 수정할 권한이 없습니다.");
 				return;
 			}
@@ -276,15 +359,16 @@ public class HfmbActivity004 extends FragmentActivity {
 		startActivityForResult(intent, 0);
 	}
 	
+	//수정완료 후 처리
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		CommonUtil.showMessage(TAG, resultCode+"");
 		switch (resultCode) {
 		case -1:
-			if (true) return;
+			openDialogAlert("수정 요청 완료 하였습니다. 인증 요청 하시기 바랍니다.");
 			
-	   		//저장후 정보세팅하는 부분...
+	   		/*//저장후 정보세팅하는 부분...
 			int _position = data.getExtras().getInt("position");
 			//String _company_cd = data.getExtras().getString("_company_cd");
 	   		rowItems.get(_position).put("company_nm", data.getExtras().getString("company_nm"));
@@ -295,7 +379,7 @@ public class HfmbActivity004 extends FragmentActivity {
 	   		rowItems.get(_position).put("phone2", data.getExtras().getString("phone2"));
 		   
 	   		listAdapter.setRowItems(rowItems);
-            listAdapter.notifyDataSetChanged();
+            listAdapter.notifyDataSetChanged();*/
             
 		   break;
 		default:
@@ -310,9 +394,9 @@ public class HfmbActivity004 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("회원사검색");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
@@ -382,11 +466,11 @@ public class HfmbActivity004 extends FragmentActivity {
 		List<Integer> selectedCheckBox = listAdapter.getSelectedCheckBox();
 		int count = selectedCheckBox.size();
 		if (count > 0) {
-			if (CommonUtil.insertYn != 1) {
+			if (DataUtil.insertYn != 1) {
 				String meetingCdTemp = "";
 		    	for (int i = 0; i < count; i++) {
 		    		meetingCdTemp = rowItems.get(selectedCheckBox.get(i)).get("meeting_cd");
-		    		if (!CommonUtil.meetingCd.equals(meetingCdTemp)) {
+		    		if (!DataUtil.meetingCd.equals(meetingCdTemp)) {
 		    			//CommonUtil.showMessage(getApplicationContext(), "자신이 속한 교류회의 회원사만 삭제 가능합니다.");
 		    			openDialogAlert("자신이 속한 교류회의 회원사만 삭제 가능합니다.");
 		    			return;

@@ -13,12 +13,26 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageview02"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:contentDescription="@string/action_settings"
-    android:scaleType="fitXY"
-    android:src="@drawable/display2"
-    android:gravity="center" />
+    android:layout_height="fill_parent" >
+
+    <ImageView
+        android:id="@+id/imageview02"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:contentDescription="@string/action_settings"
+        android:gravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/display2" />
+
+    <ImageView
+        android:id="@+id/btnGlasses02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/action_settings"
+        android:src="@drawable/search" />
+
+</RelativeLayout>

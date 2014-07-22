@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 import com.hfmb.hfmbapp.util.SpinnerAdapter;
 
@@ -180,24 +182,17 @@ public class HfmbActivity007 extends FragmentActivity {
 	
 	public OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
 		@Override    
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			//parent.getId()
-			switch (parent.getId()) {
-			case R.id.hfmb_007_Spinner_01://
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long ids) {
+			int id = parent.getId();
+			if (id == R.id.hfmb_007_Spinner_01) {
 				a13Adapter.setSelectedItemCd(a13cds[position]);
 				a13Adapter.setSelectedItem(a13s[position]);
-				
-				break;
-			case R.id.hfmb_007_Spinner_02://
+			} else if (id == R.id.hfmb_007_Spinner_02) {
 				a14Adapter.setSelectedItemCd(a14cds[position]);
 				a14Adapter.setSelectedItem(a14s[position]);
-				
-				break;
-			case R.id.hfmb_007_Spinner_03://
+			} else if (id == R.id.hfmb_007_Spinner_03) {
 				a15Adapter.setSelectedItemCd(a15cds[position]);
 				a15Adapter.setSelectedItem(a15s[position]);
-				
-				break;
 			}
 			
 		}
@@ -209,22 +204,18 @@ public class HfmbActivity007 extends FragmentActivity {
 	
 	View selectedView;//선택된 button.
 	private OnClickListener mOnClickListener = new OnClickListener() {
-		//listview의 item 선택시.
 		@Override    
 		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.hfmb_007_photo://사진추가
+			int id = view.getId();
+			if (id == R.id.hfmb_007_photo) {
 				Intent intent = new Intent();
 				intent.setAction(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
 				startActivityForResult(intent, 1);
-				break;
-			case R.id.hfmb_007_btn01://저장
+			} else if (id == R.id.hfmb_007_btn01) {
 				saveInfo();
-				break;
-			case R.id.hfmb_007_btn02://취소
+			} else if (id == R.id.hfmb_007_btn02) {
 				finish();
-				break;
 			}
 	    }
 	};
@@ -232,8 +223,6 @@ public class HfmbActivity007 extends FragmentActivity {
 	private List<HashMap<String, String>> meetingRowItems;
 	//교류회 데이터 가져오기.
 	public void getOrganData() {
-		//meetingRowItems = new ArrayList<HashMap<String, String>>();
-		
 		//조회조건에 따라서 서버와 통신한다.
     	StringBuffer strbuf = new StringBuffer();
     	StringBuffer urlbuf = new StringBuffer();
@@ -248,10 +237,7 @@ public class HfmbActivity007 extends FragmentActivity {
 		
 		//Log.i("json:", resultInfo.toString());
 		
-		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-		String[] jsonName = {"meeting_cd", "meeting_nm", "ceo_nm1", "ceo_nm2", "company_count"};
-		
-		meetingRowItems = server.jsonParserList(resultInfo.toString(), jsonName);
+		meetingRowItems = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameMeeting);
 		
 		int count = meetingRowItems.size();
 		
@@ -264,7 +250,8 @@ public class HfmbActivity007 extends FragmentActivity {
 			a13cds[i+1] = meetingRowItems.get(i).get("meeting_cd");
 		}
 	}
-	//thread 동작후 1초마다 그림을 가져와 gridview에 추가하는 함수
+	
+	//회원사정보 조회 thread handler.
 	Handler handler13 = new Handler(){
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -358,15 +345,19 @@ public class HfmbActivity007 extends FragmentActivity {
 			   c.moveToNext();
 			   selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
 			   
+			   Log.e("test", "selfileName = " + selfileName);
+			   
 			   Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
 			   
 			   ImageView photo = (ImageView)findViewById(R.id.hfmb_007_photo);
 			   photo.setImageBitmap(bitmap);
 			   
-			   //압축한 파일을 저장한다.
-			   CommonUtil.SaveBitmapToFileCache(bitmap, _company_cd + ".jpg");
+			   String path = getApplicationContext().getCacheDir().getPath();
 			   
-			   selfileName = CommonUtil.path + _company_cd + ".jpg";
+			   //압축한 파일을 저장한다.
+			   CommonUtil.SaveBitmapToFileCache(bitmap, _company_cd + ".jpg", path);
+			   
+			   selfileName = path + File.separator + _company_cd + ".jpg";
 			   
 			   c.close();
 		   break;
@@ -423,6 +414,7 @@ public class HfmbActivity007 extends FragmentActivity {
 		    	EditText hfmb_007_edit_07 = (EditText) findViewById(R.id.hfmb_007_edit_07);//이메일
 		    	
 		    	EditText hfmb_007_edit_011 = (EditText) findViewById(R.id.hfmb_007_edit_011);//대표명
+		    	EditText hfmb_007_edit_012 = (EditText) findViewById(R.id.hfmb_007_edit_012);//입회일자
 		    	
 				String imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + _company_cd + ".jpg";
 				Bitmap bitmap = server.LoadImage(imageUrl);
@@ -431,6 +423,11 @@ public class HfmbActivity007 extends FragmentActivity {
 				} else {
 					hfmb_007_photo.setImageBitmap(bitmap);
 				}
+				
+				//압축한 파일을 저장한다.
+				String path = getApplicationContext().getCacheDir().getPath();
+			    CommonUtil.SaveBitmapToFileCache(bitmap, _company_cd + ".jpg", path);
+			    selfileName = path + File.separator + _company_cd + ".jpg";
 				
 		    	hfmb_007_edit_01.setText(sinlgeData.get("company_nm"));
 		    	hfmb_007_edit_02.setText(sinlgeData.get("category_business_nm"));
@@ -441,6 +438,7 @@ public class HfmbActivity007 extends FragmentActivity {
 		    	hfmb_007_edit_07.setText(sinlgeData.get("email"));
 		    	
 		    	hfmb_007_edit_011.setText(sinlgeData.get("ceo_nm"));
+		    	hfmb_007_edit_012.setText(DataUtil.checkNull(sinlgeData.get("gita1")));
 		    	
 		    	CommonUtil.showMessage("HfmbActivity007", 
 		    					sinlgeData.get("meeting_cd") + " ^ " + 
@@ -473,19 +471,12 @@ public class HfmbActivity007 extends FragmentActivity {
 	public void saveInfo() {
 		
 		if (modify_yn.equals("1")) {
-			openDialogAlert("이전에 수정하신 정보가 있습니다. 수정 인증 받은 후 수정하시기 바랍니다.");
+			openDialogAlert("이전에 수정하신 정보가 있습니다. 인증 받은 후 수정하시기 바랍니다.");
 			return;
 		}
 		
     	StringBuffer urlbuf = new StringBuffer();
     	HashMap<String, String> params = new HashMap<String, String>();
-    	
-//    	String[] rtnKey = {"id", "meeting_cd", "ceo_nm", "company_cd", "company_nm"
-//    			, "category_business_cd", "category_business_nm", "addr", "phone1", "phone2"
-//    			, "phone3", "photo", "email", "meeting_nm", "depth_div_cd"
-//    			, "hfmb_organ_div_cd", "hfmb_duty_div_cd", "auth_div_cd", "del_yn", "gita1"
-//    			, "gita2", "gita3", "input_dt", "input_tm", "update_dt"
-//    			, "update_tm"};
     	
     	EditText hfmb_007_edit_01 = (EditText) findViewById(R.id.hfmb_007_edit_01);//회원사명
     	EditText hfmb_007_edit_02 = (EditText) findViewById(R.id.hfmb_007_edit_02);//업종
@@ -496,6 +487,7 @@ public class HfmbActivity007 extends FragmentActivity {
     	EditText hfmb_007_edit_07 = (EditText) findViewById(R.id.hfmb_007_edit_07);//이메일
     	
     	EditText hfmb_007_edit_011 = (EditText) findViewById(R.id.hfmb_007_edit_011);//대표명
+    	EditText hfmb_007_edit_012 = (EditText) findViewById(R.id.hfmb_007_edit_012);//입회일자
     	
 		String company_nm = hfmb_007_edit_01.getText().toString();//회원사명
 		
@@ -505,18 +497,14 @@ public class HfmbActivity007 extends FragmentActivity {
     		return;
     	}
     	
-//    	if(selfileName == null || selfileName.equals("")) {
-//    		CommonUtil.showMessage(getApplicationContext(), "사진을 선택하세요.");
-//    		return;
-//    	}
+    	CommonUtil.showMessage("selfileName", "selfileName = " + selfileName);
     	
     	//데이터 세팅.
     	company_nm.replaceAll(" ", "");
     	
     	params.put("company_nm", company_nm);
     	
-    	//params.put("id", "");
-    	//params.put("meeting_nm", hfmb_007_edit_01.getText().toString());
+    	params.put("meeting_cd", a13Adapter.getSelectedItemCd());//hfmb_007_Spinner_01
     	params.put("ceo_nm", hfmb_007_edit_011.getText().toString());
     	params.put("company_cd", _company_cd);//저장하기위한 키...
     	params.put("category_business_cd", "");
@@ -524,9 +512,7 @@ public class HfmbActivity007 extends FragmentActivity {
     	params.put("addr", hfmb_007_edit_03.getText().toString());
     	params.put("phone1", hfmb_007_edit_04.getText().toString());
     	params.put("phone2", hfmb_007_edit_05.getText().toString());
-    	
     	params.put("phone3", hfmb_007_edit_06.getText().toString());
-    	params.put("meeting_cd", a13Adapter.getSelectedItemCd());//hfmb_007_Spinner_01
     	params.put("photoyn", selfileName);
     	params.put("email", hfmb_007_edit_07.getText().toString());
     	params.put("meeting_nm", a13Adapter.getSelectedItem());//hfmb_007_Spinner_01
@@ -535,12 +521,8 @@ public class HfmbActivity007 extends FragmentActivity {
     	params.put("hfmb_duty_div_cd", a14Adapter.getSelectedItemCd());//hfmb_007_Spinner_02
     	params.put("auth_div_cd", "03");
     	
-    	//Log.i("json:", a13Adapter.getSelectedItemCd());
-    	//Log.i("json:", a14Adapter.getSelectedItemCd());
-    	//Log.i("json:", a15Adapter.getSelectedItemCd());
-    	
     	params.put("del_yn", "N");//N
-    	params.put("gita1", "");
+    	params.put("gita1", hfmb_007_edit_012.getText().toString());
     	params.put("gita2", "");
     	params.put("gita3", "");
     	params.put("input_dt", "");
@@ -551,22 +533,11 @@ public class HfmbActivity007 extends FragmentActivity {
     	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_0072.jsp");
     	
     	HttpConnectServer server = new HttpConnectServer();
-    	server.HttpFileUpload(urlbuf.toString(), params, selfileName);
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
     	
-    	//Log.i("json:result", resultBuffer.toString());
+    	Log.i("json:result", resultInfo.toString().trim());
     	
-    	if (selfileName != null && !selfileName.equals("")) {
-	        File file = new File(selfileName);
-	        if (file.isFile()) {
-	        	if(file.delete()) {
-	        		CommonUtil.showMessage("File", "삭제되었습니다.");
-	        	} else {
-	        		CommonUtil.showMessage("File", "삭제실패되었습니다.");
-	        	}
-	        } else {
-	        	CommonUtil.showMessage("File", "파일이 아닙니다.");
-	        }
-    	}
+    	HashMap<String, String> resultList = server.jsonParserList(resultInfo.toString().trim(), DataUtil.jsonNameResult, "Result");
     	
     	Intent intent = getIntent();
         
@@ -583,7 +554,32 @@ public class HfmbActivity007 extends FragmentActivity {
 		
         setResult(RESULT_OK, intent);
         
-    	this.finish();
+    	if (resultList != null) {
+    		if (resultList.get("error").equals("0")) {
+    			//성공
+    			openDialogAlert("수정 요청 완료 하였습니다. 인증 요청 하시기 바랍니다.");
+    			
+    			if (selfileName != null && !selfileName.equals("")) {
+    		        File file = new File(selfileName);
+    		        if (file.isFile()) {
+    		        	if(file.delete()) {
+    		        		CommonUtil.showMessage("File", "삭제되었습니다.");
+    		        	} else {
+    		        		CommonUtil.showMessage("File", "삭제실패되었습니다.");
+    		        	}
+    		        } else {
+    		        	CommonUtil.showMessage("File", "파일이 아닙니다.");
+    		        }
+    	    	}
+    			if (dialogTemp.isShowing()) dialogTemp.dismiss();
+    			this.finish();
+    		} else {
+    			//실패
+    			openDialogAlert("수정 요청 실패 하였습니다. 관리자에게 문의하세요.");
+    		}
+    	} else {
+    		openDialogAlert("수정 요청 실패 하였습니다. 관리자에게 문의하세요. null");
+    	}
     }
 	
 	/**
@@ -593,9 +589,9 @@ public class HfmbActivity007 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("회원사수정");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
@@ -656,9 +652,10 @@ public class HfmbActivity007 extends FragmentActivity {
 	    return super.onMenuItemSelected(featureId, item);
 	}
 	
+	public AlertDialog dialogTemp;
 	public void openDialogAlert(String title) {
 		//확인 다이얼로그
-		new AlertDialog.Builder(HfmbActivity007.this)
+		dialogTemp = new AlertDialog.Builder(HfmbActivity007.this)
         .setTitle(title)
 		.setPositiveButton( "확인", new DialogInterface.OnClickListener() {
 			@Override

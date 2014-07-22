@@ -23,12 +23,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
 public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabListener {
@@ -96,7 +97,7 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
                             .setTabListener(this));
         }
         
-        if (MainActivity.flag) {
+        if (DataUtil.flag) {
         	//역대회장 조회하기.
         	Log.i("Thread", "mTask.execute start......");
 	        mTask.execute();
@@ -225,47 +226,6 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         }
     }
 
-//    /**
-//     * A fragment that launches other parts of the demo application.
-//     */
-//    public static class LaunchpadSectionFragment extends Fragment {
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
-//
-//            // Demonstration of a collection-browsing activity.
-//            rootView.findViewById(R.id.demo_collection_button)
-//                    .setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-//                            startActivity(intent);
-//                        }
-//                    });
-//
-//            // Demonstration of navigating to external activities.
-//            rootView.findViewById(R.id.demo_external_activity)
-//                    .setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            // Create an intent that asks the user to pick a photo, but using
-//                            // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET, ensures that relaunching
-//                            // the application from the device home screen does not return
-//                            // to the external activity.
-//                            Intent externalActivityIntent = new Intent(Intent.ACTION_PICK);
-//                            externalActivityIntent.setType("image/*");
-//                            externalActivityIntent.addFlags(
-//                                    Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//                            startActivity(externalActivityIntent);
-//                        }
-//                    });
-//
-//            return rootView;
-//        }
-//    }
-
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
@@ -306,10 +266,13 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_002_01, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview01);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
-            //((TextView) rootView.findViewById(android.R.id.text1)).setText(args.getString(ARG_SECTION_NM));
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview01);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
             
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses01);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+        	
             return rootView;
         }
         
@@ -319,11 +282,13 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_002_02, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview02);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview02);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
         	
-            //((TextView) rootView.findViewById(android.R.id.text1)).setText(args.getString(ARG_SECTION_NM));
-            
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses02);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+        	
             return rootView;
         }
         
@@ -333,11 +298,13 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_002_03, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview03);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview03);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
         	
-            //((ImageView) rootView.findViewById(android.R.id.imageview1)).setText(args.getString(ARG_SECTION_NM));
-            
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses03);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+        	
             return rootView;
         }
         
@@ -361,31 +328,30 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         }
         
         //화면 확대 가능 화면으로 이동...
-        private OnLongClickListener mOnLongClickListener = new OnLongClickListener() {
+        private OnClickListener mOnClickListener = new OnClickListener() {
     		@Override    
-    		public boolean onLongClick(View view) {
+    		public void onClick(View view) {
     			
     			int display = 2;
     			int index = 0;
     	    	
-    			switch (view.getId()) {
-                case R.id.imageview01:
-                	//Log.e("LongClick", "임원현황");
+    			int id = view.getId();
+				if (id == R.id.btnGlasses01) {
+					//Log.e("LongClick", "임원현황");
                 	index = 1;
-                	break;
-                case R.id.imageview02:
-                	//Log.e("LongClick", "조직도");
+                	display = 3;
+				} else if (id == R.id.btnGlasses02) {
+					//Log.e("LongClick", "조직도");
                 	index = 2;
-                	break;
-                case R.id.imageview03:
-                	//Log.e("LongClick", "연혁");
+                	display = 4;
+				} else if (id == R.id.btnGlasses03) {
+					//Log.e("LongClick", "연혁");
                 	index = 3;
-                	break;
-    			}
+                	display = 5;
+				}
     			
     			goZoom(display, index);
     			
-    			return true;
     	    }
     	};
     	
@@ -404,9 +370,9 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("연합회현황");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	

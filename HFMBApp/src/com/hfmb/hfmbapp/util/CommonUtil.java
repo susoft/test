@@ -174,31 +174,60 @@ public class CommonUtil {
 	public static String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "apk" + File.separator;
 	
 	public static void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath) {
-        
-        File fileCacheItem = new File(path + strFilePath);
-        OutputStream out = null;
- 
-        try
-        {
-            fileCacheItem.createNewFile();
-            out = new FileOutputStream(fileCacheItem);
- 
-            bitmap.compress(CompressFormat.JPEG, 100, out);
-        }
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                if(out != null) out.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-  }
+		Log.e("file", path + "" + strFilePath);
+		File fileCacheItem = new File(path + strFilePath);
+		OutputStream out = null;
+
+		try
+		{
+			fileCacheItem.createNewFile();
+			out = new FileOutputStream(fileCacheItem);
+
+			bitmap.compress(CompressFormat.JPEG, 100, out);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if(out != null) out.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath, String paths) {
+		Log.e("file", paths + "/" + strFilePath);
+		File fileCacheItem = new File(paths + File.separator + strFilePath);
+		OutputStream out = null;
+
+		try
+		{
+			fileCacheItem.createNewFile();
+			out = new FileOutputStream(fileCacheItem);
+
+			bitmap.compress(CompressFormat.JPEG, 100, out);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if(out != null) out.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 }

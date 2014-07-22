@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 import com.hfmb.hfmbapp.util.SpinnerAdapter;
 
@@ -50,7 +51,7 @@ public class HfmbActivity0031 extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_hfmb_004);
 		
-		if (!CommonUtil.searchYn) {
+		if (!DataUtil.searchYn) {
 			openDialogAlert("조회할 권한이 없습니다.");
 			CommonUtil.showMessage(getApplicationContext(), "조회할 권한이 없습니다.");
 			return;
@@ -74,7 +75,7 @@ public class HfmbActivity0031 extends FragmentActivity {
 		
 		listView.setOnItemClickListener(mOnItemClickListener);
 		//회원사 삭제는 admin, power 권한만 가능하다. 즉 사무국, 연합회, 교류회 직책을 가지고 있을때만.
-		if (CommonUtil.insertYn == 1 || CommonUtil.insertYn == 2) {
+		if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
 			listView.setOnItemLongClickListener(mOnItemLongClickListener);
 		}
 		
@@ -179,10 +180,9 @@ public class HfmbActivity0031 extends FragmentActivity {
 		//listview의 item 선택시.
 		@Override    
 		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.hfmb_srch:
+			int id = view.getId();
+			if (id == R.id.hfmb_srch) {
 				goThread();
-				break;
 			}
 	    }
 	};
@@ -270,14 +270,14 @@ public class HfmbActivity0031 extends FragmentActivity {
 		String tempPhone = rowItems.get(position).get("phone2");
 		tempPhone = tempPhone.replaceAll("-", "");
 		
-		if (CommonUtil.insertYn == 3) {
-			if (!tempPhone.equals(CommonUtil.phoneNum)) {
+		if (DataUtil.insertYn == 3) {
+			if (!tempPhone.equals(DataUtil.phoneNum)) {
 				//CommonUtil.showMessage(getApplicationContext(), "수정할 권한이 없습니다.");
 				openDialogAlert("본인외 수정할 권한이 없습니다.");
 				return;
 			}
-		} else if (CommonUtil.insertYn == 2) {
-			if (!rowItems.get(position).get("meeting_cd").equals(CommonUtil.meetingCd)) {
+		} else if (DataUtil.insertYn == 2) {
+			if (!rowItems.get(position).get("meeting_cd").equals(DataUtil.meetingCd)) {
 				//CommonUtil.showMessage(getApplicationContext(), "수정할 권한이 없습니다.");
 				openDialogAlert("소속 교류회외 수정할 권한이 없습니다.");
 				return;
@@ -325,9 +325,9 @@ public class HfmbActivity0031 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle(meeting_nm);
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
@@ -397,11 +397,11 @@ public class HfmbActivity0031 extends FragmentActivity {
 		List<Integer> selectedCheckBox = listAdapter.getSelectedCheckBox();
 		int count = selectedCheckBox.size();
 		if (count > 0) {
-			if (CommonUtil.insertYn != 1) {
+			if (DataUtil.insertYn != 1) {
 				String meetingCdTemp = "";
 		    	for (int i = 0; i < count; i++) {
 		    		meetingCdTemp = rowItems.get(selectedCheckBox.get(i)).get("meeting_cd");
-		    		if (!CommonUtil.meetingCd.equals(meetingCdTemp)) {
+		    		if (!DataUtil.meetingCd.equals(meetingCdTemp)) {
 		    			//CommonUtil.showMessage(getApplicationContext(), "자신이 속한 교류회의 회원사만 삭제 가능합니다.");
 		    			openDialogAlert("자신이 속한 교류회의 회원사만 삭제 가능합니다.");
 		    			return;

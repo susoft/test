@@ -65,21 +65,53 @@
 			        android:maxLength="40"
 			        android:text=""
 			        style="@style/text15dp" />
-		        
-		        <TextView
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:text="대표명"
-			        style="@style/textTitle12dp" />
-		        
-		        <EditText        
-			        android:id="@+id/hfmb_007_edit_011"     
-			        android:layout_width="fill_parent"        
-			        android:layout_height="wrap_content"
-			        android:inputType="text"
-			        android:maxLength="40"
-			        android:text=""
-			        style="@style/text15dp" />
+		        <RelativeLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content" >
+
+		            <LinearLayout
+		                android:id="@+id/linearlayout_temp"
+			            android:layout_width="100dp"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:orientation="vertical" >
+			            <TextView
+			                style="@style/textTitle12dp"
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:text="대표명" />
+			            <EditText
+                            android:id="@+id/hfmb_007_edit_011"
+                            style="@style/text15dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:maxLength="40"
+                            android:text="" />
+					</LinearLayout>
+		            <LinearLayout
+			            android:layout_width="match_parent"
+			            android:layout_height="wrap_content"
+			            android:layout_marginLeft="10dp"
+			            android:layout_toRightOf="@+id/linearlayout_temp"
+			            android:layout_alignParentRight="true"
+			            android:orientation="vertical" >
+			            <TextView
+			                style="@style/textTitle12dp"
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:text="입회일자" />
+	
+			            <EditText
+			                android:id="@+id/hfmb_007_edit_012"
+			                style="@style/text15dp"
+			                android:layout_width="fill_parent"
+			                android:layout_height="wrap_content"
+			                android:inputType="date"
+			                android:maxLength="10"
+			                android:text="" />
+					</LinearLayout>
+		        </RelativeLayout>
 		    </LinearLayout>
 	    </LinearLayout>
 	    

@@ -23,12 +23,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
 public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabListener {
@@ -58,8 +59,6 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         submenuMap.put("3", "회장인사말");
         submenuMap.put("4", "사무국직원");
 
-        //Log.i("mAppSectionsPagerAdapter", "start......");
-        
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), submenuMap);
@@ -98,31 +97,18 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
                             .setText(mAppSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        if (MainActivity.flag) {
-	        //직원 조회하기.
-        	//Log.i("Thread", "mTask.execute start......");
-	        mTask.execute();
-        }
-        
-        listAdapter = new HfmbListAdapter(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
         
         // Show the Up button in the action bar.
      	setupActionBar();
+     	
+        if (DataUtil.flag) {
+	        //직원 조회하기.
+	        mTask.execute();
+        }
+        listAdapter = new HfmbListAdapter(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
     }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
+    
+    public static List<HashMap<String, String>> rowItems_001;
     
     //사무국직원 조회하기.
 	private AsyncTask<Void, Void, Boolean> mTask = new AsyncTask<Void, Void, Boolean>() {
@@ -139,8 +125,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         }
 	};
 	
-	public static List<HashMap<String, String>> rowItems_001;
-    //조회한다.
+	//조회한다.
   	public void searchData() {
   		rowItems_001 = null;
   		
@@ -158,23 +143,33 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
   		HttpConnectServer server = new HttpConnectServer();
   		StringBuffer resultInfo = server.sendByHttp(strbuf, urlbuf.toString());
   		
-  		//Log.i("json:", resultInfo.toString());
+  		Log.i("json:", resultInfo.toString());
   		
-  		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-  		String[] jsonName = {"id", "meeting_cd", "ceo_nm", "company_cd", "company_nm"
-  				, "category_business_cd", "category_business_nm", "addr", "phone1", "phone2"
-  				, "phone3", "photo", "email", "meeting_nm", "depth_div_cd"
-  				, "hfmb_organ_div_cd", "hfmb_duty_div_cd", "auth_div_cd", "del_yn", "gita1"
-  				, "gita2", "gita3", "input_dt", "input_tm", "update_dt"
-  				, "update_tm"};	
-  		
-  		rowItems_001 = server.jsonParserList(resultInfo.toString(), jsonName);
+  		rowItems_001 = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
   		
   		if (rowItems_001 != null) {
   			if (rowItems_001.size() > 0) {
   			}
   		}
   	}
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+    
+	
+	
+    
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -307,8 +302,12 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_001_01, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview01);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview01);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
+        	
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses01);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
             
             return rootView;
         }
@@ -319,9 +318,13 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_001_02, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview02);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
-            
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview02);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
+        	
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses02);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+        	
             return rootView;
         }
         
@@ -331,8 +334,12 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         	
         	View rootView = inflater.inflate(R.layout.hfmbactivity_001_03, container, false);
             
-        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview03);
-        	imageView.setOnLongClickListener(mOnLongClickListener);
+//        	ImageView imageView = (ImageView) rootView.findViewById(R.id.imageview03);
+//        	imageView.setOnLongClickListener(mOnLongClickListener);
+        	
+        	ImageView btnGlasses = (ImageView) rootView.findViewById(R.id.btnGlasses03);
+        	btnGlasses.setOnClickListener(mOnClickListener);
+        	btnGlasses.setOnTouchListener(CommonUtil.imgbtnTouchListener);
         	
             return rootView;
         }
@@ -357,7 +364,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
             return rootView;
         }
         
-        //화면 확대 가능 화면으로 이동...
+        /*//화면 확대 가능 화면으로 이동...
         private OnLongClickListener mOnLongClickListener = new OnLongClickListener() {
     		@Override    
     		public boolean onLongClick(View view) {
@@ -365,26 +372,51 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
     			int display = 1;
     			int index = 0;
     	    	
-    			switch (view.getId()) {
-                case R.id.imageview01:
-                	//Log.e("LongClick", "회장인사말");
+    			int id = view.getId();
+				if (id == R.id.btnGlasses01) {
+					//Log.e("LongClick", "회장인사말");
                 	index = 1;
-                	break;
-                case R.id.imageview02:
-                	//Log.e("LongClick", "중소기업융합이란");
+				} else if (id == R.id.imageview02) {
+					//Log.e("LongClick", "중소기업융합이란");
                 	index = 2;
-                	break;
-                case R.id.imageview03:
-                	//Log.e("LongClick", "찾아오시는길");
+				} else if (id == R.id.imageview03) {
+					//Log.e("LongClick", "찾아오시는길");
                 	index = 3;
-                	break;
-    			}
+				}
     			
     			goZoom(display, index);
     			
     			return true;
     	    }
+    	};*/
+    	
+    	private OnClickListener mOnClickListener = new OnClickListener() {
+    		@Override    
+    		public void onClick(View view) {
+    			
+    			int display = 1;
+    			int index = 0;
+    	    	
+    			int id = view.getId();
+				if (id == R.id.btnGlasses01) {
+					//Log.e("LongClick", "회장인사말");
+                	index = 1;
+                	display = 1;
+				} else if (id == R.id.btnGlasses02) {
+					//Log.e("LongClick", "중소기업융합이란");
+                	index = 2;
+                	display = 2;
+				} else if (id == R.id.btnGlasses03) {
+					//Log.e("LongClick", "찾아오시는길");
+                	index = 3;
+                	display = 3;
+				}
+    			
+    			goZoom(display, index);
+    			
+    	    }
     	};
+    	
     	
     	public void goZoom(int display, int index) {
     		Intent intent = new Intent( this.getActivity(), HfmbActivityZoom.class);
@@ -401,10 +433,10 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			
 			ab.setTitle("연합회소개");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	

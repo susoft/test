@@ -27,13 +27,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 import com.hfmb.hfmbapp.util.SpinnerAdapter;
 
@@ -51,12 +52,12 @@ public class HfmbActivity006 extends FragmentActivity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (CommonUtil.insertYn != 1 && CommonUtil.insertYn != 2) {
+		if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) {
 			CommonUtil.showMessage(getApplicationContext(), "등록할 권한이 없습니다.");
 			return;
 		}
 		
-		if (CommonUtil.insertYn == 3) {
+		if (DataUtil.insertYn == 3) {
 			CommonUtil.showMessage(getApplicationContext(), "이미 등록 되어 있습니다. 신규회원사 등록은 교류회 회장, 총무 및 연합회 소속자만 가능합니다.");
 			return;
 		}
@@ -179,36 +180,17 @@ public class HfmbActivity006 extends FragmentActivity {
 	
 	public OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
 		@Override    
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			//parent.getId()
-			switch (parent.getId()) {
-			case R.id.hfmb_006_Spinner_01://
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long ids) {
+			int id = parent.getId();
+			if (id == R.id.hfmb_006_Spinner_01) {
 				a13Adapter.setSelectedItemCd(a13cds[position]);
 				a13Adapter.setSelectedItem(a13s[position]);
-				
-//				CommonUtil.showMessage(getApplicationContext()
-//						, a13Adapter.getSelectedItemCd() + "---"
-//						+ a13Adapter.getSelectedItem());
-				
-				break;
-			case R.id.hfmb_006_Spinner_02://
+			} else if (id == R.id.hfmb_006_Spinner_02) {
 				a14Adapter.setSelectedItemCd(a14cds[position]);
 				a14Adapter.setSelectedItem(a14s[position]);
-				
-//				CommonUtil.showMessage(getApplicationContext()
-//						, a14Adapter.getSelectedItemCd() + "---"
-//						+ a14Adapter.getSelectedItem());
-				
-				break;
-			case R.id.hfmb_006_Spinner_03://
+			} else if (id == R.id.hfmb_006_Spinner_03) {
 				a15Adapter.setSelectedItemCd(a15cds[position]);
 				a15Adapter.setSelectedItem(a15s[position]);
-				
-//				CommonUtil.showMessage(getApplicationContext()
-//						, a15Adapter.getSelectedItemCd() + "---"
-//						+ a15Adapter.getSelectedItem());
-				
-				break;
 			}
 			
 		}
@@ -223,19 +205,18 @@ public class HfmbActivity006 extends FragmentActivity {
 		//listview의 item 선택시.
 		@Override    
 		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.hfmb_006_photo://사진추가
+			int id = view.getId();
+			if (id == R.id.hfmb_006_photo) {
 				Intent intent = new Intent();
 				intent.setAction(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
+				//intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+				//startActivityForResult(Intent.createChooser(intent, "select multiple images"), 1);
 				startActivityForResult(intent, 1);
-				break;
-			case R.id.hfmb_006_btn01://저장
+			} else if (id == R.id.hfmb_006_btn01) {
 				goThread();
-				break;
-			case R.id.hfmb_006_btn02://취소
+			} else if (id == R.id.hfmb_006_btn02) {
 				finish();
-				break;
 			}
 	    }
 	};
@@ -372,10 +353,12 @@ public class HfmbActivity006 extends FragmentActivity {
 			   ImageView photo = (ImageView)findViewById(R.id.hfmb_006_photo);
 			   photo.setImageBitmap(bitmap);
 			   
-			   //압축한 파일을 저장한다.
-			   CommonUtil.SaveBitmapToFileCache(bitmap, "test.jpg");
+			   String path = getApplicationContext().getCacheDir().getPath();
 			   
-			   selfileName = CommonUtil.path + "test.jpg";
+			   //압축한 파일을 저장한다.
+			   CommonUtil.SaveBitmapToFileCache(bitmap, "test.jpg", path);
+			   
+			   selfileName = path + File.separator + "test.jpg";
 			   
 			   c.close();
 		   break;
@@ -451,13 +434,6 @@ public class HfmbActivity006 extends FragmentActivity {
     	StringBuffer urlbuf = new StringBuffer();
     	HashMap<String, String> params = new HashMap<String, String>();
     	
-//    	String[] rtnKey = {"id", "meeting_cd", "ceo_nm", "company_cd", "company_nm"
-//    			, "category_business_cd", "category_business_nm", "addr", "phone1", "phone2"
-//    			, "phone3", "photo", "email", "meeting_nm", "depth_div_cd"
-//    			, "hfmb_organ_div_cd", "hfmb_duty_div_cd", "auth_div_cd", "del_yn", "gita1"
-//    			, "gita2", "gita3", "input_dt", "input_tm", "update_dt"
-//    			, "update_tm"};
-    	
     	EditText hfmb_006_edit_01 = (EditText) findViewById(R.id.hfmb_006_edit_01);//회원사명
     	EditText hfmb_006_edit_02 = (EditText) findViewById(R.id.hfmb_006_edit_02);//업종
     	EditText hfmb_006_edit_03 = (EditText) findViewById(R.id.hfmb_006_edit_03);//주소
@@ -466,7 +442,8 @@ public class HfmbActivity006 extends FragmentActivity {
     	EditText hfmb_006_edit_06 = (EditText) findViewById(R.id.hfmb_006_edit_06);//팩스
     	EditText hfmb_006_edit_07 = (EditText) findViewById(R.id.hfmb_006_edit_07);//이메일
     	
-    	EditText hfmb_006_edit_011 = (EditText) findViewById(R.id.hfmb_006_edit_011);//
+    	EditText hfmb_006_edit_011 = (EditText) findViewById(R.id.hfmb_006_edit_011);//대표명
+    	EditText hfmb_006_edit_012 = (EditText) findViewById(R.id.hfmb_006_edit_012);//입회일자(gita1)
     	
 		String company_nm = hfmb_006_edit_01.getText().toString();//회원사명
 		
@@ -510,7 +487,7 @@ public class HfmbActivity006 extends FragmentActivity {
     	params.put("auth_div_cd", hfmb_006_edit_01.getText().toString());
     	
     	params.put("del_yn", "N");//N
-    	params.put("gita1", "");
+    	params.put("gita1", hfmb_006_edit_012.getText().toString());
     	params.put("gita2", "");
     	params.put("gita3", "");
     	params.put("input_dt", "");
@@ -549,9 +526,9 @@ public class HfmbActivity006 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("회원사등록");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
@@ -566,11 +543,12 @@ public class HfmbActivity006 extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This is called when the Home (Up) button is pressed in the action bar.
+            	// This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
                 Intent upIntent = new Intent(this, MainActivity.class);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                	Log.e("back", "test......11111");
                     // This activity is not part of the application's task, so create a new task
                     // with a synthesized back stack.
                     TaskStackBuilder.from(this)
@@ -579,6 +557,7 @@ public class HfmbActivity006 extends FragmentActivity {
                             .startActivities();
                     finish();
                 } else {
+                	Log.e("back", "test......22222");
                     // This activity is part of the application's task, so simply
                     // navigate up to the hierarchical parent activity.
                     NavUtils.navigateUpTo(this, upIntent);

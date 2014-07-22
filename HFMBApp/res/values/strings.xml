@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">HFMBApp</string>
+    <string name="app_name">중소기업융합광주전남연합회</string>
 	<string name="action_settings">HFMBApp menu</string>
 	
     <string name="demo_external_activity">Demo External Activity</string>

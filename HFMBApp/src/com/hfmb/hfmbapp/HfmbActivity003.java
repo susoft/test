@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
 public class HfmbActivity003 extends FragmentActivity {
@@ -55,7 +56,7 @@ public class HfmbActivity003 extends FragmentActivity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (!CommonUtil.searchYn) {
+		if (!DataUtil.searchYn) {
 			CommonUtil.showMessage(getApplicationContext(), "조회할 권한이 없습니다.");
 			return;
 		}
@@ -131,10 +132,9 @@ public class HfmbActivity003 extends FragmentActivity {
 		gridAdapter = new GridViewAdapter(this, resourceId, rowItems);
 		gridLayout.setAdapter(gridAdapter);
 		gridLayout.setOnItemClickListener(mOnItemClickListener);
-		
 		if (gridAdapter.getLayoutResourceId() == R.layout.hfmbactivity_003) {
 			//회원사 삭제는 admin, power 권한만 가능하다. 즉 사무국, 연합회, 교류회 직책을 가지고 있을때만.
-			if (CommonUtil.insertYn == 1 || CommonUtil.insertYn == 2) {
+			if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
 				gridLayout.setOnItemLongClickListener(mOnItemLongClickListener);
 			}
 		}
@@ -176,9 +176,9 @@ public class HfmbActivity003 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("교류회");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
@@ -449,6 +449,18 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	
       	holder.image.setTag(R.string.meeting_cd, data.get(position).get("meeting_cd"));
       	holder.image.setTag(R.string.meeting_nm, data.get(position).get("meeting_nm"));
+      	
+      	holder.image.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+      	holder.image.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+            	ImageView imgView = (ImageView) v;
+                String meetingCd = (String)imgView.getTag(R.string.meeting_cd);
+                String meetingNm = (String)imgView.getTag(R.string.meeting_nm);
+                
+                modifyMeeting(meetingCd, meetingNm);
+            }
+        });
 		
       	if (layoutResourceId == R.layout.hfmbactivity_003_check) {
 			holder.checkbox.setTag(position);
@@ -472,6 +484,10 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
 		}
       	
       	return row;
+	}
+	
+	public void modifyMeeting(String meetingCd, String meetingNm) {
+		Log.i("info", meetingCd + "-" + meetingNm);
 	}
 	
 	public List<Integer> getSelectedCheckBox() {

@@ -111,33 +111,61 @@ public class HttpConnectServer {
 	//서버에서 받은 json 결과를 hashmap에 넣어 리턴한다.
 	public List<HashMap<String, String>> jsonParserList(String pRecvServerPage, String[] jsonName) {
 		
+		List<HashMap<String, String>> parseredDataList;
+		HashMap<String, String> parseredData;
 		try {
 			JSONObject json = new JSONObject(pRecvServerPage);
 			JSONArray jArr = json.getJSONArray("List");
 			
-			List<HashMap<String, String>> parseredDataList = new ArrayList<HashMap<String, String>>();
-			HashMap<String, String> parseredData = new HashMap<String, String>();
-			
-			for (int i = 0; i < jArr.length(); i++) {
-				json = jArr.getJSONObject(i);
+			int count = jArr.length();
+			if (count > 0) {
+				parseredDataList = new ArrayList<HashMap<String, String>>();
 				
-				if (json != null) {
-					
-					parseredData = new HashMap<String, String>();
-					for (int j = 0; j < jsonName.length; j++) {
-						parseredData.put(jsonName[j], json.getString(jsonName[j]));
-						
-						//Log.i(jsonName[j] + " : ", json.getString(jsonName[j]));
+				for (int i = 0; i < count; i++) {
+					json = jArr.getJSONObject(i);
+					if (json != null) {
+						parseredData = new HashMap<String, String>();
+						for (int j = 0; j < jsonName.length; j++) {
+							if (json.has(jsonName[j]))
+								parseredData.put(jsonName[j], json.getString(jsonName[j]));
+						}
+						parseredDataList.add(parseredData);
 					}
-					
-					parseredDataList.add(parseredData);
 				}
+				return parseredDataList;
 			}
-			return parseredDataList;
+			
 		} catch(JSONException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
+	}
+	
+	//서버에서 받은 json 결과를 hashmap에 넣어 리턴한다.
+	public HashMap<String, String> jsonParserList(String pRecvServerPage, String[] jsonName, String offset) {
+		
+		HashMap<String, String> parseredData = new HashMap<String, String>();
+		try {
+			JSONObject json = new JSONObject(pRecvServerPage);
+			JSONArray jArr = json.getJSONArray(offset);
+			
+			int count = jArr.length();
+			if (count > 0) {
+				json = jArr.getJSONObject(0);
+				if (json != null) {
+					parseredData = new HashMap<String, String>();
+					for (int j = 0; j < jsonName.length; j++) {
+						if (json.has(jsonName[j]))
+							parseredData.put(jsonName[j], json.getString(jsonName[j]));
+					}
+				}
+				return parseredData;
+			}
+			
+		} catch(JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public Bitmap LoadImage( String imagePath ) { 
@@ -176,7 +204,7 @@ public class HttpConnectServer {
     	// 데이터 경계선
     	String boundary = "*****";
         String delimiter = "\r\n--" + boundary + "\r\n";
-        
+        StringBuffer resultSrt =new StringBuffer();
 		try {
 			//개발시 디버깅 하기 위함.. 실제로는 제거 해야 함. 만약 제거하여 테스트시 안되면 이 부분을 사용하도록 한다.
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
@@ -258,28 +286,24 @@ public class HttpConnectServer {
 			
 			// 7. 결과 반환 (HTTP RES CODE)
 			int ch;
-			StringBuffer resultSrt =new StringBuffer();
+			
 			InputStream is = conn.getInputStream();
 			while( ( ch = is.read() ) != -1 ){
 				resultSrt.append( (char)ch );
 			}
-			//String s = resultSrt.toString(); 
-			
 			//close
 			dos.close();
 			is.close();
 			conn.disconnect();
 			
-			//Log.e("Test", "result = " + s);
-			
-			return resultSrt.append(resultSrt);
-		   
 		} catch (Exception e) {
 			Log.d("Test", "exception " + e.getMessage());
-			// TODO: handle exception
+			
+			resultSrt.append(e.getMessage());
+			resultSrt.append(e.toString());
 		}
 		
-		return null;
+		return resultSrt;
 	}
     
     /**

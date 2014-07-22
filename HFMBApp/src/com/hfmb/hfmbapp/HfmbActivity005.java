@@ -38,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
 public class HfmbActivity005 extends FragmentActivity {
@@ -53,7 +54,7 @@ public class HfmbActivity005 extends FragmentActivity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (CommonUtil.insertYn != 1) {
+		if (DataUtil.insertYn != 1) {
 			CommonUtil.showMessage(getApplicationContext(), "등록할 권한이 없습니다.");
 			return;
 		}
@@ -87,30 +88,24 @@ public class HfmbActivity005 extends FragmentActivity {
 		//listview의 item 선택시.
 		@Override    
 		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.hfmb_005_photo://사진추가
+			int id = view.getId();
+			if (id == R.id.hfmb_005_photo) {
 				Intent intent = new Intent();
 				intent.setAction(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
 				startActivityForResult(intent, 1);
-				break;
-			case R.id.hfmb_005_btn01://저장
+			} else if (id == R.id.hfmb_005_btn01) {
 				goThread();
-				break;
-			case R.id.hfmb_005_btn02://취소
+			} else if (id == R.id.hfmb_005_btn02) {
 				finish();
-				break;
-			case R.id.hfmb_005_srch_02://회장찾기
+			} else if (id == R.id.hfmb_005_srch_02) {
 				selectedView = view;
 				searchInfo(R.id.hfmb_005_srch_02);
-				break;
-			case R.id.hfmb_005_srch_06://총무찾기
+			} else if (id == R.id.hfmb_005_srch_06) {
 				selectedView = view;
 				searchInfo(R.id.hfmb_005_srch_02);
-				break;
-			case R.id.hfmb_srch://회원사 찾기.
+			} else if (id == R.id.hfmb_srch) {
 				searchData();
-				break;
 			}
 	    }
 	};
@@ -137,10 +132,12 @@ public class HfmbActivity005 extends FragmentActivity {
 			   ImageView photo = (ImageView)findViewById(R.id.hfmb_005_photo);
 			   photo.setImageBitmap(bitmap);
 			   
-			   //압축한 파일을 저장한다.
-			   CommonUtil.SaveBitmapToFileCache(bitmap, "test.jpg");
+			   String path = getApplicationContext().getCacheDir().getPath();
 			   
-			   selfileName = CommonUtil.path + "test.jpg";
+			   //압축한 파일을 저장한다.
+			   CommonUtil.SaveBitmapToFileCache(bitmap, "test.jpg", path);
+			   
+			   selfileName = path + File.separator + "test.jpg";
 			   
 			   c.close();
 		   break;
@@ -345,43 +342,37 @@ public class HfmbActivity005 extends FragmentActivity {
 			return;
 		}
 		
-		switch (selectedView.getId()) {
-		case R.id.hfmb_005_srch_02://회장찾기
+		int id = selectedView.getId();
+		if (id == R.id.hfmb_005_srch_02) {
 			if (rowItems.size() < 1) {
 				CommonUtil.showMessage(getBaseContext(), "선택해 주세요.");
 				return;
 			}
 			ceo1_itemMap = rowItems.get(selPosition);
-			
 			ceo1_id = ceo1_itemMap.get("id");
 			TextView hfmb_005_edit_02 = (TextView)findViewById(R.id.hfmb_005_edit_02);
 			TextView hfmb_005_edit_03 = (TextView)findViewById(R.id.hfmb_005_edit_03);
 			TextView hfmb_005_edit_04 = (TextView)findViewById(R.id.hfmb_005_edit_04);
 			TextView hfmb_005_edit_05 = (TextView)findViewById(R.id.hfmb_005_edit_05);
-			
 			hfmb_005_edit_02.setText(ceo1_itemMap.get("ceo_nm"));
 			hfmb_005_edit_03.setText(ceo1_itemMap.get("company_nm"));
 			hfmb_005_edit_04.setText(ceo1_itemMap.get("phone1"));
 			hfmb_005_edit_05.setText(ceo1_itemMap.get("phone2"));
-			break;
-		case R.id.hfmb_005_srch_06://총무찾기
+		} else if (id == R.id.hfmb_005_srch_06) {
 			if (rowItems.size() < 1) {
 				CommonUtil.showMessage(getBaseContext(), "선택해 주세요.");
 				return;
 			}
 			ceo2_itemMap = rowItems.get(selPosition);
-			
 			ceo2_id = ceo2_itemMap.get("id");
 			TextView hfmb_005_edit_06 = (TextView)findViewById(R.id.hfmb_005_edit_06);
 			TextView hfmb_005_edit_07 = (TextView)findViewById(R.id.hfmb_005_edit_07);
 			TextView hfmb_005_edit_08 = (TextView)findViewById(R.id.hfmb_005_edit_08);
 			TextView hfmb_005_edit_09 = (TextView)findViewById(R.id.hfmb_005_edit_09);
-			
 			hfmb_005_edit_06.setText(ceo2_itemMap.get("ceo_nm"));
 			hfmb_005_edit_07.setText(ceo2_itemMap.get("company_nm"));
 			hfmb_005_edit_08.setText(ceo2_itemMap.get("phone1"));
 			hfmb_005_edit_09.setText(ceo2_itemMap.get("phone2"));
-			break;
 		}
     }
 	
@@ -393,9 +384,9 @@ public class HfmbActivity005 extends FragmentActivity {
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(false);
 			ab.setTitle("교류회등록");
-			ab.setSubtitle(CommonUtil.ceoNm + "님 로그인");
+			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}
 	
