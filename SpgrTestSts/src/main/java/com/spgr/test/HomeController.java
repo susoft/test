@@ -52,7 +52,7 @@ public class HomeController {
 	public String hfmp_0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "hfmp_0003.do");
 		
-		return "hfmp/hfmp_0003";
+		return "hfmp/test";
 	}
 	
 	//Search App.... --> 사용안함.
@@ -127,46 +127,6 @@ public class HomeController {
 	}
 
 	//Search App....
-	@RequestMapping(value = "/modifyMeeting.do", method = RequestMethod.POST)
-	public @ResponseBody Map<?,?> modifyMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
-		logger.info("Welcome home! The client locale is {}.", "modifyMeeting.do");
-		logger.info("companyNm = {}", paramMap.get("companyNm"));
-		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
-		
-		int result = mainService.modifyMeeting(paramMap);
-		
-		logger.info("{} count inputed....", result);
-		
-		Map<String, String> mapinfo = new HashMap<String, String>();
-		
-		mapinfo.put("result", result+"");
-		
-		model.addAttribute("result", mapinfo);
-		
-		return mapinfo;
-	}
-
-	//Search App....
-	@RequestMapping(value = "/deleteMeeting.do", method = RequestMethod.POST)
-	public @ResponseBody Map<?,?> deleteMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
-		logger.info("Welcome home! The client locale is {}.", "deleteMeeting.do");
-		logger.info("companyNm = {}", paramMap.get("companyNm"));
-		logger.info("ceoNm = {}", paramMap.get("ceoNm"));
-		
-		int result = mainService.deleteMeeting(paramMap);
-		
-		logger.info("{} count inputed....", result);
-		
-		Map<String, String> mapinfo = new HashMap<String, String>();
-		
-		mapinfo.put("result", result+"");
-		
-		model.addAttribute("result", mapinfo);
-		
-		return mapinfo;
-	}
-
-	//Search App....
 	@RequestMapping(value = "/saveHfmp0006.do", method = RequestMethod.POST)
 	public @ResponseBody Map<?,?> saveHfmp0006(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "saveHfmp0006.do");
@@ -185,6 +145,47 @@ public class HomeController {
 		
 		return mapinfo;
 	}
+	
+	//Search App....
+	@RequestMapping(value = "/modifyMeeting.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> modifyMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "modifyMeeting.do");
+		logger.info("meetingNm = {}", paramMap.get("meetingNm"));
+		logger.info("meetingCd = {}", paramMap.get("meetingCd"));
+		
+		int result = mainService.modifyMeeting(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
+	}
+
+	//Search App....
+	@RequestMapping(value = "/deleteMeeting.do", method = RequestMethod.POST)
+	public @ResponseBody Map<?,?> deleteMeeting(@RequestParam Map<String, Object> paramMap, ModelMap model) {
+		logger.info("Welcome home! The client locale is {}.", "deleteMeeting.do");
+		logger.info("meetingNm = {}", paramMap.get("meetingNm"));
+		logger.info("meetingCd = {}", paramMap.get("meetingCd"));
+		
+		int result = mainService.deleteMeeting(paramMap);
+		
+		logger.info("{} count inputed....", result);
+		
+		Map<String, String> mapinfo = new HashMap<String, String>();
+		
+		mapinfo.put("result", result+"");
+		
+		model.addAttribute("result", mapinfo);
+		
+		return mapinfo;
+	}
+
 	
 	
 	

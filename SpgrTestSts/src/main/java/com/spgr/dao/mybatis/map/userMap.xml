@@ -151,7 +151,7 @@
 	</select>
 	
 	<update id="modifyMeeting" parameterType="com.spgr.vo.HfmbInfoVo">
-		UPDATE SET
+		UPDATE Member_Company SET
 		       meeting_nm = #{meetingNm}  
 		 WHERE meeting_cd = #{meetingCd}  
 	</update>
