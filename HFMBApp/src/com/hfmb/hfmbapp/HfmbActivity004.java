@@ -44,6 +44,9 @@ public class HfmbActivity004 extends FragmentActivity {
 	
 	private static final String TAG = "HfmbActivity004";
 	
+	private String meeting_cd;
+	private String meeting_nm;
+	
 	private HfmbListAdapter listAdapter;
 	private ListView listView;
 	private ProgressDialog dialog;
@@ -60,13 +63,14 @@ public class HfmbActivity004 extends FragmentActivity {
 		searchFlag = true;
 		lastDataFlag = false;
 		
-		// Show the Up button in the action bar.
-		setupActionBar();
-		
 		if (!DataUtil.searchYn) {
 			openDialogAlert("조회할 권한이 없습니다.");
 			return;
 		}
+		
+		Intent intent = getIntent();
+		meeting_cd = intent.getStringExtra("meeting_cd");
+		meeting_nm = intent.getStringExtra("meeting_nm");
 		
 		//콤보박스 세팅.
 		setSpinner();
@@ -93,6 +97,9 @@ public class HfmbActivity004 extends FragmentActivity {
 		//회원사 목록 페이징 처리..
 		footer = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
 				.inflate(R.layout.footer_progressbar, null, false);
+
+		// Show the Up button in the action bar.
+		setupActionBar();
 		
 		//자동조회한다.
 		searchInfo();
@@ -214,11 +221,15 @@ public class HfmbActivity004 extends FragmentActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             
+            if (dialog != null && dialog.isShowing()) dialog.dismiss();
+            
+            try {
+            	if (listView.getFooterViewsCount() > 0) listView.removeFooterView(footer);
+            } catch (ClassCastException e) {
+            	Log.e("Tag", e.toString());
+            }
             listAdapter.setRowItems(rowItems);
             listAdapter.notifyDataSetChanged();
-            
-            if (dialog != null && dialog.isShowing()) dialog.dismiss();
-            if (listView.getFooterViewsCount() > 0) listView.removeFooterView(footer);
             
             try {
             	threadgo.join();
@@ -252,6 +263,7 @@ public class HfmbActivity004 extends FragmentActivity {
     	strbuf.append("srch_gubun=" + itemcd);
 		strbuf.append("&srch_nm=" + hfmbSrchNm);
 		strbuf.append("&offset=" + offset);
+		strbuf.append("&meeting_cd=" + meeting_cd);
 		
 		Log.i("parameter ====== " , strbuf.toString()); 
 		
@@ -395,7 +407,13 @@ public class HfmbActivity004 extends FragmentActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = getActionBar();
 			ab.setDisplayHomeAsUpEnabled(false);
-			ab.setTitle("회원사검색");
+			
+			if (meeting_nm == null || meeting_nm.equals("")) {
+				ab.setTitle("회원사검색");
+			} else {
+				ab.setTitle(meeting_nm);
+			}
+			
 			ab.setSubtitle(DataUtil.ceoNm + DataUtil.temp_01);
 		}
 	}

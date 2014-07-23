@@ -6,6 +6,7 @@
     <string name="demo_external_activity">Demo External Activity</string>
     <string name="demo_collection">Demo Collection</string>
     
+    <string name="position"></string>
     <string name="meeting_cd"></string>
     <string name="meeting_nm"></string>
 </resources>

@@ -1,5 +1,6 @@
 package com.hfmb.hfmbapp;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +13,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract.Data;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -33,10 +38,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hfmb.hfmbapp.GridViewAdapter.ViewHolder;
+import com.hfmb.hfmbapp.HfmbListAdapter1.ImageCallTask;
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
@@ -152,7 +160,7 @@ public class HfmbActivity003 extends FragmentActivity {
 	
 	//교류회에 해당되는 회원사를 조회한다.
 	private void goHfmbActivity0031(int position) {
-		Intent intent = new Intent(getApplicationContext(), HfmbActivity0031.class);
+		Intent intent = new Intent(getApplicationContext(), HfmbActivity004.class);
     	intent.putExtra("meeting_cd", rowItems.get(position).get("meeting_cd"));
     	intent.putExtra("meeting_nm", rowItems.get(position).get("meeting_nm"));
     	startActivity(intent);
@@ -168,6 +176,101 @@ public class HfmbActivity003 extends FragmentActivity {
 			return false;
 	    }
 	};
+	
+	String position;
+	String meetingCd;
+	String meetingNm;
+	String selfileName;
+	Bitmap bitmap;
+	public void modifyMeetingPic(String position, String meetingCd, String meetingNm) {
+		//사무국직원 및 교류회 회장, 총무만 수정가능하도록 한다.
+		if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) {
+			return;
+		}
+		
+		this.position = position;
+		this.meetingCd = meetingCd;
+		this.meetingNm = meetingNm;
+		
+		//갤러리를 띄운다.
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		intent.setType("image/*");
+		startActivityForResult(intent, 1);
+	}
+	
+	//사진등록하기.
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		CommonUtil.showMessage("test", "[" + requestCode + "]-[" + resultCode+"]");
+		switch (requestCode) {
+		case 1://이미지선택시.
+			switch (resultCode) {
+			case -1 ://데이터 가져올떄.
+				Uri selPhoto = data.getData();
+				
+				//절대경로를 획득한다!!! 중요~
+				Cursor c = getContentResolver().query(Uri.parse(selPhoto.toString()), null,null,null,null);
+				c.moveToNext();
+				
+				selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+				
+				bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
+
+				String path = getApplicationContext().getCacheDir().getPath();
+
+				//압축한 파일을 저장한다.
+				CommonUtil.SaveBitmapToFileCache(bitmap, meetingCd + ".jpg", path);
+
+				selfileName = path + File.separator + meetingCd + ".jpg";
+
+				c.close();
+				
+				openDialogModify("교류회 사진을 수정하시겠습니까?");
+				
+				break;
+			}
+		}
+	}
+	
+	public void modifySelecedData() {
+		/*int idx = Integer.parseInt(position);
+		View row = gridAdapter.getView(idx, null, null);
+		ViewHolder viewHolder = (ViewHolder)row.getTag();
+		viewHolder.image.setImageBitmap(bitmap);
+		
+		gridAdapter.notifyDataSetChanged();*/
+		
+		updateInfo();
+	}
+	
+	//저장한다.
+	public void updateInfo() {
+    	StringBuffer urlbuf = new StringBuffer();
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	
+    	params.put("meeting_cd", meetingCd);
+    	params.put("meeting_nm", meetingNm);
+    	
+    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_updateMeeting.jsp");
+    	
+    	HttpConnectServer server = new HttpConnectServer();
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
+    	
+		Log.i("json:", resultInfo.toString());
+		
+		HashMap<String, String> results = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameResult, "Result");
+		
+		if (results != null) {
+			if (results.get("error").equals("0")) {
+				openDialogAlert("수정 완료 되었습니다.");
+			} else {
+				openDialogAlert("수정 실패 되었습니다.");
+			}
+		}
+	}
 	
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -331,6 +434,27 @@ public class HfmbActivity003 extends FragmentActivity {
 		})
         .show();
 	}
+	
+	//수정하기 위한 다이얼로그
+	public void openDialogModify(String title) {
+		//확인 다이얼로그
+		new AlertDialog.Builder(HfmbActivity003.this)
+        .setTitle(title)
+		.setNegativeButton( "Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			}
+		})
+		.setPositiveButton( "Ok", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				modifySelecedData();
+			}
+		})
+        .show();
+	}
 }
 
 //교류회 리스트 생성한다.
@@ -436,6 +560,15 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
 //			holder.image.setImageBitmap(CommonUtil.bitmap[position]);
 //		}
 		
+			String photoStr = data.get(position).get("meeting_cd");
+		if (photoStr != null && !photoStr.equals("")) {
+			//holder.position = position;
+			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr+".jpg";
+			new ImageCallTask().execute(holder);
+		} else {
+			holder.image.setImageResource(R.drawable.logo_1);
+		}
+		
 		String ceo_nm1 = data.get(position).get("ceo_nm1");
 		String ceo_nm2 = data.get(position).get("ceo_nm2");
 		
@@ -447,6 +580,7 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	holder.imageTitle3.setText("총무  " + ceo_nm2);
       	holder.imageTitle4.setText("회원수  " + data.get(position).get("company_count"));
       	
+      	holder.image.setTag(R.string.position, position+"");
       	holder.image.setTag(R.string.meeting_cd, data.get(position).get("meeting_cd"));
       	holder.image.setTag(R.string.meeting_nm, data.get(position).get("meeting_nm"));
       	
@@ -455,10 +589,12 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
             	ImageView imgView = (ImageView) v;
-                String meetingCd = (String)imgView.getTag(R.string.meeting_cd);
+                
+            	String position = (String)imgView.getTag(R.string.position);
+            	String meetingCd = (String)imgView.getTag(R.string.meeting_cd);
                 String meetingNm = (String)imgView.getTag(R.string.meeting_nm);
                 
-                modifyMeeting(meetingCd, meetingNm);
+                modifyMeeting(position, meetingCd, meetingNm);
             }
         });
 		
@@ -486,8 +622,9 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	return row;
 	}
 	
-	public void modifyMeeting(String meetingCd, String meetingNm) {
-		Log.i("info", meetingCd + "-" + meetingNm);
+	public void modifyMeeting(String position, String meetingCd, String meetingNm) {
+		Log.i("info", position + "-" + meetingCd + "-" + meetingNm);
+		((HfmbActivity003)context).modifyMeetingPic(position, meetingCd, meetingNm);
 	}
 	
 	public List<Integer> getSelectedCheckBox() {
@@ -529,7 +666,7 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
 		@Override
         protected void onPostExecute(ViewHolder result) {
         	if (result.bm == null) {
-	            result.image.setImageResource(R.drawable.empty_photo);
+	            result.image.setImageResource(R.drawable.logo_1);
 	        } else {
 	            result.image.setImageBitmap(result.bm);
 	        }
