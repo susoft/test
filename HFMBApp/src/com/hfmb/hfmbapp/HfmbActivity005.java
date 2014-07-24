@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -90,10 +91,17 @@ public class HfmbActivity005 extends FragmentActivity {
 		public void onClick(View view) {
 			int id = view.getId();
 			if (id == R.id.hfmb_005_photo) {
-				Intent intent = new Intent();
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				intent.setType("image/*");
-				startActivityForResult(intent, 1);
+				//갤러리를 띄운다.
+		        Intent intent = new Intent(
+		                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+		                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		        intent.setType("image/*");              // 모든 이미지
+		        intent.putExtra("crop", "true");        // Crop기능 활성화
+		        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+		        intent.putExtra("outputFormat",         // 포맷방식
+		                Bitmap.CompressFormat.JPEG.toString());
+
+		        startActivityForResult(intent, 1);
 			} else if (id == R.id.hfmb_005_btn01) {
 				goThread();
 			} else if (id == R.id.hfmb_005_btn02) {
@@ -120,12 +128,7 @@ public class HfmbActivity005 extends FragmentActivity {
 		//CommonUtil.showMessage(getApplicationContext(), resultCode+"");
 		switch (resultCode) {
 		   case -1:
-			   Uri selPhoto = data.getData();
-			   
-			   //절대경로를 획득한다!!! 중요~
-			   Cursor c = getContentResolver().query(Uri.parse(selPhoto.toString()), null,null,null,null);
-			   c.moveToNext();
-			   selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+			   selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
 			   
 			   Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
 			   
@@ -138,8 +141,6 @@ public class HfmbActivity005 extends FragmentActivity {
 			   CommonUtil.SaveBitmapToFileCache(bitmap, "test.jpg", path);
 			   
 			   selfileName = path + File.separator + "test.jpg";
-			   
-			   c.close();
 		   break;
 
 		default:
@@ -213,7 +214,10 @@ public class HfmbActivity005 extends FragmentActivity {
     	HashMap<String, String> params = new HashMap<String, String>();
     	
     	EditText hfmb_005_edit_01 = (EditText) findViewById(R.id.hfmb_005_edit_01);
+    	EditText hfmb_005_edit_10 = (EditText) findViewById(R.id.hfmb_005_edit_10);
+    	
 		String meeting_nm = hfmb_005_edit_01.getText().toString();//교류회명
+		String gita1 = hfmb_005_edit_10.getText().toString();//창립일자
 		
     	if(meeting_nm == null || meeting_nm.equals("")) {
     		message = "교류회명을 입력하세요.";
@@ -225,13 +229,26 @@ public class HfmbActivity005 extends FragmentActivity {
     	params.put("meeting_nm", meeting_nm);
     	params.put("ceo1_id", ceo1_id);
     	params.put("ceo2_id", ceo2_id);
+    	params.put("gita1", gita1);
     	
     	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_0052.jsp");
     	
     	HttpConnectServer server = new HttpConnectServer();
     	resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
-    	message = "정상처리되었습니다.";
-    	//Log.i("json:", resultInfo.toString());
+    	
+		Log.i("json:", resultInfo.toString());
+		
+		HashMap<String, String> results = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameResult, "Result");
+		
+		if (results != null) {
+			if (results.get("error").equals("0")) {
+				message = "정상 처리 되었습니다.";
+			} else {
+				message = "비정상 처리 되었습니다.";
+			}
+		} else {
+			message = "비정상처리되었습니다.";
+		}
     }
 	
 	List<HashMap<String, String>> rowItems;

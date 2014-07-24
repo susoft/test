@@ -1,6 +1,7 @@
 package com.hfmb.hfmbapp;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract.Data;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -38,13 +39,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hfmb.hfmbapp.GridViewAdapter.ViewHolder;
-import com.hfmb.hfmbapp.HfmbListAdapter1.ImageCallTask;
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
@@ -99,8 +97,6 @@ public class HfmbActivity003 extends FragmentActivity {
 	Handler handler = new Handler(){
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            
-            //CommonUtil.bitmap_003 = new Bitmap[rowItems.size()];
             
             setOrganListView(R.layout.hfmbactivity_003);//교류회 리스트 나열하기.
     		
@@ -181,7 +177,7 @@ public class HfmbActivity003 extends FragmentActivity {
 	String meetingCd;
 	String meetingNm;
 	String selfileName;
-	Bitmap bitmap;
+	
 	public void modifyMeetingPic(String position, String meetingCd, String meetingNm) {
 		//사무국직원 및 교류회 회장, 총무만 수정가능하도록 한다.
 		if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) {
@@ -193,10 +189,16 @@ public class HfmbActivity003 extends FragmentActivity {
 		this.meetingNm = meetingNm;
 		
 		//갤러리를 띄운다.
-		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_GET_CONTENT);
-		intent.setType("image/*");
-		startActivityForResult(intent, 1);
+        Intent intent = new Intent(
+                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");              // 모든 이미지
+        intent.putExtra("crop", "true");        // Crop기능 활성화
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+        intent.putExtra("outputFormat",         // 포맷방식
+                Bitmap.CompressFormat.JPEG.toString());
+
+        startActivityForResult(intent, 1);
 	}
 	
 	//사진등록하기.
@@ -209,15 +211,10 @@ public class HfmbActivity003 extends FragmentActivity {
 		case 1://이미지선택시.
 			switch (resultCode) {
 			case -1 ://데이터 가져올떄.
-				Uri selPhoto = data.getData();
 				
-				//절대경로를 획득한다!!! 중요~
-				Cursor c = getContentResolver().query(Uri.parse(selPhoto.toString()), null,null,null,null);
-				c.moveToNext();
+				selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
 				
-				selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
-				
-				bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
+				Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
 
 				String path = getApplicationContext().getCacheDir().getPath();
 
@@ -226,8 +223,6 @@ public class HfmbActivity003 extends FragmentActivity {
 
 				selfileName = path + File.separator + meetingCd + ".jpg";
 
-				c.close();
-				
 				openDialogModify("교류회 사진을 수정하시겠습니까?");
 				
 				break;
@@ -266,6 +261,7 @@ public class HfmbActivity003 extends FragmentActivity {
 		if (results != null) {
 			if (results.get("error").equals("0")) {
 				openDialogAlert("수정 완료 되었습니다.");
+				gridAdapter.notifyDataSetChanged();
 			} else {
 				openDialogAlert("수정 실패 되었습니다.");
 			}
@@ -584,7 +580,7 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	holder.image.setTag(R.string.meeting_cd, data.get(position).get("meeting_cd"));
       	holder.image.setTag(R.string.meeting_nm, data.get(position).get("meeting_nm"));
       	
-      	holder.image.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+      	//holder.image.setOnTouchListener(CommonUtil.imgbtnTouchListener);
       	holder.image.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // TODO Auto-generated method stub

@@ -12,6 +12,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
@@ -31,7 +32,7 @@ public class CommonUtil {
 	public static String meetingCd;
 	public static String ceoNm;
 	
-	public String checkNull(String str) {
+	public static String checkNull(String str) {
 		if (str == null || str.equals("") || str.equals("null")) return "";
 		
 		return str;
@@ -72,7 +73,7 @@ public class CommonUtil {
 				return null;
 			}
 			// Max image size
-			final int IMAGE_MAX_SIZE    = 300;//GlobalConstants.getMaxImagePixelSize(); 
+			final int IMAGE_MAX_SIZE    = 200;//GlobalConstants.getMaxImagePixelSize(); 
 			BitmapFactory.Options bfo   = new BitmapFactory.Options();
 			bfo.inJustDecodeBounds      = true;
 			
@@ -211,7 +212,6 @@ public class CommonUtil {
 		{
 			fileCacheItem.createNewFile();
 			out = new FileOutputStream(fileCacheItem);
-
 			bitmap.compress(CompressFormat.JPEG, 100, out);
 		}
 		catch (Exception e) 
@@ -230,4 +230,55 @@ public class CommonUtil {
 			}
 		}
 	}
+	
+	/** 임시 저장 파일의 경로를 반환 */
+	public static Uri getTempUri() {
+        return Uri.fromFile(getTempFile());
+    }
+	
+	/** 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환  */
+    private static File getTempFile() {
+        if (isSDCARDMOUNTED()) {
+            File f = new File(Environment.getExternalStorageDirectory(), "temp.jpg");// 외장메모리 경로
+            try {
+                f.createNewFile();      // 외장메모리에 temp.jpg 파일 생성
+            } catch (IOException e) {
+            }
+ 
+            return f;
+        } else
+            return null;
+    }
+	
+	/** SD카드가 마운트 되어 있는지 확인 */
+    private static boolean isSDCARDMOUNTED() {
+        String status = Environment.getExternalStorageState();
+        if (status.equals(Environment.MEDIA_MOUNTED))
+            return true;
+ 
+        return false;
+    }
+    
+    /** 전화번호 포맷 설정 */
+    public static String fomattingPhone(String value) {
+        String rtnValue = "";
+        
+        if (checkNull(value).equals("")) {
+        	return value;
+        }
+        
+        value = value.replaceAll("-", "");
+        
+        if (value.length() > 10) {
+        	rtnValue = value.substring(0, 3) + "-" + value.substring(3, 7) + "-" + value.substring(7);
+        } else if (value.length() == 10) {
+        	rtnValue = value.substring(0, 3) + "-" + value.substring(3, 6) + "-" + value.substring(6);
+        } else if (value.length() == 9) {
+        	rtnValue = value.substring(0, 2) + "-" + value.substring(3, 6) + "-" + value.substring(6);
+        } else {
+        	rtnValue = value;
+        }
+        
+        return rtnValue;
+    }
 }

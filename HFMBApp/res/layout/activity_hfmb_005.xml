@@ -67,6 +67,25 @@
 			        android:maxLength="40"
 			        android:text=""
 			        android:background="@drawable/round_border_gray" />
+		        
+		        <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="2dp"
+			        android:text="창립일자"
+			        style="@style/textTitle17dp" />
+		        
+		        <EditText        
+			        android:id="@+id/hfmb_005_edit_10"     
+			        android:layout_width="fill_parent"        
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="2dp"
+			        android:layout_marginLeft="10dp"
+			        android:inputType="date"
+			        android:maxLength="10"
+			        android:text=""
+			        android:background="@drawable/round_border_gray" />
+		        
 		    </LinearLayout>
 	    </LinearLayout>
 	    <LinearLayout
@@ -388,7 +407,7 @@
     </LinearLayout>
     
     <LinearLayout 
-        android:id="@+id/hfmb_005_linear_02"
+        android:id="@+id/hfmb_005_linear_10"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:layout_alignParentBottom="true"

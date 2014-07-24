@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -208,10 +209,17 @@ public class HfmbActivity007 extends FragmentActivity {
 		public void onClick(View view) {
 			int id = view.getId();
 			if (id == R.id.hfmb_007_photo) {
-				Intent intent = new Intent();
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				intent.setType("image/*");
-				startActivityForResult(intent, 1);
+				//갤러리를 띄운다.
+		        Intent intent = new Intent(
+		                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+		                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		        intent.setType("image/*");              // 모든 이미지
+		        intent.putExtra("crop", "true");        // Crop기능 활성화
+		        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+		        intent.putExtra("outputFormat",         // 포맷방식
+		                Bitmap.CompressFormat.JPEG.toString());
+
+		        startActivityForResult(intent, 1);
 			} else if (id == R.id.hfmb_007_btn01) {
 				saveInfo();
 			} else if (id == R.id.hfmb_007_btn02) {
@@ -338,12 +346,7 @@ public class HfmbActivity007 extends FragmentActivity {
 		//CommonUtil.showMessage(getApplicationContext(), resultCode+"");
 		switch (resultCode) {
 		   case -1:
-			   Uri selPhoto = data.getData();
-			   
-			   //절대경로를 획득한다!!! 중요~
-			   Cursor c = getContentResolver().query(Uri.parse(selPhoto.toString()), null,null,null,null);
-			   c.moveToNext();
-			   selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+			   selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
 			   
 			   Log.e("test", "selfileName = " + selfileName);
 			   
@@ -359,7 +362,6 @@ public class HfmbActivity007 extends FragmentActivity {
 			   
 			   selfileName = path + File.separator + _company_cd + ".jpg";
 			   
-			   c.close();
 		   break;
 
 		default:

@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract.CommonDataKinds.Email;
@@ -212,12 +213,17 @@ public class HfmbActivity006 extends FragmentActivity {
 		public void onClick(View view) {
 			switch (view.getId()) {
 			case R.id.hfmb_006_photo :
-				Intent intent = new Intent();
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				intent.setType("image/*");
-				//intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-				//startActivityForResult(Intent.createChooser(intent, "select multiple images"), 1);
-				startActivityForResult(intent, 1);
+				//갤러리를 띄운다.
+		        Intent intent = new Intent(
+		                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+		                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		        intent.setType("image/*");              // 모든 이미지
+		        intent.putExtra("crop", "true");        // Crop기능 활성화
+		        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+		        intent.putExtra("outputFormat",         // 포맷방식
+		                Bitmap.CompressFormat.JPEG.toString());
+
+		        startActivityForResult(intent, 1);
 				break;
 			case R.id.hfmb_006_btn01 :
 				goThread();
@@ -358,12 +364,7 @@ public class HfmbActivity006 extends FragmentActivity {
 		case 1://이미지선택시.
 			switch (resultCode) {
 			case -1 ://데이터 가져올떄.
-				Uri selPhoto = data.getData();
-
-				//절대경로를 획득한다!!! 중요~
-				Cursor c = getContentResolver().query(Uri.parse(selPhoto.toString()), null,null,null,null);
-				c.moveToNext();
-				selfileName = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+				selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
 
 				Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
 
@@ -377,7 +378,6 @@ public class HfmbActivity006 extends FragmentActivity {
 
 				selfileName = path + File.separator + "test.jpg";
 
-				c.close();
 				break;
 			}
 			break;
@@ -463,9 +463,9 @@ public class HfmbActivity006 extends FragmentActivity {
 				
 				emailCursor.close();
 				
-				hfmb_006_edit_04.setText(number1);
-		    	hfmb_006_edit_05.setText(number2);
-		    	hfmb_006_edit_06.setText(number3);
+				hfmb_006_edit_04.setText(CommonUtil.fomattingPhone(number1));
+		    	hfmb_006_edit_05.setText(CommonUtil.fomattingPhone(number2));
+		    	hfmb_006_edit_06.setText(CommonUtil.fomattingPhone(number3));
 		    	hfmb_006_edit_07.setText(email);
 		    	
 				CommonUtil.showMessage("test", "[" + id + "]-[" + name + "]");
