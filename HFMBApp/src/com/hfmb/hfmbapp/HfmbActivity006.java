@@ -2,13 +2,18 @@ package com.hfmb.hfmbapp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -32,9 +37,11 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;
@@ -117,6 +124,9 @@ public class HfmbActivity006 extends FragmentActivity {
 		ImageView photo = (ImageView)findViewById(R.id.hfmb_006_photo);
 		photo.setOnClickListener(mOnClickListener);
 		photo.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+		
+		EditText hfmb_006_edit_012 = (EditText) findViewById(R.id.hfmb_006_edit_012);//입회일자(gita1)
+		hfmb_006_edit_012.setOnClickListener(mOnClickListener);
 		
 		//저장, 취소 버튼.
 		Button saveBtn = (Button)findViewById(R.id.hfmb_006_btn01);
@@ -236,9 +246,35 @@ public class HfmbActivity006 extends FragmentActivity {
 				intent1.setType(Phone.CONTENT_TYPE);
 				startActivityForResult(intent1, 0);
 				break;
+			case R.id.hfmb_006_edit_012 :
+				datePicker();
+				break;
 			}
 			
 	    }
+	};
+	
+	public void datePicker() {
+		SimpleDateFormat formatter = new SimpleDateFormat ( "yyyyMMdd", Locale.KOREA );
+		String timeStamp = formatter.format(new Date());
+		int yy = Integer.parseInt(timeStamp.substring(0, 4));
+		int mm = Integer.parseInt(timeStamp.substring(4, 6))-1;
+		int dd = Integer.parseInt(timeStamp.substring(6));
+		
+		DatePickerDialog dialog = new DatePickerDialog(this, listener, yy, mm, dd);
+		dialog.show();
+	}
+	private OnDateSetListener listener = new OnDateSetListener() {		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			TextView textView = (TextView) findViewById(R.id.hfmb_006_edit_012);//입회일자(gita1)
+			monthOfYear++;
+			String month = "";
+			if (monthOfYear < 10) month = "0" + monthOfYear;
+			else month = "" + monthOfYear;
+			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
+		}
 	};
 	
 	private List<HashMap<String, String>> meetingRowItems;
@@ -359,7 +395,6 @@ public class HfmbActivity006 extends FragmentActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		CommonUtil.showMessage("test", "[" + requestCode + "]-[" + resultCode+"]");
-		//CommonUtil.showMessage(getApplicationContext(), resultCode+"");
 		switch (requestCode) {
 		case 1://이미지선택시.
 			switch (resultCode) {

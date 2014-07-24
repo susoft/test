@@ -2,20 +2,23 @@ package com.hfmb.hfmbapp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -65,6 +69,9 @@ public class HfmbActivity005 extends FragmentActivity {
 		photo.setOnClickListener(mOnClickListener);
 		photo.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 		
+		TextView textView = (TextView) findViewById(R.id.hfmb_005_edit_10);
+		textView.setOnClickListener(mOnClickListener);
+		
 		//회장찾기
 		ImageView hfmb_005_srch_02 = (ImageView)findViewById(R.id.hfmb_005_srch_02);
 		hfmb_005_srch_02.setOnClickListener(mOnClickListener);
@@ -90,7 +97,8 @@ public class HfmbActivity005 extends FragmentActivity {
 		@Override    
 		public void onClick(View view) {
 			int id = view.getId();
-			if (id == R.id.hfmb_005_photo) {
+			switch (id) {
+			case R.id.hfmb_005_photo:
 				//갤러리를 띄운다.
 		        Intent intent = new Intent(
 		                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
@@ -102,20 +110,54 @@ public class HfmbActivity005 extends FragmentActivity {
 		                Bitmap.CompressFormat.JPEG.toString());
 
 		        startActivityForResult(intent, 1);
-			} else if (id == R.id.hfmb_005_btn01) {
+				break;
+			case R.id.hfmb_005_btn01:
 				goThread();
-			} else if (id == R.id.hfmb_005_btn02) {
+				break;
+			case R.id.hfmb_005_btn02:
 				finish();
-			} else if (id == R.id.hfmb_005_srch_02) {
+				break;
+			case R.id.hfmb_005_srch_02:
 				selectedView = view;
 				searchInfo(R.id.hfmb_005_srch_02);
-			} else if (id == R.id.hfmb_005_srch_06) {
+				break;
+			case R.id.hfmb_005_srch_06:
 				selectedView = view;
 				searchInfo(R.id.hfmb_005_srch_02);
-			} else if (id == R.id.hfmb_srch) {
+				break;
+			case R.id.hfmb_srch:
 				searchData();
+				break;
+			case R.id.hfmb_005_edit_10:
+				datePicker();
+				break;
+			default:
+				break;
 			}
 	    }
+	};
+	
+	public void datePicker() {
+		SimpleDateFormat formatter = new SimpleDateFormat ( "yyyyMMdd", Locale.KOREA );
+		String timeStamp = formatter.format(new Date());
+		int yy = Integer.parseInt(timeStamp.substring(0, 4));
+		int mm = Integer.parseInt(timeStamp.substring(4, 6))-1;
+		int dd = Integer.parseInt(timeStamp.substring(6));
+		
+		DatePickerDialog dialog = new DatePickerDialog(this, listener, yy, mm, dd);
+		dialog.show();
+	}
+	private OnDateSetListener listener = new OnDateSetListener() {		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			TextView textView = (TextView) findViewById(R.id.hfmb_005_edit_10);
+			monthOfYear++;
+			String month = "";
+			if (monthOfYear < 10) month = "0" + monthOfYear;
+			else month = "" + monthOfYear;
+			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
+		}
 	};
 	
 	FileInputStream mFileInputStream;

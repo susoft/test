@@ -2,13 +2,18 @@ package com.hfmb.hfmbapp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +25,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -32,9 +39,11 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;
@@ -116,12 +125,19 @@ public class HfmbActivity007 extends FragmentActivity {
 		photo.setOnClickListener(mOnClickListener);
 		photo.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 		
+		EditText hfmb_007_edit_012 = (EditText) findViewById(R.id.hfmb_007_edit_012);//입회일자(gita1)
+		hfmb_007_edit_012.setOnClickListener(mOnClickListener);
+		
 		//저장, 취소 버튼.
 		Button saveBtn = (Button)findViewById(R.id.hfmb_007_btn01);
 		Button cancelBtn = (Button)findViewById(R.id.hfmb_007_btn02);
 		
 		saveBtn.setOnClickListener(mOnClickListener);
 		cancelBtn.setOnClickListener(mOnClickListener);
+		
+		ImageView imagePhone = (ImageView) findViewById(R.id.hfmb_007_phone);
+		imagePhone.setOnClickListener(mOnClickListener);
+		imagePhone.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
@@ -208,7 +224,8 @@ public class HfmbActivity007 extends FragmentActivity {
 		@Override    
 		public void onClick(View view) {
 			int id = view.getId();
-			if (id == R.id.hfmb_007_photo) {
+			switch (view.getId()) {
+			case R.id.hfmb_007_photo :
 				//갤러리를 띄운다.
 		        Intent intent = new Intent(
 		                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
@@ -220,12 +237,46 @@ public class HfmbActivity007 extends FragmentActivity {
 		                Bitmap.CompressFormat.JPEG.toString());
 
 		        startActivityForResult(intent, 1);
-			} else if (id == R.id.hfmb_007_btn01) {
+				break;
+			case R.id.hfmb_007_btn01 :
 				saveInfo();
-			} else if (id == R.id.hfmb_007_btn02) {
+				break;
+			case R.id.hfmb_007_btn02 :
 				finish();
+				break;
+			case R.id.hfmb_007_phone :
+				Intent intent1 = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+				intent1.setType(Phone.CONTENT_TYPE);
+				startActivityForResult(intent1, 0);
+				break;
+			case R.id.hfmb_007_edit_012 :
+				datePicker();
+				break;
 			}
 	    }
+	};
+	
+	public void datePicker() {
+		SimpleDateFormat formatter = new SimpleDateFormat ( "yyyyMMdd", Locale.KOREA );
+		String timeStamp = formatter.format(new Date());
+		int yy = Integer.parseInt(timeStamp.substring(0, 4));
+		int mm = Integer.parseInt(timeStamp.substring(4, 6))-1;
+		int dd = Integer.parseInt(timeStamp.substring(6));
+		
+		DatePickerDialog dialog = new DatePickerDialog(this, listener, yy, mm, dd);
+		dialog.show();
+	}
+	private OnDateSetListener listener = new OnDateSetListener() {		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			TextView textView = (TextView) findViewById(R.id.hfmb_007_edit_012);//입회일자(gita1)
+			monthOfYear++;
+			String month = "";
+			if (monthOfYear < 10) month = "0" + monthOfYear;
+			else month = "" + monthOfYear;
+			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
+		}
 	};
 	
 	private List<HashMap<String, String>> meetingRowItems;
@@ -343,27 +394,120 @@ public class HfmbActivity007 extends FragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		//CommonUtil.showMessage(getApplicationContext(), resultCode+"");
-		switch (resultCode) {
-		   case -1:
-			   selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
+		CommonUtil.showMessage("test", "[" + requestCode + "]-[" + resultCode+"]");
+		switch (requestCode) {
+		case 1://이미지선택시.
+			switch (resultCode) {
+			case -1 ://데이터 가져올떄.
+				selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
+				   
+				Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
 			   
-			   Log.e("test", "selfileName = " + selfileName);
+				ImageView photo = (ImageView)findViewById(R.id.hfmb_007_photo);
+				photo.setImageBitmap(bitmap);
 			   
-			   Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
+				String path = getApplicationContext().getCacheDir().getPath();
 			   
-			   ImageView photo = (ImageView)findViewById(R.id.hfmb_007_photo);
-			   photo.setImageBitmap(bitmap);
+				//압축한 파일을 저장한다.
+				CommonUtil.SaveBitmapToFileCache(bitmap, _company_cd + ".jpg", path);
 			   
-			   String path = getApplicationContext().getCacheDir().getPath();
-			   
-			   //압축한 파일을 저장한다.
-			   CommonUtil.SaveBitmapToFileCache(bitmap, _company_cd + ".jpg", path);
-			   
-			   selfileName = path + File.separator + _company_cd + ".jpg";
-			   
-		   break;
+				selfileName = path + File.separator + _company_cd + ".jpg";
 
+				break;
+			}
+			break;
+	   case 0://연락처 선택시.
+			switch (resultCode) {
+			case -1 ://데이터 가져올떄.
+				EditText hfmb_007_edit_04 = (EditText) findViewById(R.id.hfmb_007_edit_04);//회사전화번호
+		    	EditText hfmb_007_edit_05 = (EditText) findViewById(R.id.hfmb_007_edit_05);//모바일
+		    	EditText hfmb_007_edit_06 = (EditText) findViewById(R.id.hfmb_007_edit_06);//팩스
+		    	EditText hfmb_007_edit_07 = (EditText) findViewById(R.id.hfmb_007_edit_07);//이메일
+		    	
+				//전화정보 가져오기.
+				Cursor cursor = getContentResolver().query(data.getData(), 
+						 new String[]{Phone.CONTACT_ID, Phone.DISPLAY_NAME}
+						, null, null, null);
+				cursor.moveToFirst();
+				
+				String id = cursor.getString(0);
+				String name = cursor.getString(1);
+				
+				cursor.close();
+				
+				//전화번호 가져오기.
+				String number1 = "";
+				String number2 = "";
+				String number3 = "";
+				
+				Cursor phoneCursor = getContentResolver().query(Phone.CONTENT_URI, null, Phone.CONTACT_ID+"='"+id+"'", null, null);
+
+				Log.d("TAG", "phone count = "+phoneCursor.getCount());
+				
+				while(phoneCursor.moveToNext()){
+					String number = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.NUMBER));
+					String numberType = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.TYPE));
+					switch(Integer.parseInt(numberType)){
+					case Phone.TYPE_HOME : //number1 = number; break;
+					case Phone.TYPE_MOBILE : number2 = number; break;
+					case Phone.TYPE_WORK : number1 = number; break;
+					case Phone.TYPE_FAX_WORK : number3 = number; break;
+					case Phone.TYPE_FAX_HOME :
+					case Phone.TYPE_PAGER :
+					case Phone.TYPE_OTHER :
+					case Phone.TYPE_CALLBACK :
+					case Phone.TYPE_CAR :
+					case Phone.TYPE_COMPANY_MAIN :
+					case Phone.TYPE_ISDN :
+					case Phone.TYPE_MAIN :
+					case Phone.TYPE_OTHER_FAX :
+					case Phone.TYPE_RADIO :
+					case Phone.TYPE_TELEX :
+					case Phone.TYPE_TTY_TDD :
+					case Phone.TYPE_WORK_MOBILE :
+					case Phone.TYPE_WORK_PAGER :
+					case Phone.TYPE_ASSISTANT :
+					case Phone.TYPE_MMS :
+					default:
+					break;
+					}
+				}
+				
+				phoneCursor.close();
+				
+				//이메일가져오기.
+				String email = "";
+				
+				Cursor emailCursor = getContentResolver().query(Email.CONTENT_URI,
+						new String[]{Email.DATA, Email.TYPE}, Email.CONTACT_ID+"='"+id+"'"
+						,null, null);
+
+				Log.d("TAG", "email count = "+emailCursor.getCount());
+				
+				while(emailCursor.moveToNext()) {
+					email = emailCursor.getString(emailCursor.getColumnIndex(Email.DATA));
+					String emailType = emailCursor.getString(emailCursor.getColumnIndex(Email.TYPE));
+					switch(Integer.parseInt(emailType)){
+					case 1: //hfmb_007_edit_07.setText("Home: "+email); break;
+					case 2: //hfmb_007_edit_07.setText("Work: "+email); break;
+					case 3: //hfmb_007_edit_07.setText("Other: "+email); break;
+					case 4: //hfmb_007_edit_07.setText("Mobile: "+email); break;
+					case 5: //hfmb_007_edit_07.setText("Custom: "+email); break;
+					}
+				}
+				
+				emailCursor.close();
+				
+				hfmb_007_edit_04.setText(CommonUtil.fomattingPhone(number1));
+		    	hfmb_007_edit_05.setText(CommonUtil.fomattingPhone(number2));
+		    	hfmb_007_edit_06.setText(CommonUtil.fomattingPhone(number3));
+		    	hfmb_007_edit_07.setText(email);
+		    	
+				CommonUtil.showMessage("test", "[" + id + "]-[" + name + "]");
+				CommonUtil.showMessage("test", "[" + number1 + "]-[" + number2 + "]-[" + number3 + "]-[" + email + "]");
+				break;
+			}
+			break;
 		default:
 		   break;
 		}
