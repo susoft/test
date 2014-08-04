@@ -52,10 +52,10 @@ public class HomeController {
 	public String hfmp_0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "hfmp_0003.do");
 		
-		return "hfmp/test";
+		return "hfmp/MeetingList";
 	}
 	
-	//Search App.... --> 사용안함.
+	//Search App.... 
 	@RequestMapping(value = "/getHfmp0003.do", method = RequestMethod.GET)
 	public String getHfmp0003(@RequestParam Map<String, Object> paramMap, ModelMap model) {
 		logger.info("Welcome home! The client locale is {}.", "getHfmp0003.do");
