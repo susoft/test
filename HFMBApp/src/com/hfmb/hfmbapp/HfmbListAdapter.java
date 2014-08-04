@@ -1,5 +1,6 @@
 package com.hfmb.hfmbapp;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -32,8 +35,6 @@ public class HfmbListAdapter extends BaseAdapter {
 	private int selectedPosition;
 	private HttpConnectServer server;
 	
-//	private int gubun;
-	
 	public HfmbListAdapter(Context context, List<HashMap<String, String>> items, int source) {         
 		this.context = context;
 		this.resource = source;
@@ -42,36 +43,6 @@ public class HfmbListAdapter extends BaseAdapter {
 		this.thumbnailsselection = new boolean[this.rowItems.size()];
 		
 		server = new HttpConnectServer();
-//		this.gubun = 0;
-	}
-	
-	public HfmbListAdapter(Context context, List<HashMap<String, String>> items, int source, int gubun) {         
-		this.context = context;
-		this.resource = source;
-		this.rowItems = items;
-		
-		this.thumbnailsselection = new boolean[this.rowItems.size()];
-		
-		server = new HttpConnectServer();
-//		this.gubun = gubun;
-	}
-	
-	/*private view holder class*/    
-	private class ViewHolder {
-		ImageView imgbtn_01;
-		TextView ceo_nm;
-		TextView company_nm;
-		TextView category_business_nm;
-		TextView addr;
-		TextView phone1;
-		TextView phone2;
-		ImageView imgbtn_02;
-		CheckBox checkbox;
-		
-		Bitmap bm;
-		String imageUrl;
-		//int position;
-//		LinearLayout list_linear_01;
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {   
@@ -96,8 +67,6 @@ public class HfmbListAdapter extends BaseAdapter {
 				holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
 			}
 			
-			//holder.list_linear_01 = (LinearLayout) convertView.findViewById(R.id.list_linear_01);
-			
 			convertView.setTag(holder);
 		} else {             
 			holder = (ViewHolder) convertView.getTag();         
@@ -105,18 +74,14 @@ public class HfmbListAdapter extends BaseAdapter {
 		
 		String photoStr = rowItems.get(position).get("company_cd");
 		if (photoStr != null && !photoStr.equals("")) {
-			//holder.position = position;
 			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr+".jpg";
+			
+			holder.path = context.getApplicationContext().getCacheDir().getPath();
+
 			new ImageCallTask().execute(holder);
 		} else {
 			holder.imgbtn_01.setImageResource(R.drawable.empty_photo);
-			//CommonUtil.bitmap[position] = null;
 		}
-//		if (CommonUtil.bitmap[position] == null) {
-//			holder.imgbtn_01.setImageResource(R.drawable.empty_photo);
-//		} else {
-//			holder.imgbtn_01.setImageBitmap(CommonUtil.bitmap[position]);
-//		}
 		
 		holder.ceo_nm.setText(rowItems.get(position).get("ceo_nm"));
 		holder.company_nm.setText(rowItems.get(position).get("company_nm"));
@@ -149,14 +114,6 @@ public class HfmbListAdapter extends BaseAdapter {
 	            }
 	        });
 		}
-		
-//		if (gubun == 1) {
-//			holder.checkbox.setVisibility(View.VISIBLE);//보여준다.
-//			holder.imgbtn_02.setVisibility(View.GONE);//숨긴다.
-//		} else {
-//			holder.checkbox.setVisibility(View.GONE);//숨긴다.
-//			holder.imgbtn_02.setVisibility(View.VISIBLE);//보여준다.
-//		}
 		
 		return convertView;
 	}
@@ -249,15 +206,43 @@ public class HfmbListAdapter extends BaseAdapter {
 	@Override    
 	public long getItemId(int position) {         return rowItems.indexOf(getItem(position));     }
 	
+	/*private view holder class*/    
+	private class ViewHolder {
+		ImageView imgbtn_01;
+		TextView ceo_nm;
+		TextView company_nm;
+		TextView category_business_nm;
+		TextView addr;
+		TextView phone1;
+		TextView phone2;
+		ImageView imgbtn_02;
+		CheckBox checkbox;
+		
+		Bitmap bm;
+		String imageUrl;
+		String path;
+		String company_cd;
+	}
+	
 	//이미지정보 가져오기.
 	public class ImageCallTask extends AsyncTask<ViewHolder, Void, ViewHolder> {
 		@Override
 		protected ViewHolder doInBackground(ViewHolder... params) {
         	ViewHolder viewHolder = params[0];
             try {
-            	viewHolder.bm = searchData(viewHolder.imageUrl);
+            	//캐쉬폴더에 존재하면 그걸 보여준다.
+            	File file = new File(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
+            	
+            	if (file.isFile()) {
+            		viewHolder.bm = BitmapFactory.decodeFile(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
+            	} else {
+            		viewHolder.bm = searchData(viewHolder.imageUrl);
+                	
+                	//압축한 파일을 저장한다.
+        			CommonUtil.SaveBitmapToFileCache(viewHolder.bm, viewHolder.company_cd + ".jpg", viewHolder.path);
+            	}
             } catch (Exception e) {
-                Log.e("net","파일없음. : " + viewHolder.imageUrl);
+                Log.e("net","Not File : " + viewHolder.imageUrl);
             }
             return viewHolder;
         }
@@ -270,6 +255,7 @@ public class HfmbListAdapter extends BaseAdapter {
 	        }
         }
 	};
+	
 	//조회한다.
   	public Bitmap searchData(String imageUrl) {
     	return server.LoadImage(imageUrl);

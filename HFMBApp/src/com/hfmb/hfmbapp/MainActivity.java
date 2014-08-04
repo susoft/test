@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
 		icon6.setOnTouchListener(CommonUtil.imgbtnTouchListener);//교류회등록
 		icon7.setOnTouchListener(CommonUtil.imgbtnTouchListener);//회원사등록
 		
-		if (DataUtil.phoneNum.equals("01063344115")) {
+		if (DataUtil.phoneNum.equals("01063344115") || DataUtil.phoneNum.equals("01026470771")) {
 			//Debugging ...
 			openDialogDebug();
   		} else {

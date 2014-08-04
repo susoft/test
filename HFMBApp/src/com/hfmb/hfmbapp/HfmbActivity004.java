@@ -334,7 +334,7 @@ public class HfmbActivity004 extends FragmentActivity {
 	//삭제 가능 화면으로 이동.(다중선택 가능) 또는 반대로..
 	public void goImageInfoActivity(int resource) {
 		ListView listView = (ListView) findViewById(R.id.list);
-		listAdapter = new HfmbListAdapter(this, rowItems, resource, 1);
+		listAdapter = new HfmbListAdapter(this, rowItems, resource);
 		listView.setAdapter(listAdapter);
 		
 		listView.setOnItemClickListener(mOnItemClickListener);
