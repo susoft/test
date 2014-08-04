@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -46,7 +45,6 @@ public class HfmbListAdapter extends BaseAdapter {
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {   
-		
 		ViewHolder holder = null;           
 		LayoutInflater mInflater = (LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);         
 		if (convertView == null) {             
@@ -72,11 +70,14 @@ public class HfmbListAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();         
 		}
 		
+		//이미지
 		String photoStr = rowItems.get(position).get("company_cd");
 		if (photoStr != null && !photoStr.equals("")) {
-			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr+".jpg";
+			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr + ".jpg";
 			
 			holder.path = context.getApplicationContext().getCacheDir().getPath();
+			
+			holder.company_cd = photoStr;
 
 			new ImageCallTask().execute(holder);
 		} else {
@@ -94,6 +95,11 @@ public class HfmbListAdapter extends BaseAdapter {
 			holder.imgbtn_02.setTag(position);
 			holder.imgbtn_02.setOnClickListener(goClickListener);
 			holder.imgbtn_02.setOnTouchListener(CommonUtil.imgbtnTouchListener);
+			
+			//회사 선택시 회사소개 이동 이벤트..
+			holder.company_nm.setTag(photoStr);
+			holder.company_nm.setOnClickListener(goClickListener);
+			
 		} else {
 			holder.checkbox.setTag(position);
 			holder.checkbox.setChecked(thumbnailsselection[position]);
@@ -121,7 +127,14 @@ public class HfmbListAdapter extends BaseAdapter {
 	private View.OnClickListener goClickListener = new View.OnClickListener() {
 		@Override
         public void onClick(View v) {
-			callTel((Integer)v.getTag());
+			switch (v.getId()) {
+			case R.id.imgbtn_02:
+				callTel((Integer)v.getTag());
+				break;
+			case R.id.company_nm:
+				goCompanyIntro("0", (String)v.getTag());
+				break;
+			}
 		}
 	};
 	
@@ -131,6 +144,11 @@ public class HfmbListAdapter extends BaseAdapter {
 		Intent intent = new Intent(Intent.ACTION_CALL, u);
         
         context.startActivity(intent);
+	}
+	
+	//회사소개 페이지 이동.
+	public void goCompanyIntro(String position, String companyCd) {
+		((HfmbActivity004)context).goCompanyIntro(position, companyCd);
 	}
 	
 	/**
@@ -234,12 +252,14 @@ public class HfmbListAdapter extends BaseAdapter {
             	File file = new File(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
             	
             	if (file.isFile()) {
+            		Log.e("Tag","File : " + file.getPath());
             		viewHolder.bm = BitmapFactory.decodeFile(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
             	} else {
             		viewHolder.bm = searchData(viewHolder.imageUrl);
                 	
                 	//압축한 파일을 저장한다.
         			CommonUtil.SaveBitmapToFileCache(viewHolder.bm, viewHolder.company_cd + ".jpg", viewHolder.path);
+        			Log.e("Tag","File : " + viewHolder.company_cd);
             	}
             } catch (Exception e) {
                 Log.e("net","Not File : " + viewHolder.imageUrl);

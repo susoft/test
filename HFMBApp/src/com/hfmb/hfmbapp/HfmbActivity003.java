@@ -147,12 +147,12 @@ public class HfmbActivity003 extends FragmentActivity {
 		@Override    
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			//Log.i("onItemClick", "test");
-			goHfmbActivity0031(position);
+			goHfmbActivity004(position);
 	    }
 	};
 	
 	//교류회에 해당되는 회원사를 조회한다.
-	private void goHfmbActivity0031(int position) {
+	private void goHfmbActivity004(int position) {
 		Intent intent = new Intent(getApplicationContext(), HfmbActivity004.class);
     	intent.putExtra("meeting_cd", rowItems.get(position).get("meeting_cd"));
     	intent.putExtra("meeting_nm", rowItems.get(position).get("meeting_nm"));
@@ -539,23 +539,10 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       		holder = (ViewHolder) row.getTag();
       	}
 		
-//		String photoStr = data.get(position).get("meeting_cd");
-//		if (photoStr != null && !photoStr.equals("")) {
-//			holder.position = position;
-//			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr+".jpg";
-//			new ImageCallTask().execute(holder);
-//		} else {
-			holder.image.setImageResource(R.drawable.logo_1);
-//		}
-//		if (CommonUtil.bitmap_003[position] == null) {
-//			holder.image.setImageResource(R.drawable.empty_photo);
-//		} else {
-//			holder.image.setImageBitmap(CommonUtil.bitmap[position]);
-//		}
+		holder.image.setImageResource(R.drawable.logo_1);
 		
-			String photoStr = data.get(position).get("meeting_cd");
+		String photoStr = data.get(position).get("meeting_cd");
 		if (photoStr != null && !photoStr.equals("")) {
-			//holder.position = position;
 			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr+".jpg";
 			new ImageCallTask().execute(holder);
 		} else {
@@ -577,7 +564,6 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	holder.image.setTag(R.string.meeting_cd, data.get(position).get("meeting_cd"));
       	holder.image.setTag(R.string.meeting_nm, data.get(position).get("meeting_nm"));
       	
-      	//holder.image.setOnTouchListener(CommonUtil.imgbtnTouchListener);
       	holder.image.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -663,7 +649,6 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
 	        } else {
 	            result.image.setImageBitmap(result.bm);
 	        }
-        	//CommonUtil.bitmap_003[result.position] = result.bm;
         }
 	};
 	//조회한다.

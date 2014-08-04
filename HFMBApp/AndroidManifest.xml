@@ -115,6 +115,15 @@
                 android:value="com.hfmb.hfmbapp.MainActivity" />
         </activity>
         
+        <activity
+            android:name="com.hfmb.hfmbapp.HfmbActivityCompanyIntro"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hfmb.hfmbapp.MainActivity" />
+        </activity>
+        
         <activity android:name="com.hfmb.hfmbapp.CollectionDemoActivity" android:label="@string/demo_collection" />
         
     </application>

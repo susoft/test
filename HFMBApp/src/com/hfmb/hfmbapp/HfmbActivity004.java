@@ -399,6 +399,17 @@ public class HfmbActivity004 extends FragmentActivity {
 		}
 	}
 	
+	//회사소개 페이지 이동.
+	public void goCompanyIntro(String position, String companyCd) {
+		Log.i("Tag", "회사소개 페이지 이동....");
+		
+		Intent intent = new Intent(getApplicationContext(), HfmbActivityCompanyIntro.class);
+		intent.putExtra("position", position);
+		intent.putExtra("companyCd", companyCd);
+		
+		startActivity(intent);
+	}
+	
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */

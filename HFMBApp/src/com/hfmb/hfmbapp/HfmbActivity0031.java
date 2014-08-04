@@ -36,6 +36,7 @@ import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 import com.hfmb.hfmbapp.util.SpinnerAdapter;
 
+//사용하지 않는 클래스임.... -- 삭제해야함....
 public class HfmbActivity0031 extends FragmentActivity {
 	
 	private static final String TAG = "HfmbActivity0031";
