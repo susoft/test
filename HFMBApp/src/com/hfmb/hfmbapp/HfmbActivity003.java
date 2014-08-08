@@ -59,11 +59,10 @@ public class HfmbActivity003 extends FragmentActivity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (!DataUtil.searchYn) {
-			CommonUtil.showMessage(getApplicationContext(), "조회할 권한이 없습니다.");
-			return;
-		}
-		
+		startThread();
+	}
+	
+	public void startThread() {
 		if (flag) {
 			dialog = ProgressDialog.show(this, "", "잠시만 기다려 주세요 ...", true);
 			
@@ -134,8 +133,8 @@ public class HfmbActivity003 extends FragmentActivity {
 		gridLayout.setAdapter(gridAdapter);
 		gridLayout.setOnItemClickListener(mOnItemClickListener);
 		if (gridAdapter.getLayoutResourceId() == R.layout.hfmbactivity_003) {
-			//회원사 삭제는 admin, power 권한만 가능하다. 즉 사무국, 연합회, 교류회 직책을 가지고 있을때만.
-			if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
+			//교류회 삭제는 사무국직원만 가능 하도록 한다.
+			if (DataUtil.insertYn == 1) {
 				gridLayout.setOnItemLongClickListener(mOnItemLongClickListener);
 			}
 		}
@@ -143,10 +142,8 @@ public class HfmbActivity003 extends FragmentActivity {
 	
 	//그리드, 리스트에서 item을 선택하였을때.
 	private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
-		//listview의 item 선택시.
 		@Override    
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			//Log.i("onItemClick", "test");
 			goHfmbActivity004(position);
 	    }
 	};
@@ -156,7 +153,8 @@ public class HfmbActivity003 extends FragmentActivity {
 		Intent intent = new Intent(getApplicationContext(), HfmbActivity004.class);
     	intent.putExtra("meeting_cd", rowItems.get(position).get("meeting_cd"));
     	intent.putExtra("meeting_nm", rowItems.get(position).get("meeting_nm"));
-    	startActivity(intent);
+    	intent.putExtra("position", position);
+    	startActivityForResult(intent, 2);
 	}
 	
 	//그리드, 리스트에서 item을 길게선택하였을때.
@@ -176,11 +174,14 @@ public class HfmbActivity003 extends FragmentActivity {
 	String selfileName;
 	
 	public void modifyMeetingPic(String position, String meetingCd, String meetingNm) {
-		//사무국직원 및 교류회 회장, 총무만 수정가능하도록 한다.
-		if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) {
-			return;
-		}
-		
+
+      	if (DataUtil.insertYn == 2) {
+      		if (!meetingCd.equals(DataUtil.meetingCd)) {
+      			openDialogAlert("교류회 회장, 총무는 자신의 교류회만 수정 가능 합니다.");
+      			return;
+      		}
+      	}	
+      	
 		this.position = position;
 		this.meetingCd = meetingCd;
 		this.meetingNm = meetingNm;
@@ -224,6 +225,31 @@ public class HfmbActivity003 extends FragmentActivity {
 				
 				break;
 			}
+			break;
+		case 2://회원사 화면에서 리턴될때.
+			switch (resultCode) {
+			case -1 ://데이터 가져올떄.
+				
+				//삭제된 정보가 존재하면 재조회한다.
+				String delflag = data.getExtras().getString("delflag");
+				//int positionTemp = Integer.parseInt(data.getExtras().getString("position"));
+				//int delCount = Integer.parseInt(data.getExtras().getString("delCount"));
+				
+				if (delflag.equals("1")) {
+					flag = true;
+					startThread();
+					
+//					HashMap<String, String> tempMap = rowItems.get(positionTemp);
+//					
+//					tempMap.put("company_count", (Integer.parseInt(tempMap.get("company_count").toString()) - delCount) + "");
+//					
+//					gridAdapter.setData(rowItems);
+//					gridAdapter.notifyDataSetChanged();
+				}
+				
+				break;
+			}
+			break;
 		}
 	}
 	
@@ -232,7 +258,6 @@ public class HfmbActivity003 extends FragmentActivity {
 		View row = gridAdapter.getView(idx, null, null);
 		ViewHolder viewHolder = (ViewHolder)row.getTag();
 		viewHolder.image.setImageBitmap(bitmap);
-		
 		gridAdapter.notifyDataSetChanged();*/
 		
 		updateInfo();
@@ -346,10 +371,8 @@ public class HfmbActivity003 extends FragmentActivity {
 		if (count > 0) {
 			//삭제확인 다이얼로그
 	    	openDialogDelete("선택한 교류회 정보를 삭제하시겠습니까?");
-			
 		} else {
 			openDialogAlert("선택된 정보가 없습니다.");
-			//CommonUtil.showMessage(getApplicationContext(), "선택된 정보가 없습니다.");
 		}
 	}
 	
@@ -363,7 +386,7 @@ public class HfmbActivity003 extends FragmentActivity {
     	List<Integer> selectedCheckBox = gridAdapter.getSelectedCheckBox();
     	int count = selectedCheckBox.size();
     	for (int i = 0; i < count; i++) {
-    		strbuf.append(rowItems.get(selectedCheckBox.get(i)).get("meeting_cd") + "|");
+    		strbuf.append(rowItems.get(selectedCheckBox.get(i)).get("meeting_cd") + "#");
     	}
     	
 		Log.i("parameter ====== " , strbuf.toString()); 
@@ -374,10 +397,13 @@ public class HfmbActivity003 extends FragmentActivity {
 		HttpConnectServer server = new HttpConnectServer();
 		server.sendByHttp(strbuf, urlbuf.toString());
 		
-		//Log.i("json:", resultInfo.toString());
+		setOrganListView(R.layout.hfmbactivity_003);
+		_menu.clear();
+		getMenuInflater().inflate(R.menu.main, _menu);
 		
-		getOrganData();
-		gridAdapter.notifyDataSetChanged();
+		//재조회한다.
+		flag = true;
+		startThread();
 	}
 	
 	@Override
@@ -564,18 +590,21 @@ class GridViewAdapter extends ArrayAdapter<HashMap<String,String>> {
       	holder.image.setTag(R.string.meeting_cd, data.get(position).get("meeting_cd"));
       	holder.image.setTag(R.string.meeting_nm, data.get(position).get("meeting_nm"));
       	
-      	holder.image.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-            	ImageView imgView = (ImageView) v;
-                
-            	String position = (String)imgView.getTag(R.string.position);
-            	String meetingCd = (String)imgView.getTag(R.string.meeting_cd);
-                String meetingNm = (String)imgView.getTag(R.string.meeting_nm);
-                
-                modifyMeeting(position, meetingCd, meetingNm);
-            }
-        });
+      	//교류회 사진은 사무국직원과 교류회 회장, 총무만 수정가능하도록 한다.
+  		if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
+  			holder.image.setOnClickListener(new OnClickListener() {
+  	            public void onClick(View v) {
+  	                // TODO Auto-generated method stub
+  	            	ImageView imgView = (ImageView) v;
+  	                
+  	            	String position = (String)imgView.getTag(R.string.position);
+  	            	String meetingCd = (String)imgView.getTag(R.string.meeting_cd);
+  	                String meetingNm = (String)imgView.getTag(R.string.meeting_nm);
+  	                
+  	                modifyMeeting(position, meetingCd, meetingNm);
+  	            }
+  	        });
+  		}
 		
       	if (layoutResourceId == R.layout.hfmbactivity_003_check) {
 			holder.checkbox.setTag(position);

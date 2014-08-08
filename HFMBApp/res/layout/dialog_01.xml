@@ -7,6 +7,7 @@
     tools:context=".MainActivity" >
     
     <LinearLayout 
+        android:id="@+id/dial_linearlayout"        
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:paddingLeft="5dp"

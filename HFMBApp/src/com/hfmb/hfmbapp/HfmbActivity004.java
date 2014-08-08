@@ -46,6 +46,7 @@ public class HfmbActivity004 extends FragmentActivity {
 	
 	private String meeting_cd;
 	private String meeting_nm;
+	private String positionTemp;
 	
 	private HfmbListAdapter listAdapter;
 	private ListView listView;
@@ -63,14 +64,10 @@ public class HfmbActivity004 extends FragmentActivity {
 		searchFlag = true;
 		lastDataFlag = false;
 		
-		if (!DataUtil.searchYn) {
-			openDialogAlert("조회할 권한이 없습니다.");
-			return;
-		}
-		
 		Intent intent = getIntent();
 		meeting_cd = intent.getStringExtra("meeting_cd");
 		meeting_nm = intent.getStringExtra("meeting_nm");
+		positionTemp = intent.getStringExtra("position");
 		
 		//콤보박스 세팅.
 		setSpinner();
@@ -89,7 +86,7 @@ public class HfmbActivity004 extends FragmentActivity {
 		listView.setOnItemClickListener(mOnItemClickListener);
 		listView.setOnScrollListener(mOnScrollListener);
 		
-		//회원사 삭제는 admin, power 권한만 가능하다. 즉 사무국, 연합회, 교류회 직책을 가지고 있을때만.
+		//회원사 삭제는  사무국직원과 교류회 회장, 총무만 가능하다.
 		if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
 			listView.setOnItemLongClickListener(mOnItemLongClickListener);
 		}
@@ -254,8 +251,6 @@ public class HfmbActivity004 extends FragmentActivity {
 		String itemcd = a13Adapter.getSelectedItemCd();
 		String item = a13Adapter.getSelectedItem();
 		
-		//Log.i("Search", hfmbSrchNm + "-" + item + "-" + itemcd);
-    	
     	if(itemcd == null) itemcd = "";
     	if(item == null) item = "";
     	if(hfmbSrchNm == null) hfmbSrchNm = "";
@@ -327,6 +322,13 @@ public class HfmbActivity004 extends FragmentActivity {
 			goImageInfoActivity(R.layout.hfmbactivity_listview1);
 			_menu.clear();
 			getMenuInflater().inflate(R.menu.main01, _menu);
+			
+			try {
+            	if (listView.getFooterViewsCount() > 0) listView.removeFooterView(footer);
+            } catch (ClassCastException e) {
+            	Log.e("Tag", e.toString());
+            }
+			
 			return false;
 	    }
 	};
@@ -365,6 +367,8 @@ public class HfmbActivity004 extends FragmentActivity {
 			}
 		}
 		
+		Log.i("Tag", "position = " + position);
+		
 		Intent intent = new Intent(getApplicationContext(), HfmbActivity007.class);
 		intent.putExtra("position", position);
 		intent.putExtra("company_cd", rowItems.get(position).get("company_cd"));
@@ -400,12 +404,15 @@ public class HfmbActivity004 extends FragmentActivity {
 	}
 	
 	//회사소개 페이지 이동.
-	public void goCompanyIntro(String position, String companyCd) {
-		Log.i("Tag", "회사소개 페이지 이동....");
+	public void goCompanyIntro(int position) {
+		Log.i("Tag", "회사소개 페이지 이동...." + position);
+		
+		HashMap<String,String> tempMap = (HashMap<String,String>)listAdapter.getItem(position);
 		
 		Intent intent = new Intent(getApplicationContext(), HfmbActivityCompanyIntro.class);
 		intent.putExtra("position", position);
-		intent.putExtra("companyCd", companyCd);
+		intent.putExtra("companyCd", tempMap.get("company_cd"));
+		intent.putExtra("companyNm", tempMap.get("company_nm"));
 		
 		startActivity(intent);
 	}
@@ -490,14 +497,16 @@ public class HfmbActivity004 extends FragmentActivity {
 	    return super.onMenuItemSelected(featureId, item);
 	}
 	
+	private int delCount = 0;
+	
 	//선택한 회원사 정보를 삭제한다.
 	public void delete() {
 		List<Integer> selectedCheckBox = listAdapter.getSelectedCheckBox();
-		int count = selectedCheckBox.size();
-		if (count > 0) {
+		delCount = selectedCheckBox.size();
+		if (delCount > 0) {
 			if (DataUtil.insertYn != 1) {
 				String meetingCdTemp = "";
-		    	for (int i = 0; i < count; i++) {
+		    	for (int i = 0; i < delCount; i++) {
 		    		meetingCdTemp = rowItems.get(selectedCheckBox.get(i)).get("meeting_cd");
 		    		if (!DataUtil.meetingCd.equals(meetingCdTemp)) {
 		    			//CommonUtil.showMessage(getApplicationContext(), "자신이 속한 교류회의 회원사만 삭제 가능합니다.");
@@ -506,7 +515,7 @@ public class HfmbActivity004 extends FragmentActivity {
 		    		}
 		    	}
 			}
-	    	
+			
 			//삭제확인 다이얼로그
 	    	openDialogDelete("선택한 회원사 정보를 삭제하시겠습니까?");
 			
@@ -539,12 +548,32 @@ public class HfmbActivity004 extends FragmentActivity {
 		
 		//Log.i("json:", resultInfo.toString());
 		
+		goImageInfoActivity(R.layout.hfmbactivity_listview);
+		_menu.clear();
+		getMenuInflater().inflate(R.menu.main, _menu);
+		
+		//재조회한다.
+		lastDataFlag = false;
+		searchFlag = true;
 		searchInfo();
+		
+		delflag = "1";
 	}
+	
+	private String delflag = "0";
 	
 	@Override
     public void onBackPressed() {
     	// TODO Auto-generated method stub
+		Intent intent = getIntent();
+        
+    	intent.putExtra("meeting_cd", meeting_cd);
+    	intent.putExtra("delflag", delflag);
+    	intent.putExtra("position", positionTemp);
+    	intent.putExtra("delCount", delCount);
+    	
+        setResult(RESULT_OK, intent);
+        
 		if (listAdapter == null) {
 			super.onBackPressed();
 		} else if (listAdapter.getResource() == R.layout.hfmbactivity_listview) {

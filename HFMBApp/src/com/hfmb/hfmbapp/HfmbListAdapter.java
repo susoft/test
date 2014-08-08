@@ -61,6 +61,7 @@ public class HfmbListAdapter extends BaseAdapter {
 			
 			if (resource == R.layout.hfmbactivity_listview) {
 				holder.imgbtn_02 = (ImageView) convertView.findViewById(R.id.imgbtn_02);
+				holder.imgbtn_03 = (ImageView) convertView.findViewById(R.id.imgbtn_03);
 			} else {
 				holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
 			}
@@ -97,8 +98,9 @@ public class HfmbListAdapter extends BaseAdapter {
 			holder.imgbtn_02.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 			
 			//회사 선택시 회사소개 이동 이벤트..
-			holder.company_nm.setTag(photoStr);
-			holder.company_nm.setOnClickListener(goClickListener);
+			holder.imgbtn_03.setTag(position);
+			holder.imgbtn_03.setOnClickListener(goClickListener);
+			holder.imgbtn_03.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 			
 		} else {
 			holder.checkbox.setTag(position);
@@ -131,8 +133,8 @@ public class HfmbListAdapter extends BaseAdapter {
 			case R.id.imgbtn_02:
 				callTel((Integer)v.getTag());
 				break;
-			case R.id.company_nm:
-				goCompanyIntro("0", (String)v.getTag());
+			case R.id.imgbtn_03:
+				goCompanyIntro((Integer)v.getTag());
 				break;
 			}
 		}
@@ -147,8 +149,8 @@ public class HfmbListAdapter extends BaseAdapter {
 	}
 	
 	//회사소개 페이지 이동.
-	public void goCompanyIntro(String position, String companyCd) {
-		((HfmbActivity004)context).goCompanyIntro(position, companyCd);
+	public void goCompanyIntro(int position) {
+		((HfmbActivity004)context).goCompanyIntro(position);
 	}
 	
 	/**
@@ -233,7 +235,8 @@ public class HfmbListAdapter extends BaseAdapter {
 		TextView addr;
 		TextView phone1;
 		TextView phone2;
-		ImageView imgbtn_02;
+		ImageView imgbtn_02;//전화기
+		ImageView imgbtn_03;//overflow
 		CheckBox checkbox;
 		
 		Bitmap bm;

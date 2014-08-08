@@ -1,9 +1,13 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:background="#ffffff"
     tools:context=".MainActivity" >
+<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
     
     <LinearLayout 
         android:id="@+id/hfmb_005_linear_01"
@@ -410,6 +414,7 @@
         android:id="@+id/hfmb_005_linear_10"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
+    	android:layout_below="@+id/hfmb_005_linear_01"
     	android:layout_alignParentBottom="true"
     	android:layout_margin="10dp"
     	android:orientation="horizontal" >
@@ -433,3 +438,4 @@
 		
     </LinearLayout>
 </RelativeLayout>
+</ScrollView>

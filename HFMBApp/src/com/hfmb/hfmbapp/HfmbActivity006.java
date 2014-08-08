@@ -11,9 +11,11 @@ import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -62,39 +64,48 @@ public class HfmbActivity006 extends FragmentActivity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
-		if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) {
-			CommonUtil.showMessage(getApplicationContext(), "등록할 권한이 없습니다.");
-			return;
-		}
-		
-		if (DataUtil.insertYn == 3) {
-			CommonUtil.showMessage(getApplicationContext(), "이미 등록 되어 있습니다. 신규회원사 등록은 교류회 회장, 총무 및 연합회 소속자만 가능합니다.");
-			return;
-		}
-		
 		if (!flag) {
 			dialog = ProgressDialog.show(this, "", "잠시만 기다려 주세요 ...", true);
 			
-			new Thread(new Runnable() {           
-	            public void run() { 
-	                while (true) {   
-	                    try {
-	                    	//데이터 조회.
-	                    	getOrganData();
-	                    	
-	                    	Thread.sleep(1000);
-	                    	if (meetingRowItems != null) {
-		                    	Message msg = handler13.obtainMessage();
-		                    	handler13.sendMessage(msg);
-		                        break;
-	                    	}
-	                        
-	                    } catch (InterruptedException ie) {
-	                        ie.printStackTrace();
-	                    }
-	                }
-	            }
-	        }).start();
+			//로그인 정보가 사무국직원일떄만 교류회 전체 리스트를 조회한다.
+			if (DataUtil.insertYn == 1) {
+				new Thread(new Runnable() {           
+		            public void run() { 
+		                while (true) {   
+		                    try {
+		                    	//데이터 조회.
+		                    	getOrganData();
+		                    	
+		                    	Thread.sleep(1000);
+		                    	if (meetingRowItems != null) {
+			                    	Message msg = handler13.obtainMessage();
+			                    	handler13.sendMessage(msg);
+			                        break;
+		                    	}
+		                        
+		                    } catch (InterruptedException ie) {
+		                        ie.printStackTrace();
+		                    }
+		                }
+		            }
+		        }).start();
+			} else {
+				a13s = new String[2];
+				a13cds = new String[2];
+				
+				a13s[0] = "선택";
+				a13cds[0] = "";
+				
+				a13s[1] = DataUtil.meetingNm;
+				a13cds[1] = DataUtil.meetingCd;
+				
+				setSpinner13();
+				
+				//a13Adapter
+		    	Spinner spin13 = (Spinner)findViewById(R.id.hfmb_006_Spinner_01);
+		    	int  position13 = a13Adapter.getPosition(DataUtil.meetingCd);
+		    	spin13.setSelection(position13);
+			}
 			
 			new Thread(new Runnable() {           
 	            public void run() { 
@@ -267,12 +278,18 @@ public class HfmbActivity006 extends FragmentActivity {
 	private OnDateSetListener listener = new OnDateSetListener() {		
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			TextView textView = (TextView) findViewById(R.id.hfmb_006_edit_012);//입회일자(gita1)
 			monthOfYear++;
+			
 			String month = "";
 			if (monthOfYear < 10) month = "0" + monthOfYear;
 			else month = "" + monthOfYear;
-			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			
+			String day = "";
+			if (dayOfMonth < 10) day = "0" + dayOfMonth;
+			else day = "" + dayOfMonth;
+			
+			TextView textView = (TextView) findViewById(R.id.hfmb_006_edit_012);//입회일자(gita1)
+			textView.setText(year + "." + month + "." + day);
 			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
 		}
 	};
@@ -319,7 +336,7 @@ public class HfmbActivity006 extends FragmentActivity {
 
     		setSpinner13();
     		
-            dialog.dismiss();
+            //dialog.dismiss();
         }
     };
 	
@@ -355,7 +372,8 @@ public class HfmbActivity006 extends FragmentActivity {
             super.handleMessage(msg);
             setSpinner14();
     		setSpinner15();
-            //dialog.dismiss();
+    		
+    		dialog.dismiss();
         }
     };
 	
@@ -394,7 +412,7 @@ public class HfmbActivity006 extends FragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		CommonUtil.showMessage("test", "[" + requestCode + "]-[" + resultCode+"]");
+		CommonUtil.showMessage("Tag", "[" + requestCode + "]-[" + resultCode+"]");
 		switch (requestCode) {
 		case 1://이미지선택시.
 			switch (resultCode) {
@@ -544,7 +562,7 @@ public class HfmbActivity006 extends FragmentActivity {
 	Handler handler = new Handler(){
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            CommonUtil.showMessage(getApplicationContext(), message);
+            //CommonUtil.showMessage(getApplicationContext(), message);
             
             dialog.dismiss();
             
@@ -568,12 +586,15 @@ public class HfmbActivity006 extends FragmentActivity {
 		            }
             	}
             }
+            
+            openDialogAlert(message);
         }
     };
     
     public String message;
     public StringBuffer resultInfo;
-	
+    private boolean resultFlag = false;
+    
 	//저장한다.
 	public void saveInfo() {
     	StringBuffer urlbuf = new StringBuffer();
@@ -644,7 +665,25 @@ public class HfmbActivity006 extends FragmentActivity {
     	
     	HttpConnectServer server = new HttpConnectServer();
     	resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
-    	message = "정상처리되었습니다.";
+    	//message = "정상처리되었습니다.";
+    	
+    	Log.i("json:", resultInfo.toString());
+		
+		HashMap<String, String> results = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameResult, "Result");
+		
+		if (results != null) {
+			if (results.get("error").equals("0")) {
+				message = "정상 처리 되었습니다.";
+				resultFlag = true;
+			} else {
+				message = "비정상 처리 되었습니다.";
+				resultFlag = false;
+			}
+		} else {
+			message = "비정상처리되었습니다.";
+			resultFlag = false;
+		}
+		
 		//server connecting... login check...
 //		HttpConnectServer server = new HttpConnectServer();
 //		StringBuffer resultInfo = server.sendByHttpPost(urlbuf.toString(), nameValuePairs);
@@ -735,4 +774,24 @@ public class HfmbActivity006 extends FragmentActivity {
 	    
 	    return super.onMenuItemSelected(featureId, item);
 	}
+	
+    //회원사 생성 성공시.
+    public void openDialogAlert(String title) {
+		//확인 다이얼로그
+		new AlertDialog.Builder(HfmbActivity006.this)
+        .setTitle(title)
+		.setPositiveButton( "확인", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				if (resultFlag) finished();
+			}
+		})
+        .show();
+	}
+    
+    public void finished() {
+    	this.finish();
+    }
+  	
 }

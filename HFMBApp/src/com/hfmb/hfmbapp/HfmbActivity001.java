@@ -65,11 +65,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
-        //actionBar.setHomeButtonEnabled(true);
-        //actionBar.setTitle("연합회소개    " + CommonUtil.ceoNm + "님 로그인");
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-
+        
         // Specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
@@ -98,14 +94,14 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
                             .setTabListener(this));
         }
         
-        // Show the Up button in the action bar.
-     	setupActionBar();
-     	
-        if (DataUtil.flag) {
-	        //직원 조회하기.
+        //사무국직원 조회하기. - 회원사만 조회 가능하도록...
+        if (DataUtil.searchYn) {
 	        mTask.execute();
         }
         listAdapter = new HfmbListAdapter(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
+        
+        // Show the Up button in the action bar.
+     	setupActionBar();
     }
     
     public static List<HashMap<String, String>> rowItems_001;
@@ -125,7 +121,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         }
 	};
 	
-	//조회한다.
+	//사무국정보를 조회한다.
   	public void searchData() {
   		rowItems_001 = null;
   		
@@ -135,7 +131,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
       	
       	strbuf.append("srch_gubun=0");
   		
-  		//Log.i("parameter ====== " , strbuf.toString()); 
+  		Log.i("HfmbActivity001" , strbuf.toString()); 
   		
       	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_0011.jsp");
       	
@@ -143,7 +139,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
   		HttpConnectServer server = new HttpConnectServer();
   		StringBuffer resultInfo = server.sendByHttp(strbuf, urlbuf.toString());
   		
-  		Log.i("json:", resultInfo.toString());
+  		Log.i("HfmbActivity001", resultInfo.toString());
   		
   		rowItems_001 = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
   		
@@ -166,10 +162,6 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
-    
-	
-	
-    
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -364,59 +356,25 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
             return rootView;
         }
         
-        /*//화면 확대 가능 화면으로 이동...
-        private OnLongClickListener mOnLongClickListener = new OnLongClickListener() {
-    		@Override    
-    		public boolean onLongClick(View view) {
-    			
-    			int display = 1;
-    			int index = 0;
-    	    	
-    			int id = view.getId();
-				if (id == R.id.btnGlasses01) {
-					//Log.e("LongClick", "회장인사말");
-                	index = 1;
-				} else if (id == R.id.imageview02) {
-					//Log.e("LongClick", "중소기업융합이란");
-                	index = 2;
-				} else if (id == R.id.imageview03) {
-					//Log.e("LongClick", "찾아오시는길");
-                	index = 3;
-				}
-    			
-    			goZoom(display, index);
-    			
-    			return true;
-    	    }
-    	};*/
-    	
     	private OnClickListener mOnClickListener = new OnClickListener() {
     		@Override    
     		public void onClick(View view) {
-    			
-    			int display = 1;
     			int index = 0;
-    	    	
+    			int display = 1;
     			int id = view.getId();
 				if (id == R.id.btnGlasses01) {
-					//Log.e("LongClick", "회장인사말");
                 	index = 1;
                 	display = 1;
 				} else if (id == R.id.btnGlasses02) {
-					//Log.e("LongClick", "중소기업융합이란");
                 	index = 2;
                 	display = 2;
 				} else if (id == R.id.btnGlasses03) {
-					//Log.e("LongClick", "찾아오시는길");
                 	index = 3;
                 	display = 3;
 				}
-    			
     			goZoom(display, index);
-    			
     	    }
     	};
-    	
     	
     	public void goZoom(int display, int index) {
     		Intent intent = new Intent( this.getActivity(), HfmbActivityZoom.class);
@@ -443,7 +401,9 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		if (DataUtil.searchYn) {
+			getMenuInflater().inflate(R.menu.main, menu);
+        }
 		return true;
 	}
 	

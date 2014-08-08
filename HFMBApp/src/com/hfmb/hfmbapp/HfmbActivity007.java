@@ -96,26 +96,45 @@ public class HfmbActivity007 extends FragmentActivity {
 	            }
 	        }).start();
 			
-			new Thread(new Runnable() {           
-	            public void run() { 
-	                while (true) {   
-	                    try {
-	                    	//데이터 조회.
-	                    	getOrganData();
-	                    	
-	                    	Thread.sleep(1000);
-	                    	if (meetingRowItems != null && flagCode) {
-		                    	Message msg = handler13.obtainMessage();
-		                    	handler13.sendMessage(msg);
-		                        break;
-	                    	}
-	                        
-	                    } catch (InterruptedException ie) {
-	                        ie.printStackTrace();
-	                    }
-	                }
-	            }
-	        }).start();
+			//로그인 정보가 사무국직원일떄만 교류회 전체 리스트를 조회한다.
+			if (DataUtil.insertYn == 1) {
+				new Thread(new Runnable() {           
+		            public void run() { 
+		                while (true) {   
+		                    try {
+		                    	//데이터 조회.
+		                    	getOrganData();
+		                    	
+		                    	Thread.sleep(1000);
+		                    	if (meetingRowItems != null && flagCode) {
+			                    	Message msg = handler13.obtainMessage();
+			                    	handler13.sendMessage(msg);
+			                        break;
+		                    	}
+		                        
+		                    } catch (InterruptedException ie) {
+		                        ie.printStackTrace();
+		                    }
+		                }
+		            }
+		        }).start();
+			} else {
+				a13s = new String[2];
+				a13cds = new String[2];
+				
+				a13s[0] = "선택";
+				a13cds[0] = "";
+				
+				a13s[1] = DataUtil.meetingNm;
+				a13cds[1] = DataUtil.meetingCd;
+				
+				setSpinner13();
+				
+				//a13Adapter
+		    	Spinner spin13 = (Spinner)findViewById(R.id.hfmb_007_Spinner_01);
+		    	int  position13 = a13Adapter.getPosition(DataUtil.meetingCd);
+		    	spin13.setSelection(position13);
+			}
 		}
 		
 		flag = true;
@@ -266,15 +285,22 @@ public class HfmbActivity007 extends FragmentActivity {
 		DatePickerDialog dialog = new DatePickerDialog(this, listener, yy, mm, dd);
 		dialog.show();
 	}
+	
 	private OnDateSetListener listener = new OnDateSetListener() {		
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			TextView textView = (TextView) findViewById(R.id.hfmb_007_edit_012);//입회일자(gita1)
 			monthOfYear++;
+			
 			String month = "";
 			if (monthOfYear < 10) month = "0" + monthOfYear;
 			else month = "" + monthOfYear;
-			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			
+			String day = "";
+			if (dayOfMonth < 10) day = "0" + dayOfMonth;
+			else day = "" + dayOfMonth;
+			
+			TextView textView = (TextView) findViewById(R.id.hfmb_007_edit_012);//입회일자(gita1)
+			textView.setText(year + "." + month + "." + day);
 			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
 		}
 	};
@@ -318,7 +344,7 @@ public class HfmbActivity007 extends FragmentActivity {
     		setSpinner13();
 
     		getSingleData();
-    		
+        	
             dialog.dismiss();
         }
     };
@@ -332,7 +358,7 @@ public class HfmbActivity007 extends FragmentActivity {
     	StringBuffer strbuf = new StringBuffer();
     	StringBuffer urlbuf = new StringBuffer();
     	
-		//Log.i("parameter ====== " , strbuf.toString()); 
+		Log.i("parameter ====== " , strbuf.toString()); 
 		
     	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_Code.jsp");
     	
@@ -355,6 +381,13 @@ public class HfmbActivity007 extends FragmentActivity {
             super.handleMessage(msg);
             setSpinner14();//교류회직책
     		setSpinner15();//연합회조직
+    		
+    		if (DataUtil.insertYn != 1) {
+    			getSingleData();
+    			
+    			dialog.dismiss();
+    		}
+    		
     		flagCode = true;
         }
     };

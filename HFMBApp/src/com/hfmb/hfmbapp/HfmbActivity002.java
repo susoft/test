@@ -65,10 +65,7 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setTitle("연합회현황");
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        //actionBar.setHomeButtonEnabled(true);
-
+        
         // Specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -97,15 +94,13 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
                             .setTabListener(this));
         }
         
-        if (DataUtil.flag) {
-        	//역대회장 조회하기.
-        	Log.i("Thread", "mTask.execute start......");
+        //역대회장 조회하기. - 회원사만 조회 가능하도록...
+        if (DataUtil.searchYn) {
 	        mTask.execute();
         }
         
         listAdapter = new HfmbListAdapter1(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview2);
 		
-        
         // Show the Up button in the action bar.
      	setupActionBar();
     }
@@ -150,7 +145,7 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
     	
     	strbuf.append("srch_gubun=0");
 		
-		//Log.i("parameter ====== " , strbuf.toString()); 
+		Log.i("parameter ====== " , strbuf.toString()); 
 		
     	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_002.jsp");
     	
@@ -379,7 +374,9 @@ public class HfmbActivity002 extends FragmentActivity implements ActionBar.TabLi
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		if (DataUtil.searchYn) {
+			getMenuInflater().inflate(R.menu.main, menu);
+        }
 		return true;
 	}
 	@SuppressWarnings("deprecation")

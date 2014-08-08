@@ -150,12 +150,18 @@ public class HfmbActivity005 extends FragmentActivity {
 	private OnDateSetListener listener = new OnDateSetListener() {		
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			TextView textView = (TextView) findViewById(R.id.hfmb_005_edit_10);
 			monthOfYear++;
+			
 			String month = "";
 			if (monthOfYear < 10) month = "0" + monthOfYear;
 			else month = "" + monthOfYear;
-			textView.setText(year + "-" + month + "-" + dayOfMonth);
+			
+			String day = "";
+			if (dayOfMonth < 10) day = "0" + dayOfMonth;
+			else day = "" + dayOfMonth;
+			
+			TextView textView = (TextView) findViewById(R.id.hfmb_005_edit_10);
+			textView.setText(year + "." + month + "." + day);
 			//Toast.makeText(getApplicationContext(), year + "년" + monthOfYear + "월" + dayOfMonth +"일", Toast.LENGTH_SHORT).show();
 		}
 	};
@@ -221,7 +227,7 @@ public class HfmbActivity005 extends FragmentActivity {
 	Handler handler = new Handler(){
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            CommonUtil.showMessage(getApplicationContext(), message);
+            //CommonUtil.showMessage(getApplicationContext(), message);
             
             dialog.dismiss();
             
@@ -245,6 +251,8 @@ public class HfmbActivity005 extends FragmentActivity {
 		            }
             	}
             }
+            
+            openDialogAlert(message);
         }
     };
 	
@@ -285,13 +293,18 @@ public class HfmbActivity005 extends FragmentActivity {
 		if (results != null) {
 			if (results.get("error").equals("0")) {
 				message = "정상 처리 되었습니다.";
+				resultFlag = true;
 			} else {
 				message = "비정상 처리 되었습니다.";
+				resultFlag = false;
 			}
 		} else {
 			message = "비정상처리되었습니다.";
+			resultFlag = false;
 		}
     }
+	
+	private boolean resultFlag = false;
 	
 	List<HashMap<String, String>> rowItems;
 	//회장, 총무 찾기.
@@ -551,4 +564,24 @@ public class HfmbActivity005 extends FragmentActivity {
         }
          
     }
+    
+    //교류회 생성 성공시.
+    public void openDialogAlert(String title) {
+		//확인 다이얼로그
+		new AlertDialog.Builder(HfmbActivity005.this)
+        .setTitle(title)
+		.setPositiveButton( "확인", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				if (resultFlag) finished();
+			}
+		})
+        .show();
+	}
+    
+    public void finished() {
+    	this.finish();
+    }
+  	
 }

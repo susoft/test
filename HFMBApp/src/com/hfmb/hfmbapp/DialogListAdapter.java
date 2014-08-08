@@ -1,10 +1,14 @@
 package com.hfmb.hfmbapp;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.HttpConnectServer;
+
 public class DialogListAdapter extends BaseAdapter {
 	
 	private Context context;
@@ -22,6 +29,9 @@ public class DialogListAdapter extends BaseAdapter {
 	private int resource;
 	private boolean[] thumbnailsselection;
 	private int selectedPosition;
+	private int priveousPosition;
+	private CheckBox priveousCheckbox;
+	private HttpConnectServer server;
 	
 	public DialogListAdapter(Context context, List<HashMap<String, String>> items, int source) {         
 		this.context = context;
@@ -29,6 +39,11 @@ public class DialogListAdapter extends BaseAdapter {
 		this.rowItems = items;
 		
 		this.thumbnailsselection = new boolean[this.rowItems.size()];
+		
+		server = new HttpConnectServer();
+		
+		priveousPosition = -1;
+        priveousCheckbox = null;
 	}
 	
 	/*private view holder class*/    
@@ -37,8 +52,13 @@ public class DialogListAdapter extends BaseAdapter {
 		TextView ceo_nm;
 		TextView company_nm;
 		TextView addr;
-		TextView phone1;
+		TextView meeting_nm;
 		CheckBox checkbox;
+		
+		Bitmap bm;
+		String imageUrl;
+		String path;
+		String company_cd;
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {   
@@ -53,7 +73,7 @@ public class DialogListAdapter extends BaseAdapter {
 			holder.ceo_nm = (TextView) convertView.findViewById(R.id.ceo_nm);
 			holder.company_nm = (TextView) convertView.findViewById(R.id.company_nm);
 			holder.addr = (TextView) convertView.findViewById(R.id.addr);
-			holder.phone1 = (TextView) convertView.findViewById(R.id.phone1);
+			holder.meeting_nm = (TextView) convertView.findViewById(R.id.meeting_nm);
 			holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
 			
 			convertView.setTag(holder);
@@ -64,36 +84,50 @@ public class DialogListAdapter extends BaseAdapter {
 		holder.ceo_nm.setText(rowItems.get(position).get("ceo_nm"));
 		holder.company_nm.setText(rowItems.get(position).get("company_nm"));
 		holder.addr.setText(rowItems.get(position).get("addr"));
-		holder.phone1.setText(rowItems.get(position).get("phone1"));
+		holder.meeting_nm.setText(rowItems.get(position).get("meeting_nm") + " 교류회");
 		
 		holder.checkbox.setTag(position);
 		holder.checkbox.setChecked(thumbnailsselection[position]);
         holder.checkbox.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+            	
+            	if (priveousPosition > -1) {
+            		priveousCheckbox.setChecked(false);
+                    thumbnailsselection[priveousPosition] = false;
+            	}
+            	
                 CheckBox cb = (CheckBox) v;
                 int id = (Integer)cb.getTag();
                 if (thumbnailsselection[id]){
                     cb.setChecked(false);
                     thumbnailsselection[id] = false;
                     selectedPosition = -1;
+                    priveousPosition = -1;
+                    priveousCheckbox = null;
                 } else {
                     cb.setChecked(true);
                     thumbnailsselection[id] = true;
                     selectedPosition = id;
+                    priveousPosition = id;
+                    priveousCheckbox = cb;
                 }
             }
         });
-		
+        
+        //이미지
+		String photoStr = rowItems.get(position).get("company_cd");
+		if (photoStr != null && !photoStr.equals("")) {
+			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr + ".jpg";
+			holder.path = context.getApplicationContext().getCacheDir().getPath();
+			holder.company_cd = photoStr;
+			new ImageCallTask().execute(holder);
+		} else {
+			holder.imgbtn_01.setImageResource(R.drawable.empty_photo);
+		}
+			
 		return convertView;
 	}
-	
-	private View.OnClickListener goClickListener = new View.OnClickListener() {
-		@Override
-        public void onClick(View v) {
-			Log.i("tel", "");
-		}
-	};
 	
 	/**
 	 * @return the rowItems
@@ -107,6 +141,20 @@ public class DialogListAdapter extends BaseAdapter {
 	 */
 	public int getSelectedPosition() {
 		return selectedPosition;
+	}
+	
+	/**
+	 * @return the selectedPosition
+	 */
+	public int getPriveousPosition() {
+		return priveousPosition;
+	}
+	
+	/**
+	 * @return 
+	 */
+	public void setPriveousPosition(int priveousPosition) {
+		this.priveousPosition = priveousPosition;
 	}
 
 	/**
@@ -133,5 +181,43 @@ public class DialogListAdapter extends BaseAdapter {
 	@Override    
 	public long getItemId(int position) {         return rowItems.indexOf(getItem(position));     }
 	
+	//이미지정보 가져오기.
+	public class ImageCallTask extends AsyncTask<ViewHolder, Void, ViewHolder> {
+		@Override
+		protected ViewHolder doInBackground(ViewHolder... params) {
+        	ViewHolder viewHolder = params[0];
+            try {
+            	//캐쉬폴더에 존재하면 그걸 보여준다.
+            	File file = new File(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
+            	
+            	if (file.isFile()) {
+            		Log.e("Tag","File : " + file.getPath());
+            		viewHolder.bm = BitmapFactory.decodeFile(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
+            	} else {
+            		viewHolder.bm = searchData(viewHolder.imageUrl);
+                	
+                	//압축한 파일을 저장한다.
+        			CommonUtil.SaveBitmapToFileCache(viewHolder.bm, viewHolder.company_cd + ".jpg", viewHolder.path);
+        			Log.e("Tag","File : " + viewHolder.company_cd);
+            	}
+            } catch (Exception e) {
+                Log.e("net","Not File : " + viewHolder.imageUrl);
+            }
+            return viewHolder;
+        }
+		@Override
+        protected void onPostExecute(ViewHolder result) {
+        	if (result.bm == null) {
+	            result.imgbtn_01.setImageResource(R.drawable.empty_photo);
+	        } else {
+	            result.imgbtn_01.setImageBitmap(result.bm);
+	        }
+        }
+	};
+	
+	//조회한다.
+  	public Bitmap searchData(String imageUrl) {
+    	return server.LoadImage(imageUrl);
+  	}
 }
 

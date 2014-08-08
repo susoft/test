@@ -1,5 +1,6 @@
 package com.hfmb.hfmbapp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,8 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;
@@ -126,7 +131,7 @@ public class MainActivity extends Activity {
         }
     };
     
-    //조회한다.
+    //로그인정보 체크
   	public HashMap<String, String> searchData() {
   		HashMap<String, String> rowItem = null;
   		
@@ -153,29 +158,8 @@ public class MainActivity extends Activity {
   			return rowItem;//에러발생.
   		}
   		
-  		List<HashMap<String, String>> rowItems = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
+  		rowItems = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
   		
-  		if (rowItems != null) {
-  			if (rowItems.size() > 0) {
-  				rowItem = rowItems.get(0);
-  				
-				//교류회등록가능 사용자. 1=admin, 2=power, 3=general
-  				DataUtil.searchYn = true;
-  				DataUtil.insertYn = Integer.parseInt(rowItem.get("auth_div_cd"));
-  				DataUtil.meetingCd = rowItem.get("meeting_cd");
-  				DataUtil.ceoNm = rowItem.get("ceo_nm");
-  			} else {
-  				DataUtil.searchYn = false;
-  				DataUtil.insertYn = 0;
-  				DataUtil.meetingCd = "000000";
-  				DataUtil.ceoNm = "Guest";
-  			}
-  		} else {
-  			DataUtil.searchYn = false;
-  			DataUtil.insertYn = 0;
-  			DataUtil.meetingCd = "000000";
-  			DataUtil.ceoNm = "Guest";
-  		}
   		return rowItem;
   	}
     
@@ -193,13 +177,57 @@ public class MainActivity extends Activity {
             	Log.i("thread", "Thread  stopping...... enterrupted Exception...");
             }
     		
-    		if (rowItemData == null) {
-        		openDialogFail(DataUtil.phoneNum + " 로그인 실패! 온라인 여부 또는 가입여부를 확인하세요.");
-        	} else {
-        		openDialogAlert(DataUtil.ceoNm + "님 로그인 하셨습니다.");
-        	}
+    		if (rowItems != null) {
+      			if (rowItems.size() > 0) {
+      				if (rowItems.size() > 1) {
+      					openDial();
+      				} else {
+        				//교류회등록가능 사용자. 1=admin, 2=power, 3=general
+          				selectedLogin(rowItems.get(0));
+      				}
+      			} else {
+      				DataUtil.searchYn = false;
+      				DataUtil.insertYn = 0;
+      				DataUtil.meetingCd = "000000";
+      				DataUtil.meetingNm = "Guest";
+      				DataUtil.ceoNm = "Guest";
+      				
+      				messageLogin();
+      			}
+      		} else {
+      			DataUtil.searchYn = false;
+      			DataUtil.insertYn = 0;
+      			DataUtil.meetingCd = "000000";
+      			DataUtil.meetingNm = "Guest";
+      			DataUtil.ceoNm = "Guest";
+      			
+      			messageLogin();
+      		}
+
+      		Log.d("Tag", DataUtil.insertYn + "-" + DataUtil.searchYn);
         }
     };
+    
+    public void selectedLogin(HashMap<String, String> rowItem) {
+    	//교류회등록가능 사용자. 1=admin, 2=power, 3=general
+		DataUtil.searchYn = true;
+		DataUtil.insertYn = Integer.parseInt(rowItem.get("auth_div_cd"));
+		DataUtil.meetingCd = rowItem.get("meeting_cd");
+		DataUtil.meetingNm = rowItem.get("meeting_nm");
+		DataUtil.ceoNm = rowItem.get("ceo_nm");
+		
+		rowItemData = rowItem;
+		
+		messageLogin();
+    }
+    
+    public void messageLogin() {
+    	if (rowItemData == null) {
+    		openDialogFail(DataUtil.phoneNum + " 로그인 실패! 온라인 여부 또는 가입여부를 확인하세요.");
+    	} else {
+    		openDialogAlert(DataUtil.ceoNm + "님 로그인 하셨습니다.");
+    	}
+    }
     
     //로그인 성공시.
     public void openDialogAlert(String title) {
@@ -234,40 +262,62 @@ public class MainActivity extends Activity {
   			public void onClick(DialogInterface dialog, int which) {
   				// TODO Auto-generated method stub
   				DataUtil.flag = false;
-  				//finishApp();
+  				
+        		DataUtil.searchYn = false;
+      			DataUtil.insertYn = 0;
+      			DataUtil.meetingCd = "000000";
+      			DataUtil.meetingNm = "Guest";
+      			DataUtil.ceoNm = "Guest";
   			}
   		})
           .show();
   	}
   	
-  	public void finishApp() {
-  		this.finish();
-  	}
-	
 	//이미지 클릭시.
 	private OnClickListener mOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
 			// TODO Auto-generated method stub
+			boolean inFlag = true;
+			String message = "";
+			Intent intent = new Intent(getApplicationContext(), HfmbActivity001.class);//연합회소개
 			
-			Intent intent;
-			int id = view.getId();
-			if (id == R.id.icon1) {
+			switch (view.getId()) {
+			case R.id.icon1://연합회소개
 				intent = new Intent(getApplicationContext(), HfmbActivity001.class);
-			} else if (id == R.id.icon2) {
+				break;
+			case R.id.icon2://연합회현황
 				intent = new Intent(getApplicationContext(), HfmbActivity002.class);
-			} else if (id == R.id.icon4) {
+				break;
+			case R.id.icon4://교류회현황
+				if (!DataUtil.searchYn) inFlag = false;
+				message = "교류회현황은 회원사만 조회 가능합니다.";
 				intent = new Intent(getApplicationContext(), HfmbActivity003.class);
-			} else if (id == R.id.icon5) {
+				break;
+			case R.id.icon5://회원사검색
+				if (!DataUtil.searchYn) inFlag = false;
+				message = "회원사검색은 회원사만 조회 가능합니다.";
 				intent = new Intent(getApplicationContext(), HfmbActivity004.class);
-			} else if (id == R.id.icon6) {
+				break;
+			case R.id.icon6://교류회등록
+				//권한체크.. -- 사무국직원만 가능.
+				if (DataUtil.insertYn != 1) inFlag = false;
+				message = "교류회 등록은 사무국직원만 가능합니다.";
 				intent = new Intent(getApplicationContext(), HfmbActivity005.class);
-			} else if (id == R.id.icon7) {
+				break;
+			case R.id.icon7://회원사등록
+				//권한체크.. -- 사무국직원, 교류회 회장, 총무 만 가능.
+				if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) inFlag = false;
+				message = "회원사 등록은 사무국직원과 교류회 회장,총무만 가능합니다.";
 				intent = new Intent(getApplicationContext(), HfmbActivity006.class);
-			} else {
-				intent = new Intent(getApplicationContext(), HfmbActivity001.class);
+				break;
 			}
-			startActivity(intent);
+			
+			if (inFlag) {
+				startActivity(intent);
+			} else {
+				openDialogAlert(message);//진행불가.
+			}
 		}
 	};
 	
@@ -282,6 +332,62 @@ public class MainActivity extends Activity {
 			ab.hide();
 		}
 	}
+	
+	//이미지정보 수정화면을 팝업한다.
+	List<HashMap<String, String>> rowItems;
+	DialogListAdapter listAdapter;
+	AlertDialog subMenu;
+	View convertView;
+	public void openDial() {
+        LayoutInflater mInflater = (LayoutInflater)this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);  
+		convertView = mInflater.inflate(R.layout.dialog_01, null);
+		
+        if (subMenu != null) {
+        	subMenu.dismiss();
+        }
+        
+        ListView list = (ListView)convertView.findViewById(R.id.list);
+        listAdapter = new DialogListAdapter(this, rowItems, R.layout.diallog_listview);
+        list.setAdapter(listAdapter);
+        
+        list.setOnItemClickListener(mOnItemClickListener);
+        
+        LinearLayout dial_linearlayout = (LinearLayout)convertView.findViewById(R.id.dial_linearlayout);
+        dial_linearlayout.setVisibility(View.GONE);
+        
+        subMenu = new AlertDialog.Builder(this)
+        .setTitle("복수 회원사로 다음에서 선택하세요.")
+        .setNeutralButton("선택", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which){
+				int selPosition = listAdapter.getSelectedPosition();
+				selectedLogin(rowItems.get(selPosition));
+			}
+		})
+//        .setNegativeButton( "취소", new DialogInterface.OnClickListener() {
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+//			}
+//		})
+		.setView(convertView)
+        .create();
+        
+        subMenu.show();
+	}
+	
+	//list view 에서 item을 선택하였을때.
+	private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+		@Override    
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			//goLogin(position);
+			selectedLogin(rowItems.get(position));
+	    }
+	};
+	
+//	public void goLogin(int position) {
+//		selectedLogin(rowItems.get(position));
+//	}
     
     /* Start.................
      * Debugging .... Test 하기 위함. (개발자를 위함)

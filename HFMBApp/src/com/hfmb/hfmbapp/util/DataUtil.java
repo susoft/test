@@ -6,6 +6,7 @@ public class DataUtil {
 	public static boolean searchYn;
 	public static int insertYn;
 	public static String meetingCd;
+	public static String meetingNm;
 	public static String ceoNm;
 	
 	public final static String temp_01 = "´Ô ·Î±×ÀÎ";
