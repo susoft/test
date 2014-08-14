@@ -41,7 +41,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
      * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
-    public static HfmbListAdapter listAdapter;
+    public static HfmbListAdapter2 listAdapter;
     
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
@@ -98,7 +98,7 @@ public class HfmbActivity001 extends FragmentActivity implements ActionBar.TabLi
         if (DataUtil.searchYn) {
 	        mTask.execute();
         }
-        listAdapter = new HfmbListAdapter(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
+        listAdapter = new HfmbListAdapter2(this, new ArrayList<HashMap<String, String>>(), R.layout.hfmbactivity_listview);
         
         // Show the Up button in the action bar.
      	setupActionBar();

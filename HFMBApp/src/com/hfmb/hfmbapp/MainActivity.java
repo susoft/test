@@ -1,6 +1,5 @@
 package com.hfmb.hfmbapp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,11 +21,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.DataUtil;

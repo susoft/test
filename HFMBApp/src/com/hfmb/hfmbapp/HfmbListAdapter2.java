@@ -23,16 +23,19 @@ import android.widget.TextView;
 import com.hfmb.hfmbapp.util.CommonUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
-public class HfmbListAdapter extends BaseAdapter {
+//사무국직원 리스트
+public class HfmbListAdapter2 extends BaseAdapter {
 	
 	private Context context;
-	private List<HashMap<String,String>> rowItems;
 	private int resource;
-	private boolean[] thumbnailsselection;
-	private int selectedPosition;
 	private HttpConnectServer server;
 	
-	public HfmbListAdapter(Context context, List<HashMap<String, String>> items, int source) {         
+	private List<HashMap<String,String>> rowItems;
+	private boolean[] thumbnailsselection;
+	
+	private int selectedPosition;
+	
+	public HfmbListAdapter2(Context context, List<HashMap<String, String>> items, int source) {         
 		this.context = context;
 		this.resource = source;
 		this.rowItems = items;
@@ -59,7 +62,7 @@ public class HfmbListAdapter extends BaseAdapter {
 			
 			if (resource == R.layout.hfmbactivity_listview) {
 				holder.imgbtn_02 = (ImageView) convertView.findViewById(R.id.imgbtn_02);
-				holder.imgbtn_03 = (ImageView) convertView.findViewById(R.id.imgbtn_03);
+				convertView.findViewById(R.id.imgbtn_03).setVisibility(View.GONE);
 			} else {
 				holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
 			}
@@ -74,10 +77,6 @@ public class HfmbListAdapter extends BaseAdapter {
 		if (photoStr != null && !photoStr.equals("")) {
 			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr + ".jpg";
 			
-			holder.path = context.getApplicationContext().getCacheDir().getPath();
-			
-			holder.company_cd = photoStr;
-
 			new ImageCallTask().execute(holder);
 		} else {
 			holder.imgbtn_01.setImageResource(R.drawable.empty_photo);
@@ -94,11 +93,6 @@ public class HfmbListAdapter extends BaseAdapter {
 			holder.imgbtn_02.setTag(position);
 			holder.imgbtn_02.setOnClickListener(goClickListener);
 			holder.imgbtn_02.setOnTouchListener(CommonUtil.imgbtnTouchListener);
-			
-			//회사 선택시 회사소개 이동 이벤트..
-			holder.imgbtn_03.setTag(position);
-			holder.imgbtn_03.setOnClickListener(goClickListener);
-			holder.imgbtn_03.setOnTouchListener(CommonUtil.imgbtnTouchListener);
 			
 		} else {
 			holder.checkbox.setTag(position);
@@ -131,9 +125,6 @@ public class HfmbListAdapter extends BaseAdapter {
 			case R.id.imgbtn_02:
 				callTel((Integer)v.getTag());
 				break;
-			case R.id.imgbtn_03:
-				goCompanyIntro((Integer)v.getTag());
-				break;
 			}
 		}
 	};
@@ -144,11 +135,6 @@ public class HfmbListAdapter extends BaseAdapter {
 		Intent intent = new Intent(Intent.ACTION_CALL, u);
         
         context.startActivity(intent);
-	}
-	
-	//회사소개 페이지 이동.
-	public void goCompanyIntro(int position) {
-		((HfmbActivity004)context).goCompanyIntro(position);
 	}
 	
 	/**
@@ -163,7 +149,6 @@ public class HfmbListAdapter extends BaseAdapter {
 	 */
 	public void setRowItems(List<HashMap<String, String>> rowItems) {
 		this.rowItems = rowItems;
-		
 		this.thumbnailsselection = new boolean[this.rowItems.size()];
 	}
 
@@ -234,13 +219,10 @@ public class HfmbListAdapter extends BaseAdapter {
 		TextView phone1;
 		TextView phone2;
 		ImageView imgbtn_02;//전화기
-		ImageView imgbtn_03;//overflow
 		CheckBox checkbox;
 		
 		Bitmap bm;
 		String imageUrl;
-		String path;
-		String company_cd;
 	}
 	
 	//이미지정보 가져오기.
@@ -250,20 +232,6 @@ public class HfmbListAdapter extends BaseAdapter {
         	ViewHolder viewHolder = params[0];
             try {
             	viewHolder.bm = searchData(viewHolder.imageUrl);
-            	
-            	//캐쉬폴더에 존재하면 그걸 보여준다.
-//            	File file = new File(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
-//            	
-//            	if (file.isFile()) {
-//            		Log.e("Tag","File : " + file.getPath());
-//            		viewHolder.bm = BitmapFactory.decodeFile(viewHolder.path + File.separator + viewHolder.company_cd + ".jpg");
-//            	} else {
-//            		viewHolder.bm = searchData(viewHolder.imageUrl);
-//                	
-//                	//압축한 파일을 저장한다.
-//        			CommonUtil.SaveBitmapToFileCache(viewHolder.bm, viewHolder.company_cd + ".jpg", viewHolder.path);
-//        			Log.e("Tag","File : " + viewHolder.company_cd);
-//            	}
             } catch (Exception e) {
                 Log.e("net","Not File : " + viewHolder.imageUrl);
             }

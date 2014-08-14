@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
@@ -53,6 +54,7 @@ public class DialogListAdapter extends BaseAdapter {
 		TextView company_nm;
 		TextView addr;
 		TextView meeting_nm;
+		TextView phone2;
 		CheckBox checkbox;
 		
 		Bitmap bm;
@@ -75,16 +77,22 @@ public class DialogListAdapter extends BaseAdapter {
 			holder.addr = (TextView) convertView.findViewById(R.id.addr);
 			holder.meeting_nm = (TextView) convertView.findViewById(R.id.meeting_nm);
 			holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
+			holder.phone2 = (TextView)convertView.findViewById(R.id.phone2);
 			
 			convertView.setTag(holder);
 		} else {             
 			holder = (ViewHolder) convertView.getTag();         
 		}
-		
-		holder.ceo_nm.setText(rowItems.get(position).get("ceo_nm"));
-		holder.company_nm.setText(rowItems.get(position).get("company_nm"));
-		holder.addr.setText(rowItems.get(position).get("addr"));
-		holder.meeting_nm.setText(rowItems.get(position).get("meeting_nm") + " 교류회");
+		HashMap<String, String> rowItem = rowItems.get(position);
+		holder.ceo_nm.setText(rowItem.get("ceo_nm"));
+		holder.company_nm.setText(rowItem.get("company_nm"));
+		holder.addr.setText(rowItem.get("addr"));
+		if (rowItem.get("meeting_nm") != null) {
+			holder.meeting_nm.setText(rowItem.get("meeting_nm") + " 교류회");
+		} else {
+			holder.meeting_nm.setText("");
+		}
+		holder.phone2.setText(rowItem.get("phone2"));
 		
 		holder.checkbox.setTag(position);
 		holder.checkbox.setChecked(thumbnailsselection[position]);
@@ -116,7 +124,7 @@ public class DialogListAdapter extends BaseAdapter {
         });
         
         //이미지
-		String photoStr = rowItems.get(position).get("company_cd");
+		String photoStr = rowItem.get("company_cd");
 		if (photoStr != null && !photoStr.equals("")) {
 			holder.imageUrl = "http://119.200.166.131:8054/JwyWebService/hfmbProWeb/photo/" + photoStr + ".jpg";
 			holder.path = context.getApplicationContext().getCacheDir().getPath();

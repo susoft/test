@@ -684,23 +684,6 @@ public class HfmbActivity006 extends FragmentActivity {
 			resultFlag = false;
 		}
 		
-		//server connecting... login check...
-//		HttpConnectServer server = new HttpConnectServer();
-//		StringBuffer resultInfo = server.sendByHttpPost(urlbuf.toString(), nameValuePairs);
-//		
-//		Log.i("json:", resultInfo.toString());
-//		
-//		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-//		String[] jsonName = {"Result"};	
-//		
-//		List<HashMap<String, String>> results = server.jsonParserList(resultInfo.toString(), jsonName);
-//		
-//		if (results != null) {
-//			if (results.size() > 0) {
-//				String result = results.get(0).get(jsonName[0]);
-//				CommonUtil.showMessage(getApplicationContext(), result);
-//			}
-//		}
     }
 	
 	/**

@@ -70,7 +70,7 @@ public class HttpConnectServer {
 	}
 	
 	//Tomcat 서버 호출
-	public StringBuffer sendByHttpPost(String urlStr, ArrayList<NameValuePair> nameValuePairs) {
+	public StringBuffer sendByHttpPost(String urlStr, List<NameValuePair> nameValuePairs) {
 		
 		StringBuffer resultSrt = new StringBuffer();
 		DefaultHttpClient client = new DefaultHttpClient();

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -383,19 +386,27 @@ public class HfmbActivity003 extends FragmentActivity {
     	
     	strbuf.append("del_id=");
     	
+    	ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+    	
     	List<Integer> selectedCheckBox = gridAdapter.getSelectedCheckBox();
     	int count = selectedCheckBox.size();
+    	
+    	nameValuePairs.add(new BasicNameValuePair("delCount", count+""));
     	for (int i = 0; i < count; i++) {
     		strbuf.append(rowItems.get(selectedCheckBox.get(i)).get("meeting_cd") + "#");
+    		nameValuePairs.add(new BasicNameValuePair("del_cd"+i, rowItems.get(selectedCheckBox.get(i)).get("meeting_cd")));
     	}
     	
 		Log.i("parameter ====== " , strbuf.toString()); 
 		
-    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_Del1.jsp");
+    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_Del_Meeting.jsp");
     	
 		//server connecting... login check...
 		HttpConnectServer server = new HttpConnectServer();
-		server.sendByHttp(strbuf, urlbuf.toString());
+		//server.sendByHttp(strbuf, urlbuf.toString());
+		StringBuffer rtnValue = server.sendByHttpPost(urlbuf.toString(), nameValuePairs);
+		
+		Log.i("rtnValue ====== " , rtnValue.toString()); 
 		
 		setOrganListView(R.layout.hfmbactivity_003);
 		_menu.clear();

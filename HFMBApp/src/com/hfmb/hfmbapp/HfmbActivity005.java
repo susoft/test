@@ -325,7 +325,7 @@ public class HfmbActivity005 extends FragmentActivity {
         rowItems = new ArrayList<HashMap<String, String>>() ;
         
         ListView list = (ListView)convertView.findViewById(R.id.list);
-        listAdapter = new DialogListAdapter(this, rowItems, R.layout.hfmbactivity_listview1);
+        listAdapter = new DialogListAdapter(this, rowItems, R.layout.diallog_listview);
         list.setAdapter(listAdapter);
         
         searchData();//조회하기.
