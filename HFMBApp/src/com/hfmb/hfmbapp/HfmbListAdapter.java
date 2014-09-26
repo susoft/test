@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
+import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
 public class HfmbListAdapter extends BaseAdapter {
@@ -83,6 +84,40 @@ public class HfmbListAdapter extends BaseAdapter {
 			holder.imgbtn_01.setImageResource(R.drawable.empty_photo);
 		}
 		
+		holder.imgbtn_01.setTag(R.string.position, position+"");
+      	holder.imgbtn_01.setTag(R.string.company_cd, rowItems.get(position).get("company_cd"));
+      	
+		//교류회 사진은 사무국직원과 교류회 회장, 총무만 수정가능하도록 한다.
+  		if (DataUtil.insertYn == 1 || DataUtil.insertYn == 2) {
+  			holder.imgbtn_01.setOnClickListener(new OnClickListener() {
+  	            public void onClick(View v) {
+  	                // TODO Auto-generated method stub
+  	            	ImageView imgView = (ImageView) v;
+  	                
+  	            	String position = (String)imgView.getTag(R.string.position);
+  	            	String companyCd = (String)imgView.getTag(R.string.company_cd);
+  	                
+  	                modifyCompanyPhoto(position, companyCd);
+  	            }
+  	        });
+  		} else if (DataUtil.insertYn == 3) {
+  			//일반회원일때.
+  			if (rowItems.get(position).get("phone2").replaceAll("-", "").equals(DataUtil.phoneNum) ||
+  					rowItems.get(position).get("phone1").replaceAll("-", "").equals(DataUtil.phoneNum)) {
+  				holder.imgbtn_01.setOnClickListener(new OnClickListener() {
+  	  	            public void onClick(View v) {
+  	  	                // TODO Auto-generated method stub
+  	  	            	ImageView imgView = (ImageView) v;
+  	  	                
+  	  	            	String position = (String)imgView.getTag(R.string.position);
+  	  	            	String companyCd = (String)imgView.getTag(R.string.company_cd);
+  	  	                
+  	  	            	modifyCompanyPhoto(position, companyCd);
+  	  	            }
+  	  	        });
+  			}
+  		}
+		
 		holder.ceo_nm.setText(rowItems.get(position).get("ceo_nm"));
 		holder.company_nm.setText(rowItems.get(position).get("company_nm"));
 		holder.category_business_nm.setText(rowItems.get(position).get("category_business_nm"));
@@ -122,6 +157,11 @@ public class HfmbListAdapter extends BaseAdapter {
 		}
 		
 		return convertView;
+	}
+	
+	public void modifyCompanyPhoto(String position, String companyCd) {
+		Log.i("company info", position + "-" + companyCd);
+		((HfmbActivity004)context).modifyCompanyPic(position, companyCd);
 	}
 	
 	private View.OnClickListener goClickListener = new View.OnClickListener() {

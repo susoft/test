@@ -9,4 +9,5 @@
     <string name="position"></string>
     <string name="meeting_cd"></string>
     <string name="meeting_nm"></string>
+    <string name="company_cd"></string>
 </resources>

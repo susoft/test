@@ -1,5 +1,6 @@
 package com.hfmb.hfmbapp;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +15,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -382,28 +386,74 @@ public class HfmbActivity004 extends FragmentActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		CommonUtil.showMessage(TAG, resultCode+"");
-		switch (resultCode) {
-		case -1:
-			openDialogAlert("수정 요청 완료 하였습니다. 인증 요청 하시기 바랍니다.");
-			
-	   		/*//저장후 정보세팅하는 부분...
-			int _position = data.getExtras().getInt("position");
-			//String _company_cd = data.getExtras().getString("_company_cd");
-	   		rowItems.get(_position).put("company_nm", data.getExtras().getString("company_nm"));
-	   		rowItems.get(_position).put("ceo_nm", data.getExtras().getString("ceo_nm"));
-	   		rowItems.get(_position).put("category_business_nm", data.getExtras().getString("category_business_nm"));
-	   		rowItems.get(_position).put("addr", data.getExtras().getString("addr"));
-	   		rowItems.get(_position).put("phone1", data.getExtras().getString("phone1"));
-	   		rowItems.get(_position).put("phone2", data.getExtras().getString("phone2"));
-		   
-	   		listAdapter.setRowItems(rowItems);
-            listAdapter.notifyDataSetChanged();*/
-            
-		   break;
-		default:
-		   break;
+		CommonUtil.showMessage(TAG, requestCode + ":" + resultCode);
+		
+		switch (requestCode) {
+		case 0:
+			switch (resultCode) {
+			case -1:
+				openDialogAlert("수정 요청 완료 하였습니다. 인증 요청 하시기 바랍니다.");
+				
+		   		/*//저장후 정보세팅하는 부분...
+				int _position = data.getExtras().getInt("position");
+				//String _company_cd = data.getExtras().getString("_company_cd");
+		   		rowItems.get(_position).put("company_nm", data.getExtras().getString("company_nm"));
+		   		rowItems.get(_position).put("ceo_nm", data.getExtras().getString("ceo_nm"));
+		   		rowItems.get(_position).put("category_business_nm", data.getExtras().getString("category_business_nm"));
+		   		rowItems.get(_position).put("addr", data.getExtras().getString("addr"));
+		   		rowItems.get(_position).put("phone1", data.getExtras().getString("phone1"));
+		   		rowItems.get(_position).put("phone2", data.getExtras().getString("phone2"));
+			   
+		   		listAdapter.setRowItems(rowItems);
+	            listAdapter.notifyDataSetChanged();*/
+	            
+			   break;
+			default:
+			   break;
+			}
+		case 1:
+			switch (resultCode) {
+			case -1:
+				selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
+				
+				Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
+
+				String path = getApplicationContext().getCacheDir().getPath();
+
+				//압축한 파일을 저장한다.
+				CommonUtil.SaveBitmapToFileCache(bitmap, companyCd + ".jpg", path);
+
+				selfileName = path + File.separator + companyCd + ".jpg";
+
+				openDialogModify("회원사 사진을 수정하시겠습니까?");
+	            
+			   break;
+			default:
+			   break;
+			}
 		}
+		
+	}
+	
+	String position;
+	String companyCd;
+	String selfileName;
+	public void modifyCompanyPic(String position, String companyCd) {
+
+		this.position = position;
+		this.companyCd = companyCd;
+		
+		//갤러리를 띄운다.
+        Intent intent = new Intent(
+                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");              // 모든 이미지
+        intent.putExtra("crop", "true");        // Crop기능 활성화
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+        intent.putExtra("outputFormat",         // 포맷방식
+                Bitmap.CompressFormat.JPEG.toString());
+
+        startActivityForResult(intent, 1);
 	}
 	
 	//회사소개 페이지 이동.
@@ -638,5 +688,52 @@ public class HfmbActivity004 extends FragmentActivity {
 			}
 		})
         .show();
+	}
+	
+	//수정하기 위한 다이얼로그
+	public void openDialogModify(String title) {
+		//확인 다이얼로그
+		new AlertDialog.Builder(HfmbActivity004.this)
+        .setTitle(title)
+		.setNegativeButton( "Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			}
+		})
+		.setPositiveButton( "Ok", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				updatePhoto();
+			}
+		})
+        .show();
+	}
+	
+	//저장한다.
+	public void updatePhoto() {
+    	StringBuffer urlbuf = new StringBuffer();
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	
+    	params.put("company_cd", companyCd);
+    	
+    	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_0073.jsp");
+    	
+    	HttpConnectServer server = new HttpConnectServer();
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
+    	
+		Log.i("json:", resultInfo.toString());
+		
+		HashMap<String, String> results = server.jsonParserList(resultInfo.toString(), DataUtil.jsonNameResult, "Result");
+		
+		if (results != null) {
+			if (results.get("error").equals("0")) {
+				openDialogAlert("수정 완료 되었습니다.");
+				listAdapter.notifyDataSetChanged();
+			} else {
+				openDialogAlert("수정 실패 되었습니다.");
+			}
+		}
 	}
 }
