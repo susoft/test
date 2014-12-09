@@ -32,6 +32,8 @@ public class CommonUtil {
 	public static String meetingCd;
 	public static String ceoNm;
 	
+	public final static String[] jsonNameResult = {"srch_gubun", "srch_nm", "count", "error", "error_nm"};
+	
 	public static String checkNull(String str) {
 		if (str == null || str.equals("") || str.equals("null")) return "";
 		
