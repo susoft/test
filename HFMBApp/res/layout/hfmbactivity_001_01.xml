@@ -24,7 +24,7 @@
         android:contentDescription="@string/action_settings"
         android:gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/intro1" />
+        android:src="@drawable/intro_1" />
 
     <ImageView
         android:id="@+id/btnGlasses01"
