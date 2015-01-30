@@ -40,18 +40,18 @@ public class HfmbActivityZoom extends Activity implements OnTouchListener {
 		switch (index) {
         case 1:
         	//Log.e("LongClick", "회장인사말");
-        	if (display == 1) imageView.setImageResource(R.drawable.intro1);
-        	else imageView.setImageResource(R.drawable.person);
+        	if (display == 1) imageView.setImageResource(R.drawable.intro_1);
+        	else imageView.setImageResource(R.drawable.info_1);
         	break;
         case 2:
         	//Log.e("LongClick", "중소기업융합이란");
-        	if (display == 2) imageView.setImageResource(R.drawable.display2);
-        	else imageView.setImageResource(R.drawable.organ);
+        	if (display == 2) imageView.setImageResource(R.drawable.intro_2);
+        	else imageView.setImageResource(R.drawable.info_2);
         	break;
         case 3:
         	//Log.e("LongClick", "찾아오시는길");
-        	if (display == 3) imageView.setImageResource(R.drawable.searchofroad);
-        	else imageView.setImageResource(R.drawable.resume);
+        	if (display == 3) imageView.setImageResource(R.drawable.intro_3);
+        	else imageView.setImageResource(R.drawable.info_3);
         	break;
 		}
 		
