@@ -2,28 +2,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/main_2_11"
     tools:context=".MainActivity" >
+<!-- <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_2_11" > -->
     
     <ImageView        
         android:id="@+id/main01"        
         android:layout_width="wrap_content"        
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/action_settings"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo3" />
+    
+    <ImageView        
+        android:id="@+id/main011"        
+        android:layout_width="wrap_content"        
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/action_settings"
+        android:layout_below="@+id/main01"
+        android:src="@drawable/main_1_3" />
     
 	<LinearLayout
         android:id="@+id/linearlayout0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_below="@+id/main01"
-        android:baselineAligned="false" >
-        
+        android:layout_below="@+id/main011"
+        android:baselineAligned="false" >    
+    
 	    <LinearLayout
 	        android:id="@+id/linearlayout1"
 	        android:layout_width="wrap_content"
@@ -33,21 +52,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon1"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0100" />       
+		        android:src="@drawable/main_icon_1_1" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title1"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="연합회소개"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	
 	    <LinearLayout
@@ -59,21 +78,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon2"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0200" />       
+		        android:src="@drawable/main_icon_1_2" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title2"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="연합회현황"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	    
 	</LinearLayout>
@@ -95,21 +114,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon4"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0300" />       
+		        android:src="@drawable/main_icon_1_3" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title4"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="교류회현황"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	
 	    <LinearLayout
@@ -121,21 +140,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon5"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0400" />       
+		        android:src="@drawable/main_icon_1_4" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title5"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="회원사검색"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	</LinearLayout>
 	
@@ -156,21 +175,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon6"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0500_1" />       
+		        android:src="@drawable/main_icon_1_5" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title6"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="교류회등록"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	
 	    <LinearLayout
@@ -182,21 +201,21 @@
 	        
 	        <ImageView        
 		        android:id="@+id/icon7"
-		        android:layout_width="60dp"        
-		        android:layout_height="60dp"
+		        android:layout_width="80dp"        
+		        android:layout_height="80dp"
 		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="10dp"
 		        android:contentDescription="@string/action_settings"
-		        android:src="@drawable/plants0600_1" />       
+		        android:src="@drawable/main_icon_1_6" />       
 		        
-		    <TextView        
+		    <!-- <TextView        
 		        android:id="@+id/title7"        
 		        android:layout_width="wrap_content"        
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="회원사등록"
 		        android:textSize="17sp"
-		        android:textStyle="bold" />
+		        android:textStyle="bold" /> -->
 		</LinearLayout>
 	</LinearLayout>
 	
@@ -209,7 +228,16 @@
         android:baselineAligned="false"
         android:orientation="vertical" >
         
-	    <TextView 
+	    <!-- <ImageView        
+		        android:id="@+id/icon8"
+		        android:layout_width="match_parent"        
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:contentDescription="@string/action_settings"
+		        android:layout_marginLeft="5dp"
+		        android:layout_marginRight="5dp"
+		        android:src="@drawable/main_1_4" />    -->
+	    <!-- <TextView 
 	        android:layout_width="wrap_content"        
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
@@ -238,6 +266,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:text="All Rights Reserved."
-	        android:textSize="12sp" />
+	        android:textSize="12sp" /> -->
 	</LinearLayout>
+<!-- </RelativeLayout> -->
 </RelativeLayout>
