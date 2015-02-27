@@ -7,7 +7,7 @@
     <string name="server_txt_nm">서버</string>
 	<string name="id_txt_nm">아이디</string>
 	<string name="pwd_txt_nm">비번</string>
-	<string name="login_btn_nm">인 증</string>
+	<string name="login_btn_nm">로그인</string>
 	<string name="cancel_btn_nm">취 소</string>
 	
 	<string name="title_activity_ntpbm0002">개인정보</string>
@@ -58,8 +58,9 @@
 	<string name="ntpbm_0104_btn02">취소</string>
 	
 	<string name="title_activity_ntpbm0105">현장사진</string>
-	<string name="ntpbm_0105_btn01">사진추가</string>
+	<string name="ntpbm_0105_btn01">사진변경</string>
 	<string name="ntpbm_0105_btn02">사진삭제</string>
+	<string name="ntpbm_0105_btn03">확인</string>
 	
 	<string name="title_activity_ntpbm0106">메모</string>
 	<string name="ntpbm_0106_imgbtn01">편집 or 쓰기</string>
@@ -79,7 +80,7 @@
 	<string name="ntpbm_0108_btn04">삭제</string>
 	
 	<string name="title_activity_ntpbm0109">고객서명</string>
-	<string name="ntpbm_0109_btn01">인증</string>
+	<string name="ntpbm_0109_btn01">승인</string>
 	<string name="ntpbm_0109_btn03">Reset</string>
 	<string name="ntpbm_0109_btn02">취소</string>
 	
@@ -117,8 +118,9 @@
     <string name="action_personinfo">개인정보</string>
     
     <!-- server connect page... -->
-    <string name="domainUrl">http://nanoomtech.iptime.org:8054/</string>
+    <string name="domainUrl">http://nanoomtech.iptime.org:3022/</string>
     <string name="domainUrl1">http://119.200.166.131:8054/</string>
+    <string name="domainUrl2">http://192.168.10.200:8088/</string>
     
     <string name="ntpbmPath">NtpbmWebService/ntpbmWeb/</string>
     
@@ -126,6 +128,7 @@
     <string name="ntpbm_0002">ntpbm0002.jsp</string>
     
     <string name="ntpbmPath0100">NtpbmWebService/ntpbmWeb/ntpbm0100/</string>
+    <string name="ntpbm_0100">ntpbm0100.jsp</string>
     <string name="ntpbm_0101">ntpbm0101.jsp</string>
     <string name="ntpbm_0102">ntpbm0102.jsp</string>
     <string name="ntpbm_0103">ntpbm0103.jsp</string>
@@ -133,6 +136,12 @@
     <string name="ntpbm_0105">ntpbm0105.jsp</string>
     <string name="ntpbm_0106">ntpbm0106.jsp</string>
     <string name="ntpbm_0107">ntpbm0107.jsp</string>
+    
+    <string name="ntpbm_0103_update">ntpbm0103_update.jsp</string>
+    <string name="ntpbm_0104_update">ntpbm0104_update.jsp</string>
+    <string name="ntpbm_0105_add">ntpbm0105_fileadd.jsp</string>
+    <string name="ntpbm_0105_del">ntpbm0105_del.jsp</string>
+    <string name="ntpbm_0109_sign">ntpbm0109_sign.jsp</string>
     
     <string name="ntpbmPath0300">NtpbmWebService/ntpbmWeb/ntpbm0300/</string>
     <string name="ntpbm_0300">ntpbm0300.jsp</string>
