@@ -1,6 +1,7 @@
 package com.ntpbm.ntpbmapp.app0100;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -25,22 +26,28 @@ import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
 import com.ntpbm.ntpbmapp.RowItem;
+import com.ntpbm.ntpbmapp.Util;
 
+/*
+ * 설치장치의 악세사리정보 조회
+ */
 public class Ntpbm0103Activity extends Activity implements OnItemClickListener, OnItemLongClickListener {
 	
-public static final String[] titles = new String[] { "브랜드", "배터리", "전극패드", "수건", "메뉴얼", "보관함" };
+	private static String[] titles = new String[] { "브랜드", "배터리", "전극패드", "수건", "메뉴얼", "보관함" };
 	
-public String barcode;
-
-	public static final Integer[] images = { R.drawable.img_ntpbm_0100_01,             
+	private static final Integer[] images = { R.drawable.img_ntpbm_0100_01,             
 		R.drawable.img_ntpbm_0100_02, R.drawable.img_ntpbm_0100_03, R.drawable.img_ntpbm_0100_04,
-		R.drawable.img_ntpbm_0100_05, R.drawable.img_ntpbm_0100_06,};
-	public static final String[] descriptions = new String[] {"", "", "", "", "", "" };
-	public static final String[] chkboxInfo = new String[] {"", "", "", "", "", "" };
+		R.drawable.img_ntpbm_0100_05, R.drawable.img_ntpbm_0100_06, R.drawable.img_ntpbm_0100_06, R.drawable.img_ntpbm_0100_06
+		, R.drawable.img_ntpbm_0100_06, R.drawable.img_ntpbm_0100_06, R.drawable.img_ntpbm_0100_06, R.drawable.img_ntpbm_0100_06};
 	
-	ListView listView;
-	List<RowItem> rowItems;
-	CustomBaseAdapter adapter;
+	private static String[] descriptions = new String[] {"", "", "", "", "", "" };
+	private static String[] chkboxInfo = new String[] {"", "", "", "", "", "" };
+	
+	private String barcode;
+	
+	private ListView listView;
+	private List<RowItem> rowItems;
+	private CustomBaseAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,39 +57,34 @@ public String barcode;
 		Intent intent = getIntent();
 		barcode = intent.getStringExtra("barcode");
 		
-		//server connecting... search barcode...
+		//바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode...
 		searchNtpbm0103Info();
-		
-		rowItems = new ArrayList<RowItem>();         
-		for (int i = 0; i < titles.length; i++) {             
-			RowItem item = new RowItem(images[i], titles[i], descriptions[i], chkboxInfo[i]);
-			rowItems.add(item);
-		}
-		listView = (ListView) findViewById(R.id.list1);
-		
-		adapter = new CustomBaseAdapter(this, rowItems, R.layout.list_view02);         
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(this);
-		listView.setOnItemLongClickListener(this);
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 * 목록에서 선택시 이벤트 발생 - 체크박스 제어
+	 */
 	@Override    
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		MainActivity.logView(getApplicationContext(), position+"");
-		
+		//MainActivity.logView(getApplicationContext(), position+"");
 		adapter.setChecked(position);
         // Data 변경시 호출 Adapter에 Data 변경 사실을 알려줘서 Update 함.
 		adapter.notifyDataSetChanged();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemLongClickListener#onItemLongClick(android.widget.AdapterView, android.view.View, int, long)
+	 * 목록에서 길게선택시 이벤트 발생 - 보관함 화면으로 이동하는 경우만 해당.
+	 */
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		// TODO Auto-generated method stub
-		
 		if (arg2 == 5) {
     		//보관함일떄만 호출된다.
     		Intent intent = new Intent(this, Ntpbm0108Activity.class);
@@ -91,6 +93,117 @@ public String barcode;
 		return false;
 	}
 	
+	/** 
+	 * Called when the user clicks the saveAccessoryInfo button
+	 * 악세사리 변경된 정보 저장
+	 */ 
+	public void saveAccessoryInfo(View view) {
+		
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		
+		//변경정보 생성하기.
+		boolean[] isChecked = adapter.getIsCheckedConfrim();
+		for (int i = 0; i < isChecked.length; i++) {
+			//원본정보와 현재정보를 확인 하여 변경일 경우 업데이트 대상건으로 처리한다.
+			strbuf.append("&seq=" + parseredDataList.get(i).get("SEQ"));
+			strbuf.append("&chk_tf=" + (isChecked[i] ? "1" : "0"));
+		}
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0103_update).toString();
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json:", resultInfo.toString());
+		
+		Util.DialogSimple("처리결과", "정상처리되었습니다.", this);
+	}
+	
+	/** 
+	 * Called when the user clicks the cancelAccessoryInfo button
+	 * 악세사리변경 취소 처리(이전화면으로 이동한다.)
+	 */ 
+	public void cancelAccessoryInfo(View view) {
+		// Do something in response to button
+		this.finish();
+	}
+	
+	//                            순번, 품목코드, 브랜드명, 모델명, 식별자, 소모품S/N번호, 유효일자, 확인여부
+	private String[] jsonName = {"SEQ", "IT_CD", "IT_NM", "MD_NM", "GD_OT", "SN_S_CD", "EXP_DATE", "CHK_TF"};
+	private List<HashMap<String, String>> parseredDataList;
+	
+	/** 
+	 * 바코드(sn_cd)를 이용한 데이터조회  (악세사리만 조회한다.)
+	 * server connecting... search barcode... 
+	 */ 
+	public void searchNtpbm0103Info() {
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0103).toString();
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json:", resultInfo.toString());
+		
+		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
+		parseredDataList = server.jsonParserArrayList(resultInfo.toString(), jsonName);
+		
+		//서버에서 조회한 정보를 화면에 보여준다.
+		setData();
+		
+		//목록을 refresh 한다.
+		setDisplay();
+	}
+
+	/*
+	 * 서버에서 조회한 정보를 화면에 보여준다.
+	 */
+	private void setData() {
+		if (parseredDataList != null) {
+			titles = new String[parseredDataList.size()];//악세사리 리스트
+			descriptions = new String[parseredDataList.size()];//temp
+			chkboxInfo = new String[parseredDataList.size()];//체크여부
+			
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList.size(); i++) {
+				parseredData = parseredDataList.get(i);
+				
+				titles[i] = parseredData.get(jsonName[2]);//악세사리명.
+				chkboxInfo[i] = parseredData.get(jsonName[7]);//체크됨.
+				descriptions[i] = "";
+				
+				parseredData.put("CHK_YN", chkboxInfo[i]);
+			}
+		}
+	}
+	
+	/*
+	 * 목록을 refresh 한다.
+	 */
+	private void setDisplay() {
+		rowItems = new ArrayList<RowItem>();         
+		for (int i = 0; i < titles.length; i++) {             
+			RowItem item = new RowItem(images[0], titles[i], descriptions[i], chkboxInfo[i]);
+			rowItems.add(item);
+		}
+		listView = (ListView) findViewById(R.id.list1);
+		
+		adapter = new CustomBaseAdapter(this, rowItems, R.layout.list_view02);         
+		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(this);
+		listView.setOnItemLongClickListener(this);
+	}
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */
@@ -140,38 +253,4 @@ public String barcode;
 		
 		return true;
 	}
-	
-	/** Called when the user clicks the saveAccessoryInfo button */ 
-	public void saveAccessoryInfo(View view) {
-		// Do something in response to button
-		// save in server...
-	}
-	
-	/** Called when the user clicks the cancelAccessoryInfo button */ 
-	public void cancelAccessoryInfo(View view) {
-		// Do something in response to button
-		this.finish();
-	}
-	
-	/** server connecting... search barcode... */ 
-	public void searchNtpbm0103Info() {
-		StringBuffer strbuf = new StringBuffer();
-		strbuf.append("barcode=" + barcode);
-		
-		//서버 url 경로를 xml에서 가져온다.
-		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100
-				+ getText(R.string.ntpbm_0102).toString();
-		
-		//server connecting... login check...
-		HttpConnectServer server = new HttpConnectServer();
-		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
-		
-		Log.i("json:", resultInfo.toString());
-		
-		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-//		String[] jsonName = {"serverip", "loginid", "loginpwd", "loginyn"};
-//		HashMap<String, String> parseredData = server.jsonParserList(resultInfo.toString(), jsonName);
-		
-	}
-
 }

@@ -3,21 +3,23 @@ package com.ntpbm.ntpbmapp.app0100;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,49 +30,364 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.ntpbm.ntpbmapp.HttpConnectServer;
 import com.ntpbm.ntpbmapp.MainActivity;
 import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
+import com.ntpbm.ntpbmapp.Util;
 
+/*
+ * 설치장치의 현장사진조회 및 저장, 삭제
+ */
 public class Ntpbm0105Activity extends Activity {
 	
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	public static final int MEDIA_TYPE_IMAGE = 1;
-//	private Uri fileUri;
+	private String barcode;
+	private String crud;
 	
-	ImageAdapter adapter;
-	GridView grid;
-	int selPositionImg = -1;
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	
+	private ImageAdapter adapter;
+	private GridView grid;
+	private int selPositionImg = -1;
+	
+	public String fullpath;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ntpbm_0105);
 		
+		Intent intent = getIntent();
+		barcode = intent.getStringExtra("barcode");
+		
+		fullpath = Util.path + Util.sn_path + File.separator + barcode + File.separator;
+		File fileDetail = new File(fullpath); 
+        if( !fileDetail.exists() ) fileDetail.mkdirs();
+		
 		grid = (GridView)findViewById(R.id.photoGridView);
-		adapter = new ImageAdapter(this);
+		adapter = new ImageAdapter(this, fullpath);
 		grid.setAdapter(adapter);
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//				MainActivity.logView(getApplicationContext(), "test" + position);
 				selPositionImg = position;
 				
-				BitmapFactory.Options bo = new BitmapFactory.Options();  
-				bo.inSampleSize = 8;  
-				Bitmap bmp = BitmapFactory.decodeFile(adapter.path + File.separator + adapter.pictures[position], bo);  
-				//Bitmap resized = Bitmap.createScaledBitmap(bmp, 320, 320, true);
+				boolean flag = true;
+				for(int i = 0; i < adapter.pictures.length; i++) {
+					if (adapter.pictures[i].startsWith(adapter.picture[selPositionImg]) ) {
+						BitmapFactory.Options bo = new BitmapFactory.Options();  
+						bo.inSampleSize = 8;
+						Bitmap bmp = BitmapFactory.decodeFile(fullpath + adapter.pictures[i]);  
+						
+						ImageView imgView = (ImageView)findViewById(R.id.ntpbm_0105_imgview);
+						imgView.setImageBitmap(bmp);
+						flag = false;
+						break;
+					}
+				}
 				
-				ImageView imgView = (ImageView)findViewById(R.id.ntpbm_0105_imgview);
-				imgView.setImageBitmap(bmp);
+				if (flag) {
+					addPhoto();//신규사진 추가....
+				}
 			}
 		});
-		
+
+		if (selPositionImg < 0)
+			//바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode...
+			searchNtpbm0105Info();
+
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
+
+	//설치일자,	설치장소,	설치주소,	담당자,	전화번호,	휴대전화,	이메일
+	private String[] jsonName = {"SN_CD", "ISP_IMG1", "ISP_IMG2", "ISP_IMG3", "ISP_IMG4"};
+	private List<HashMap<String, String>> parseredDataList;
+
+	/** 
+	 * 바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode... 
+	 */ 
+	public void searchNtpbm0105Info() {
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0105).toString();
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json:", resultInfo.toString());
+		
+		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
+		parseredDataList = server.jsonParserArrayList(resultInfo.toString(), jsonName);
+
+		//서버에서 조회한 정보를 화면에 보여준다.
+		setData();
+	}
+
+	/*
+	 * 서버에서 조회한 정보를 화면에 보여준다.
+	 */
+	private void setData() {
+		crud = "c";//최초
+		if (parseredDataList != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList.size(); i++) {
+				parseredData = parseredDataList.get(i);
+				
+				//서버에서 파일을 다운로드 하여 로컬에 저장한다.
+				saveImage(parseredData.get("ISP_IMG1").toString());
+				saveImage(parseredData.get("ISP_IMG2").toString());
+				saveImage(parseredData.get("ISP_IMG3").toString());
+				saveImage(parseredData.get("ISP_IMG4").toString());
+				
+				crud = "u";
+			}
+			
+			adapter.notifyDataSetChanged();
+		}
+	}
 	
+	/*
+	 * 서버에서 파일을 다운로드 하여 로컬에 저장한다.
+	 */
+	private void saveImage(String filename) {
+		if (filename == null || filename.equals("")) {
+			return;
+		}
+		
+		for(int i = 0; i < adapter.pictures.length; i++) {
+			if (adapter.pictures[i].startsWith(filename.substring(0,8)) ) {
+				File file = new File(fullpath + adapter.pictures[i]);
+				file.delete();
+				break;
+			}
+		}
+		
+		String imageUrl = MainActivity.domainUrl + MainActivity.ntpbmPath + File.separator + Util.photo_path + File.separator + barcode;
+		Util.saveBitmapToFileCache(Util.download(filename, imageUrl), filename, fullpath, 100);
+	}
+	
+	/** 
+	 * Called when the user clicks the addPhoto button 
+	 * 확인버튼 이벤트
+	 */ 
+	public void confirmPhoto(View view) {
+		this.finish();
+	}
+	
+	/** 
+	 * Called when the user clicks the addPhoto button 
+	 * 사진 추가버튼 이벤트
+	 */ 
+	public void addPhoto(View view) {
+		addPhoto();
+	}
+	
+	/** 
+	 * Called when the user clicks the addPhoto button 
+	 * 사진추가하기... 서버에도 저장한다.
+	 */ 
+	public void addPhoto() {
+		// Do something in response to button
+		// create Intent to take a picture and return control to the calling application
+		if (adapter.pictures.length > 3) {
+			return;
+		}
+		
+	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+	    try{
+	    	
+	    	Log.i("selPositionImg", "selPositionImg = " + selPositionImg);
+	    	
+	    	for(int i = 0; i < adapter.pictures.length; i++) {
+				if (adapter.pictures[i].startsWith(adapter.picture[selPositionImg]) ) {
+					File file = new File(fullpath + adapter.pictures[i]);
+					file.delete();
+					break;
+				}
+			}
+	    	
+		    File f = createImageFile();
+		    
+	    	Log.i("f.getName()", "f.getName() = " + f.getName());
+	    	
+		    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)); // set the image file name
+		    tempfilename = f.getName();
+		    
+		    Log.i("tempfilename", "tempfilename     ----------- = " + tempfilename);
+	
+		    // start the image capture Intent
+		    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+	    } catch(IOException e) {
+	    	e.printStackTrace();
+	    }
+	}
+	public String tempfilename;
+	// 저장하기
+	final static String JPEG_FILE_PREFIX = "";
+	final static String JPEG_FILE_SUFFIX = ".jpg";
+
+	private File createImageFile() throws IOException{
+		String imageFileName = JPEG_FILE_PREFIX + "ISP_IMG" + (selPositionImg + 1);
+		File image = File.createTempFile(
+			imageFileName,			// prefix
+			JPEG_FILE_SUFFIX,		// suffix
+			new File(fullpath) // directory [API level 8 이상]
+		);
+		return image;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 * 사진촬영후 리턴 - 저장....
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		Log.i("resultCode", "resultCode = " + resultCode);
+		
+		if(resultCode!=0){//-1 일경우 정상처리...
+			try{
+				
+				Log.i("tempfilename-0", "tempfilename = " + tempfilename);
+				
+				//압축한 파일을 저장한다.
+				BitmapFactory.Options bo = new BitmapFactory.Options();  
+				bo.inSampleSize = 8;
+				Bitmap bitmap = BitmapFactory.decodeFile(fullpath + tempfilename, bo);
+				Util.saveBitmapToFileCache(bitmap, tempfilename.substring(0,8) + ".jpg", fullpath, 100);
+				
+				Log.i("tempfilename-1", "tempfilename = " + tempfilename);
+				
+				File file = new File(fullpath + tempfilename);
+				file.delete();
+				
+				Log.i("tempfilename-2", "tempfilename = " + tempfilename);
+				
+				adapter = new ImageAdapter(Ntpbm0105Activity.this, fullpath);
+				grid.setAdapter(adapter);
+				adapter.notifyDataSetChanged();
+				
+				for(int i = 0; i < adapter.pictures.length; i++) {
+					if (adapter.pictures[i].startsWith(adapter.picture[selPositionImg]) ) {
+						tempfilename = adapter.pictures[i];
+						break;
+					}
+				}
+				
+				Log.i("tempfilename-3", "tempfilename = " + tempfilename);
+				
+				//사진 저장 서버에 전송하기.... 추가해야 함.
+				addNtpbm0105Info();
+				
+				ImageView imgView = (ImageView)findViewById(R.id.ntpbm_0105_imgview);
+				imgView.setImageBitmap(null);
+				
+				selPositionImg = -1;
+				
+			} catch(Exception e){
+				return;
+			}
+		} else {//0일경우 에러처리..
+			Log.i("tempfilename 0", "tempfilename = " + tempfilename);
+			File file = new File(fullpath + tempfilename);
+			file.delete();
+		}
+	}
+	
+	/*
+	 * 촬영한 사진 정보를 서버에 전송하여 저장한다.
+	 * multipart parser로 전송해야함.
+	 */
+	public void addNtpbm0105Info() {
+    	StringBuffer urlbuf = new StringBuffer();
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	
+    	params.put("sn_cd", barcode);
+    	params.put("isp_img", (selPositionImg+1)+"");
+    	params.put("crud", crud);
+    	
+    	Log.i("json: before", params.get("isp_img"));
+    	
+    	String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0105_add).toString();
+		urlbuf.append(urlStr);
+    	
+    	HttpConnectServer server = new HttpConnectServer();
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, fullpath + tempfilename);
+    	
+    	Log.i("json:result", resultInfo.toString().trim());
+    	
+    	crud = "u";
+    	
+    	DialogSimple("처리결과", "정상처리되었습니다.");
+    }
+	
+	
+	/** 
+	 * Called when the user clicks the delPhoto button 
+	 * 선택한 사진을 삭제한다.
+	 */ 
+	public void delPhoto(View view) {
+		// Do something in response to button
+		//MainActivity.logView(getApplicationContext(), selPositionImg+"");
+		if (selPositionImg < 0) {
+			return;
+		}
+		
+		for(int i = 0; i < adapter.pictures.length; i++) {
+			if (adapter.pictures[i].startsWith(adapter.picture[selPositionImg]) ) {
+				File file = new File(fullpath + adapter.pictures[i]);
+				file.delete();
+				break;
+			}
+		}
+
+		//서버에 데이터 삭제 요청...
+		delNtpbm0105Info();
+		
+		adapter = new ImageAdapter(this, fullpath);
+		grid.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
+		
+		ImageView imgView = (ImageView)findViewById(R.id.ntpbm_0105_imgview);
+		imgView.setImageBitmap(null);
+		
+		selPositionImg = -1;
+	}
+	
+	/*
+	 * 삭제한 사진을 서버에 전송하여 처리한다.
+	 */
+	private void delNtpbm0105Info() {
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		strbuf.append("&isp_img=" + (selPositionImg+1));
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0105_del).toString();
+		
+		Log.i("json: before", strbuf.toString());
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json: result", resultInfo.toString());
+		
+		DialogSimple("처리결과", "정상처리되었습니다.");
+	}
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */
@@ -120,129 +437,57 @@ public class Ntpbm0105Activity extends Activity {
 		
 		return true;
 	}
-	
-	/** Called when the user clicks the addPhoto button */ 
-	public void addPhoto(View view) {
-		// Do something in response to button
-		// create Intent to take a picture and return control to the calling application
-		
-		if (adapter.pictures.length > 3) {
-			return;
-		}
-		
-	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-	    try{
-		    File f = createImageFile();
-		    
-//		    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)); 
-		    
-//		    fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
-		    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)); // set the image file name
-	
-		    // start the image capture Intent
-		    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-	    } catch(IOException e) {
-	    	e.printStackTrace();
-	    }
-	}
-	
-	// 저장하기
-	final static String JPEG_FILE_PREFIX = "IMG_";
-	final static String JPEG_FILE_SUFFIX = ".jpg";
-
-	private File createImageFile() throws IOException{
-		String timeStamp = new SimpleDateFormat( "yyyyMMdd_HHmmss").format( new Date());
-		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-		File image = File.createTempFile(
-			imageFileName,			// prefix
-			JPEG_FILE_SUFFIX,		// suffix
-			getAlbumDir()				// directory
-		);
-//		String mCurrentPhotoPath = image.getAbsolutePath();
-		return image;
-	}
-	
-	// 저장할 위치를 얻는 방법
-	// [API level 8 이상]
-	public File getAlbumDir(){
-		File storageDir = new File(adapter.path);
-		return storageDir;
-	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if(resultCode!=0){
-//			if(requestCode==1&&!data.equals(null)){
-				try{
-					adapter = new ImageAdapter(Ntpbm0105Activity.this);
-					grid.setAdapter(adapter);
-					
-				} catch(Exception e){
-					return;
-				}
-//			}
-		}
-	}
-	
-	/** Called when the user clicks the delPhoto button */ 
-	public void delPhoto(View view) {
-		// Do something in response to button
-		MainActivity.logView(getApplicationContext(), selPositionImg+"");
-		if (selPositionImg < 0) {
-			return;
-		}
-		
-		File file = new File(adapter.path + adapter.pictures[selPositionImg]);
-		file.delete();
-		
-		adapter = new ImageAdapter(this);
-		grid.setAdapter(adapter);
-		
-		ImageView imgView = (ImageView)findViewById(R.id.ntpbm_0105_imgview);
-		imgView.setImageBitmap(null);
-		
-		selPositionImg = -1;
+	private void DialogSimple(String title, String message) {
+	    AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+	    alt_bld.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	        	dialog.dismiss();     //닫기
+	        }
+	    });
+	    
+	    AlertDialog alert = alt_bld.create();
+	    alert.setTitle(title);
+	    alert.setMessage(message);
+	    alert.setCanceledOnTouchOutside(true);
+	    alert.show();
 	}
 	
 }
 
+/*
+ * 이미지 어댑터를 이용한 그리드 구성.
+ */
 class ImageAdapter extends BaseAdapter {
 	private Context mContext;
+	private String fullpath;
 	
-	int[] picture = { R.drawable.ntpbm_0100, R.drawable.ntpbm_0200, R.drawable.ntpbm_0300, R.drawable.ntpbm_0400 };
-	
+	String[] picture = { "ISP_IMG1", "ISP_IMG2", "ISP_IMG3", "ISP_IMG4" };
 	String[] pictures;
-	String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ntpbm" + File.separator;
 	
-	public ImageAdapter(Context c) {
-		mContext = c;
+	public ImageAdapter(Context c, String fullpath) {
+		this.mContext = c;
+		this.fullpath = fullpath;
 		
-		File file = new File(path); 
-        if( !file.exists() )  // 원하는 경로에 폴더가 있는지 확인
-        	file.mkdirs();
-		
-		File list = new File(path);
-		pictures = list.list(filter);
-		
-		MainActivity.logView(mContext, pictures.length+"");
+        File fileDetail = new File(fullpath);
+        
+		pictures = fileDetail.list(filter);
 	}
 	
 	private FilenameFilter filter = new FilenameFilter(){
 		public boolean accept(File dir, String filename) {
-			if(filename.endsWith(".JPG") || filename.endsWith(".jpg")) return true;
+			if(filename.startsWith("ISP_IMG")) return true;
 			return false;
 		}
 	};
 	
 	public int getCount() {
-		return pictures.length;
+		return picture.length;
 	}
 	
 	public Object getItem(int position) {
-		return pictures[position];
+		return picture[position];
 	}
 	
 	public long getItemId(int position) {
@@ -264,10 +509,23 @@ class ImageAdapter extends BaseAdapter {
 		
 		BitmapFactory.Options bo = new BitmapFactory.Options();  
 		bo.inSampleSize = 8;  
-		Bitmap bmp = BitmapFactory.decodeFile(path + File.separator + pictures[position], bo);  
-		Bitmap resized = Bitmap.createScaledBitmap(bmp, 130, 130, true);
-		imageView.setImageBitmap(resized);
+		Bitmap bmp = null;
+		
+		for(int i = 0; i < pictures.length; i++) {
+			if (pictures[i].startsWith(picture[position]) ) {
+				bmp = BitmapFactory.decodeFile(fullpath + pictures[i]);
+				break;
+			}
+		}
+		
+		if(bmp != null) {
+			Bitmap resized = Bitmap.createScaledBitmap(bmp, 130, 130, true);
+			imageView.setImageBitmap(resized);
+		} else {
+			imageView.setImageResource(R.drawable.ntpbm_0100);
+		}
 		
 		return imageView;
 	}
+
 }

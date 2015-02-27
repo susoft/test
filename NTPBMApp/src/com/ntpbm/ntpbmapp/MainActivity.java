@@ -1,5 +1,6 @@
 package com.ntpbm.ntpbmapp;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,7 +59,11 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ntpbm_0000);
 		
-		domainUrl = getText(R.string.domainUrl1).toString();
+		//경로 확인...
+		Util.path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ntpbm" + File.separator;
+		Util.mkdirs();
+		
+		domainUrl = getText(R.string.domainUrl).toString();
 		ntpbmPath = getText(R.string.ntpbmPath).toString();
 		ntpbmPath0100 = getText(R.string.ntpbmPath0100).toString();
 		ntpbmPath0300 = getText(R.string.ntpbmPath0300).toString();
@@ -76,6 +82,11 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
+		
+		/*SELECT * FROM [POP_NT_POP].[dbo].[Goods_ISP_Img] where sn_cd = 'SN10030-0000-1500001'
+		SELECT * FROM [POP_NT_POP].[dbo].Goods_Serial where sn_cd = 'SN10030-0000-1500001'
+		SELECT * FROM [POP_NT_POP].[dbo].Goods_Shipment where sn_cd = 'SN10030-0000-1500001'
+		SELECT *  FROM [POP_NT_POP].[dbo].[Program_User] where [EPLY_CD] = 'js'*/
 	}
 	
 	@Override    
@@ -193,6 +204,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		toast.show();
 	}
 	
+	//개인정보
 	public static HashMap<String, String> personInfo;
 	
 	

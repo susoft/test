@@ -26,6 +26,9 @@ import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
 
+/*
+ * 설치장치의 메모
+ */
 public class Ntpbm0106Activity extends Activity implements OnClickListener {
 	
 	public String barcode;
@@ -197,7 +200,7 @@ public class Ntpbm0106Activity extends Activity implements OnClickListener {
 	/** server connecting... search barcode... */ 
 	public void searchNtpbm0106Info() {
 		StringBuffer strbuf = new StringBuffer();
-		strbuf.append("barcode=" + barcode);
+		strbuf.append("sn_cd=" + barcode);
 		
 		//서버 url 경로를 xml에서 가져온다.
 		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100

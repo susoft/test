@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 public class CustomBaseAdapter extends BaseAdapter {
 	
-	Context context;
-	List<RowItem> rowItems;
-	int resource;
+	private Context context;
+	private int resource;
+	private List<RowItem> rowItems;
 	private boolean[] isCheckedConfrim;
 	
 	public CustomBaseAdapter(Context context, List<RowItem> items, int source) {         
@@ -26,6 +26,9 @@ public class CustomBaseAdapter extends BaseAdapter {
 		
 		// CheckBox의 true/false를 구별 하기 위해
 		this.isCheckedConfrim = new boolean[items.size()];
+		for(int i = 0; i < rowItems.size(); i++) {
+			isCheckedConfrim[i] = rowItems.get(i).getChkinfo().equals("1") ? true : false;
+		}
 	}
 	
 	/*private view holder class*/    
@@ -35,10 +38,6 @@ public class CustomBaseAdapter extends BaseAdapter {
 		TextView txtDesc;
 		CheckBox chkinfo;
 	}
-	
-	public void setChecked(int position) {
-        isCheckedConfrim[position] = !isCheckedConfrim[position];
-    }
 	
 	public View getView(int position, View convertView, ViewGroup parent) {         
 		ViewHolder holder = null;           
@@ -65,9 +64,10 @@ public class CustomBaseAdapter extends BaseAdapter {
 		} else {             
 			holder = (ViewHolder) convertView.getTag();         
 		}
+		
 		RowItem rowItem = (RowItem) getItem(position);           
 		if (resource == R.layout.list_view02) {
-			holder.chkinfo.setText(rowItem.getChkinfo());
+			//isCheckedConfrim[position] = (rowItem.getChkinfo().equals("1") ? true : false);
 			holder.chkinfo.setChecked(isCheckedConfrim[position]);
 		} else {
 			holder.txtDesc.setText(rowItem.getDesc());
@@ -87,4 +87,16 @@ public class CustomBaseAdapter extends BaseAdapter {
 
 	@Override    
 	public long getItemId(int position) {         return rowItems.indexOf(getItem(position));     }
+
+	public void setChecked(int position) {
+        isCheckedConfrim[position] = !isCheckedConfrim[position];
+    }
+
+	public boolean[] getIsCheckedConfrim() {
+		return isCheckedConfrim;
+	}
+
+	public void setIsCheckedConfrim(boolean[] isCheckedConfrim) {
+		this.isCheckedConfrim = isCheckedConfrim;
+	}
 }

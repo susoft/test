@@ -23,6 +23,9 @@ import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
 import com.ntpbm.ntpbmapp.SpinnerAdapter;
 
+/*
+ * 설치장치의 보관함
+ */
 public class Ntpbm0108Activity extends Activity implements OnClickListener {
 	
 	TableLayout tl;

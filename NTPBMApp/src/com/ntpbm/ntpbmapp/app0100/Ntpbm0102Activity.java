@@ -1,5 +1,8 @@
 package com.ntpbm.ntpbmapp.app0100;
 
+import java.util.HashMap;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -17,9 +20,12 @@ import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
 
+/*
+ * 설치장치의 상세정보 조회하기..
+ */
 public class Ntpbm0102Activity extends Activity {
 	
-	public String barcode;
+	private String barcode;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +35,69 @@ public class Ntpbm0102Activity extends Activity {
 		Intent intent = getIntent();
 		barcode = intent.getStringExtra("barcode");
 		
-		//server connecting... search barcode...
+		//바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode...
 		searchNtpbm0102Info();
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
+
+	//                            순번, 품목코드, 브랜드명, 모델명, 식별자, 소모품S/N번호, 유효일자, 확인여부
+	private String[] jsonName = {"SEQ", "IT_CD", "IT_NM", "MD_NM", "GD_OT", "SN_S_CD", "EXP_DATE", "CHK_TF"};
+	private List<HashMap<String, String>> parseredDataList;
 	
+	/** 
+	 * 바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode... 
+	 */ 
+	private void searchNtpbm0102Info() {
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0102).toString();
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json:", resultInfo.toString());
+		
+		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
+		parseredDataList = server.jsonParserArrayList(resultInfo.toString(), jsonName);
+		
+		setData();//서버에서 조회한 정보를 화면에 보여준다.
+	}
+
+	/*
+	 * 서버에서 조회한 정보를 화면에 보여준다.
+	 */
+	private void setData() {
+		if (parseredDataList != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList.size(); i++) {
+				parseredData = parseredDataList.get(i);
+
+				//모델명 기본정보 조회하기.
+				if ( i == 0) {
+					((TextView)findViewById(R.id.serverTxtNm02)).setText(parseredData.get(jsonName[2]));//브랜드
+					((TextView)findViewById(R.id.serverTxtNm04)).setText(parseredData.get(jsonName[3]));//모델명
+					((TextView)findViewById(R.id.serverTxtNm06)).setText(parseredData.get(jsonName[4]));//식별자
+					((TextView)findViewById(R.id.serverTxtNm08)).setText(parseredData.get(jsonName[5]));///시리얼번호
+				}
+			}
+		}
+		
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm02)).setText("");//제조번호
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm04)).setText("");//제조일자
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm06)).setText("");//제조회사
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm08)).setText("");//제조국
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm10)).setText("");//구입처명
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm12)).setText("");//구입처주소
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm14)).setText("");//구입처담당자
+		((TextView)findViewById(R.id.ntpbm_0102_txt_nm16)).setText("");//구입처연락처
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -83,40 +145,6 @@ public class Ntpbm0102Activity extends Activity {
 			startActivity(intent2);
 			break;
 		}
-		
 		return true;
 	}
-	
-	/** server connecting... search barcode... */ 
-	public void searchNtpbm0102Info() {
-		
-		StringBuffer strbuf = new StringBuffer();
-		strbuf.append("barcode=" + barcode);
-		
-		//서버 url 경로를 xml에서 가져온다.
-		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100
-				+ getText(R.string.ntpbm_0102).toString();
-		
-		//server connecting... login check...
-		HttpConnectServer server = new HttpConnectServer();
-		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
-		
-		Log.i("json:", resultInfo.toString());
-		
-		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
-//		String[] jsonName = {"serverip", "loginid", "loginpwd", "loginyn"};
-//		HashMap<String, String> parseredData = server.jsonParserList(resultInfo.toString(), jsonName);
-		
-		((TextView)findViewById(R.id.serverTxtNm02)).setText("진산인포시스");
-		((TextView)findViewById(R.id.serverTxtNm04)).setText("진산인포시스모델");
-		((TextView)findViewById(R.id.serverTxtNm06)).setText("진산인포식별자");
-		((TextView)findViewById(R.id.serverTxtNm08)).setText("123456789");
-		
-		((TextView)findViewById(R.id.ntpbm_0102_txt_nm02)).setText("123456789");
-		
-		
-		
-		((TextView)findViewById(R.id.ntpbm_0102_txt_nm16)).setText("010-0000-0000");
-	}
-	
 }
