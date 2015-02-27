@@ -11,7 +11,7 @@
     <GridView android:id="@+id/photoGridView"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:padding="10dp"
+		android:padding="5dp"
 		android:verticalSpacing="10dp"
 		android:horizontalSpacing="10dp"
 		android:numColumns="auto_fit"
@@ -20,10 +20,30 @@
 		android:gravity="center"
 		></GridView>
  
-    <LinearLayout android:id="@+id/btnLinearLay00"
-	    android:layout_width="match_parent"
+    <Button
+		android:id="@+id/ntpbm_0105_btn03"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/photoGridView"
+		android:text="@string/ntpbm_0105_btn03"
+		android:onClick="confirmPhoto"
+		style="@style/btnStyleBeige" />
+
+    <ImageView 
+        android:id="@+id/ntpbm_0105_imgview"
+        android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/photoGridView"
+	    android:layout_margin="5dip"
+	    android:layout_below="@+id/ntpbm_0105_btn03"
+	    android:layout_above="@+id/btnLinearLay00"
+	    android:layout_centerVertical="true"
+	    android:layout_centerHorizontal="true"
+	    android:contentDescription="@string/image" />
+    
+	<LinearLayout android:id="@+id/btnLinearLay00"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
 	    android:orientation="horizontal" >
 	    <Button
 			android:id="@+id/ntpbm_0105_btn01"
@@ -46,15 +66,4 @@
 			style="@style/btnStyleBeige" />
   
 	</LinearLayout>
-
-    <ImageView 
-        android:id="@+id/ntpbm_0105_imgview"
-        android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:layout_margin="10dip"
-	    android:layout_below="@id/btnLinearLay00"
-	    android:layout_centerVertical="true"
-	    android:layout_centerHorizontal="true"
-	    android:contentDescription="@string/image" />
-
 </RelativeLayout>

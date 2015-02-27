@@ -9,20 +9,84 @@
     tools:context=".MainActivity" >
 	
     <LinearLayout
-        android:id="@+id/ntpbm_0109_linearLayout00"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_margin="20dp"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/ntpbm_0109_linearLayout01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
         
+        <TextView
+	        android:id="@+id/ntpbm_0109_txtNm_0100"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:text="납품자명"
+	        style="@style/textTitle20dp_2" />
+        <EditText
+	        android:id="@+id/ntpbm_0109_edit01"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_marginLeft="20dp"
+	        android:text=""
+	        android:ems="12"
+	        android:inputType="text"
+	        style="@style/text15dp" >
+	    </EditText>
+        <LinearLayout
+	        android:id="@+id/ntpbm_0109_linearLayout03"
+	        android:layout_width="fill_parent"
+	        android:layout_height="100dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="10dp"
+	        android:layout_centerHorizontal="true"
+	        android:orientation="horizontal" >
+	    </LinearLayout>
     </LinearLayout>
     
     <LinearLayout
+        android:id="@+id/ntpbm_0109_linearLayout01"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ntpbm_0109_linearLayout00"
+        android:layout_above="@+id/ntpbm_0109_linearLayout02"
+        android:orientation="vertical" >
+        
+        <TextView
+	        android:id="@+id/ntpbm_0109_txtNm_0200"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:text="담당자명"
+	        style="@style/textTitle20dp_2" />
+        <EditText
+	        android:id="@+id/ntpbm_0109_edit02"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_marginLeft="20dp"
+	        android:text=""
+	        android:ems="12"
+	        android:inputType="text"
+	        android:enabled="true"
+	        style="@style/text15dp" >
+        </EditText>
+        <LinearLayout
+	        android:id="@+id/ntpbm_0109_linearLayout00"
+	        android:layout_width="fill_parent"
+	        android:layout_height="200dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="10dp"
+	        android:layout_centerHorizontal="true"
+	        android:orientation="horizontal" >
+	    </LinearLayout>
+    </LinearLayout>
+    
+    
+    <LinearLayout
+        android:id="@+id/ntpbm_0109_linearLayout02"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="10dp"
         android:orientation="horizontal" >
         
