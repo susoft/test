@@ -18,14 +18,16 @@
         android:allowBackup="true"
         android:icon="@drawable/logo2_1"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        <!-- android:theme="@style/AppTheme" > -->
         
         <activity
 	         android:name="com.hfmb.hfmbapp.MainActivity"
 	         android:screenOrientation="portrait"
-	         android:configChanges="orientation|keyboardHidden|keyboard"
 	         android:label="@string/app_name" 
 	         >
+	         <!-- android:configChanges="orientation|keyboardHidden|keyboard" -->
+	         
 	         <!-- landscape (가로), portrait (세로)-->
 	         
 	         <intent-filter>
