@@ -713,7 +713,7 @@ public class HfmbActivity006 extends FragmentActivity {
             	// This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
-                Intent upIntent = new Intent(this, MainActivity.class);
+                Intent upIntent = new Intent(this, MainActivity_app.class);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 	Log.e("back", "test......11111");
                     // This activity is not part of the application's task, so create a new task
