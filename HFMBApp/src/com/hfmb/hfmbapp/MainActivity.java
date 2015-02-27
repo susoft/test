@@ -1,235 +1,295 @@
 package com.hfmb.hfmbapp;
 
+import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
+import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.hfmb.hfmbapp.util.CommonUtil;
-import com.hfmb.hfmbapp.util.DataUtil;
 import com.hfmb.hfmbapp.util.HttpConnectServer;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
+
+	public static String phoneNum;
 	
+	private WebView mWebView;
+	private final Handler handler = new Handler();
+	private final Handler handler_img = new Handler();
+	private String url;
+	//private long backKeyPressedTime = 0;
+    private Toast toast;
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main_web);
 		
-		// Show the Up button in the action bar.
-		setupActionBar();
+		setLayout(); 
 		
-		setInit();//자신의 전화번호 가져오기.
+		url = getText(R.string.url).toString();
 		
-		//버튼 액션.
-		ImageView icon1 = (ImageView)findViewById(R.id.icon1);//연합회소개
-		ImageView icon2 = (ImageView)findViewById(R.id.icon2);//연합회현황
-		ImageView icon4 = (ImageView)findViewById(R.id.icon4);//교류회현황
-		ImageView icon5 = (ImageView)findViewById(R.id.icon5);//회원사검색
-		ImageView icon6 = (ImageView)findViewById(R.id.icon6);//교류회등록
-		ImageView icon7 = (ImageView)findViewById(R.id.icon7);//회원사등록
+		certification();
 		
-		icon1.setOnClickListener(mOnClickListener);//연합회소개
-		icon2.setOnClickListener(mOnClickListener);//연합회현황
-		icon4.setOnClickListener(mOnClickListener);//교류회현황
-		icon5.setOnClickListener(mOnClickListener);//회원사검색
-		icon6.setOnClickListener(mOnClickListener);//교류회등록
-		icon7.setOnClickListener(mOnClickListener);//회원사등록
-		
-		icon1.setOnTouchListener(CommonUtil.imgbtnTouchListener);//연합회소개
-		icon2.setOnTouchListener(CommonUtil.imgbtnTouchListener);//연합회현황
-		icon4.setOnTouchListener(CommonUtil.imgbtnTouchListener);//교류회현황
-		icon5.setOnTouchListener(CommonUtil.imgbtnTouchListener);//회원사검색
-		icon6.setOnTouchListener(CommonUtil.imgbtnTouchListener);//교류회등록
-		icon7.setOnTouchListener(CommonUtil.imgbtnTouchListener);//회원사등록
-		
-		if (DataUtil.phoneNum.equals("01063344115") || DataUtil.phoneNum.equals("01026470771")) {
-			//Debugging ...
-			openDialogDebug();
-  		} else {
-			startAsyncTask();
-  		}
+		if (phoneNum == "") {
+			openDialogAlert1("통신사에 가입한 폰만 사용 가능합니다.");
+		} else {
+        
+	        // 웹뷰에서 자바스크립트실행가능
+	        mWebView.getSettings().setJavaScriptEnabled(true); 
+	        
+	        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+	        
+	        // Bridge 인스턴스 등록
+	        mWebView.addJavascriptInterface(new AndroidBridge(), "GwangjuApp");
+	        // hfmp 연결..
+	        mWebView.loadUrl(url + getText(R.string.home).toString() + "?phonenum=" + phoneNum);
+	        // WebViewClient 지정
+	        mWebView.setWebViewClient(new WebViewClientClass()); 
+		}
 	}
 	
 	//자기자신의 전화번호 가져오기...
 	@SuppressWarnings("static-access")
-	public void setInit() {
+	public void certification() {
 		TelephonyManager telManager = (TelephonyManager)getApplicationContext().getSystemService(getApplicationContext().TELEPHONY_SERVICE); 
 		String telNum = telManager.getLine1Number();
 		
-		DataUtil.phoneNum = "0" + telNum.substring(telNum.indexOf("1"));
+		if (telNum == null || telNum.equals("")) {
+			//phoneNum = "01063344115";
+			phoneNum = "";
+		} else {
+			phoneNum = "0" + telNum.substring(telNum.indexOf("1"));
+		}
 	}
 	
-	//전화번호를 이용한 인증처리 thread... start...
-	private HashMap<String, String> rowItemData = null;
-	
-	private ProgressDialog dialog;//조회처리 프로그래스바..
-	private int threadMaxTime = 0;
-  	private Thread threadgo;
-  	public void startAsyncTask() {
-  		if (!DataUtil.flag) {
-			threadMaxTime = 0; 
-	  		dialog = ProgressDialog.show(this, "", DataUtil.phoneNum + " 잠시만 기다려 주세요 ...", true);
-			threadgo = new Thread(mRunnable);
-			threadgo.start();
-  		}
-	}
-  	
-  	// threadgo 의 runnable 
-	Runnable mRunnable = new Runnable() {           
-        public void run() { 
-            while (true) {   
-                try {
-                	//데이터 조회.
-                	rowItemData = searchData();
-                	
-                	Thread.sleep(1000);//1초 간으로 진행.
-                	
-                	//데이터 조회 완료 여부 체크
-                	if (rowItemData != null) {
-                    	Message msg = handler.obtainMessage();
-                        handler.sendMessage(msg);
-                        break;
-                	}
-                	
-                	//쓰레드 4회 이상일떄 stop 처리.
-                	if (4 <= threadMaxTime) {
-                		Message msg = handler.obtainMessage();
-                		//rowItemData = null;
-                        handler.sendMessage(msg);
-                        break;
-                	}
-                    
-                	threadMaxTime++;
-                	
-                } catch (InterruptedException ie) {
-                    ie.printStackTrace();
-                }
-            }
-        }
-    };
-    
-    //로그인정보 체크
-  	public HashMap<String, String> searchData() {
-  		HashMap<String, String> rowItem = null;
-  		
-      	//조회조건에 따라서 서버와 통신한다.
-      	StringBuffer strbuf = new StringBuffer();
-      	StringBuffer urlbuf = new StringBuffer();
-      	
-  		String hfmbSrchNm = DataUtil.phoneNum;
-  		
-      	if(hfmbSrchNm == null) hfmbSrchNm = "";
-      	
-      	strbuf.append("srch_gubun=0");
-  		strbuf.append("&srch_nm=" + hfmbSrchNm);
-  		
-      	urlbuf.append("http://119.200.166.131:8054/JwyWebService/hfmbProWeb/jwy_Hfmb_001.jsp");
-      	
-  		//server connecting... login check...
-  		HttpConnectServer server = new HttpConnectServer();
-  		StringBuffer resultInfo = server.sendByHttp(strbuf, urlbuf.toString());
-  		
-  		CommonUtil.showMessage("Debugging", "resultInfo = " + resultInfo);
-  		
-  		if (resultInfo.toString().startsWith("error")) {
-  			return rowItem;//에러발생.
-  		}
-  		
-  		rowItems = server.jsonParserList(resultInfo.toString(), DataUtil.jsonName);
-  		
-  		return rowItem;
-  	}
-    
-	//thread handler.. 결과 처리.
-	Handler handler = new Handler(){
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            
-    		dialog.dismiss();//조회처리 프로그래스바.. 닫기
-    		
-    		//thread stop ... 
-    		try {
-            	threadgo.join();
-            } catch(InterruptedException e) {
-            	Log.i("thread", "Thread  stopping...... enterrupted Exception...");
-            }
-    		
-    		if (rowItems != null) {
-      			if (rowItems.size() > 0) {
-      				if (rowItems.size() > 1) {
-      					openDial();
-      				} else {
-        				//교류회등록가능 사용자. 1=admin, 2=power, 3=general
-          				selectedLogin(rowItems.get(0));
-      				}
-      			} else {
-      				DataUtil.searchYn = false;
-      				DataUtil.insertYn = 0;
-      				DataUtil.meetingCd = "000000";
-      				DataUtil.meetingNm = "Guest";
-      				DataUtil.ceoNm = "Guest";
-      				
-      				messageLogin();
-      			}
-      		} else {
-      			DataUtil.searchYn = false;
-      			DataUtil.insertYn = 0;
-      			DataUtil.meetingCd = "000000";
-      			DataUtil.meetingNm = "Guest";
-      			DataUtil.ceoNm = "Guest";
-      			
-      			messageLogin();
-      		}
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) { 
+        	mWebView.loadUrl(url + getText(R.string.home).toString());
+            return true; 
+        } 
+        return super.onKeyDown(keyCode, event);
+    }
 
-      		Log.d("Tag", DataUtil.insertYn + "-" + DataUtil.searchYn);
+	//back key 제어...
+    /*@Override
+	public void onBackPressed() {
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            showGuide();
+            return;
         }
-    };
-    
-    public void selectedLogin(HashMap<String, String> rowItem) {
-    	//교류회등록가능 사용자. 1=admin, 2=power, 3=general
-		DataUtil.searchYn = true;
-		DataUtil.insertYn = Integer.parseInt(rowItem.get("auth_div_cd"));
-		DataUtil.meetingCd = rowItem.get("meeting_cd");
-		DataUtil.meetingNm = rowItem.get("meeting_nm");
-		DataUtil.ceoNm = rowItem.get("ceo_nm");
-		
-		rowItemData = rowItem;
-		
-		messageLogin();
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            this.finish();
+            toast.cancel();
+        }
+    }*/
+	public void showGuide() {
+    	toast = Toast.makeText(getApplicationContext(),
+                "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+        toast.show();
+    }
+	
+    private class WebViewClientClass extends WebViewClient { 
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) { 
+            view.loadUrl(url); 
+            return true; 
+        }
+    }
+     
+    /*
+     * Layout
+     */
+    private void setLayout(){
+        mWebView = (WebView) findViewById(R.id.webView1);
     }
     
-    public void messageLogin() {
-    	if (rowItemData == null) {
-    		openDialogFail(DataUtil.phoneNum + " 로그인 실패! 온라인 여부 또는 가입여부를 확인하세요.");
-    	} else {
-    		openDialogAlert(DataUtil.ceoNm + "님 로그인 하셨습니다.");
+    public void closeMain() {
+    	this.finish();
+    }
+    
+    final class AndroidBridge {
+    	//페이지이동시.
+    	@JavascriptInterface
+    	public void callPage(final String arg) { // must be final
+    		handler.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "callPage("+arg+")");
+    				mWebView.loadUrl(url + arg);
+    			}
+    		});
+    	}
+    	//메세지
+    	@JavascriptInterface
+    	public void setMessage(final String arg) { // must be final
+    		handler.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "setMessage("+arg+")");
+    				Toast toast = Toast.makeText(getApplicationContext(), arg, Toast.LENGTH_SHORT);
+    				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+    				toast.show();
+    			}
+    		});
+    	}
+    	//앱 닫기
+    	@JavascriptInterface
+    	public void closeApp() { // must be final
+    		handler.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "Close App...");
+    				closeMain();
+    			}
+    		});
+    	}
+    	//로그아웃후 앱 닫기
+    	@JavascriptInterface
+    	public void logout() { // must be final
+    		handler.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "Log Out.....");
+    				Toast toast = Toast.makeText(getApplicationContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT);
+    				toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+    				toast.show();
+    			}
+    		});
+    	}
+    	
+    	//갤러리앱 열기...
+    	@JavascriptInterface
+    	public void openImg(final String arg) { // must be final
+    		handler_img.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "setMessage("+arg+")");
+    				openGallerys(arg);
+    			}
+    		});
+    	}
+
+    	//전화걸기...
+    	@JavascriptInterface
+    	public void callphone(final String arg) { // must be final
+    		handler_img.post(new Runnable() {
+    			public void run() {
+    				Log.d("UlsanApp", "setMessage("+arg+")");
+    				openPhone(arg);
+    			}
+    		});
     	}
     }
     
-    //로그인 성공시.
-    public void openDialogAlert(String title) {
+    //전화걸기
+    public void openPhone(String phoneNum) {
+    	Uri u = Uri.parse("tel:" + phoneNum.replace("-", ""));
+		Intent intent = new Intent(Intent.ACTION_CALL, u);
+        
+        this.startActivity(intent);
+    }
+    
+    //갤러리 열기...
+    public void openGallerys(String tempFileNm) {
+    	if (tempFileNm == null || tempFileNm.equals("")) {
+    		fileNm = "ulsanapp_" + phoneNum;
+    	} else {
+    		fileNm = tempFileNm;
+    	}
+    	
+		//갤러리를 띄운다.
+        Intent intent = new Intent(
+                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");              // 모든 이미지
+        intent.putExtra("crop", "true");        // Crop기능 활성화
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, CommonUtil.getTempUri());     // 임시파일 생성
+        intent.putExtra("outputFormat",         // 포맷방식
+                Bitmap.CompressFormat.JPEG.toString());
+
+        startActivityForResult(intent, 1);
+    }
+    
+    String fileNm;
+    String selfileName;
+	//사진등록하기.
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		switch (requestCode) {
+		case 1://이미지선택시.
+			switch (resultCode) {
+			case -1 ://데이터 가져올떄.
+				
+				selfileName = Environment.getExternalStorageDirectory() + "/temp.jpg";
+				
+				Bitmap bitmap = CommonUtil.SafeDecodeBitmapFile(selfileName);
+
+				String path = getApplicationContext().getCacheDir().getPath();
+
+				//압축한 파일을 저장한다.
+				CommonUtil.SaveBitmapToFileCache(bitmap, fileNm + ".jpg", path);
+
+				selfileName = path + File.separator + fileNm + ".jpg";
+
+				updateInfo();
+				
+				break;
+			}
+			break;
+		}
+	}
+	
+	//저장한다.
+	public void updateInfo() {
+    	StringBuffer urlbuf = new StringBuffer();
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	
+    	params.put("filename", fileNm);
+    	
+    	urlbuf.append(url + "fileUploadByAndroid.jsp");
+    	
+    	HttpConnectServer server = new HttpConnectServer();
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, selfileName);
+    	
+		Log.i("json:", resultInfo.toString());
+		
+		HashMap<String, String> results = server.jsonParserList(resultInfo.toString(), CommonUtil.jsonNameResult, "Result");
+		
+		if (results != null) {
+			if (results.get("error") == null || results.get("error").equals("")) {
+				openDialogAlert("파일 업로드가 실패하였습니다. WIFI 또는 인터넷이 되어 있는 곳에서만 가능합니다.");
+			} else if (results.get("error").equals("0")) {
+				Log.i("json:", "업로드 성공!!");
+				openDialogAlert("파일 업로드가 성공하였습니다.");
+				//웹뷰의 자바스크립트 호출
+				mWebView.loadUrl("javascript:setImg('"+ fileNm +"', '"+ selfileName +"')");
+				//mWebView.clearCache(true);
+			}
+		} else {
+			openDialogAlert("파일 업로드가 실패하였습니다. WIFI 또는 인터넷이 되어 있는 곳에서만 가능합니다.");
+		}
+	}
+	
+	public void openDialogAlert(String title) {
 		//확인 다이얼로그
 		new AlertDialog.Builder(MainActivity.this)
         .setTitle(title)
@@ -237,207 +297,27 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				DataUtil.flag = true;
 			}
 		})
         .show();
 	}
-  	
-  	//로그인 실패시
-  	public void openDialogFail(String title) {
-  		//확인 다이얼로그
-  		new AlertDialog.Builder(MainActivity.this)
-          .setTitle(title)
-  		.setNegativeButton( "재시도", new DialogInterface.OnClickListener() {
-  			@Override
-  			public void onClick(DialogInterface dialog, int which) {
-  				// TODO Auto-generated method stub
-  				DataUtil.flag = false;
-  				startAsyncTask();
-  			}
-  		})
-  		.setPositiveButton( "닫기", new DialogInterface.OnClickListener() {
-  			@Override
-  			public void onClick(DialogInterface dialog, int which) {
-  				// TODO Auto-generated method stub
-  				DataUtil.flag = false;
-  				
-        		DataUtil.searchYn = false;
-      			DataUtil.insertYn = 0;
-      			DataUtil.meetingCd = "000000";
-      			DataUtil.meetingNm = "Guest";
-      			DataUtil.ceoNm = "Guest";
-  			}
-  		})
-          .show();
-  	}
-  	
-	//이미지 클릭시.
-	private OnClickListener mOnClickListener = new OnClickListener() {
-		@Override
-		public void onClick(View view) {
-			// TODO Auto-generated method stub
-			boolean inFlag = true;
-			String message = "";
-			Intent intent = new Intent(getApplicationContext(), HfmbActivity001.class);//연합회소개
-			
-			switch (view.getId()) {
-			case R.id.icon1://연합회소개
-				intent = new Intent(getApplicationContext(), HfmbActivity001.class);
-				break;
-			case R.id.icon2://연합회현황
-				intent = new Intent(getApplicationContext(), HfmbActivity002.class);
-				break;
-			case R.id.icon4://교류회현황
-				if (!DataUtil.searchYn) inFlag = false;
-				message = "교류회현황은 회원사만 조회 가능합니다.";
-				intent = new Intent(getApplicationContext(), HfmbActivity003.class);
-				break;
-			case R.id.icon5://회원사검색
-				if (!DataUtil.searchYn) inFlag = false;
-				message = "회원사검색은 회원사만 조회 가능합니다.";
-				intent = new Intent(getApplicationContext(), HfmbActivity004.class);
-				break;
-			case R.id.icon6://교류회등록
-				//권한체크.. -- 사무국직원만 가능.
-				if (DataUtil.insertYn != 1) inFlag = false;
-				message = "교류회 등록은 사무국직원만 가능합니다.";
-				intent = new Intent(getApplicationContext(), HfmbActivity005.class);
-				break;
-			case R.id.icon7://회원사등록
-				//권한체크.. -- 사무국직원, 교류회 회장, 총무 만 가능.
-				if (DataUtil.insertYn != 1 && DataUtil.insertYn != 2) inFlag = false;
-				message = "회원사 등록은 사무국직원과 교류회 회장,총무만 가능합니다.";
-				intent = new Intent(getApplicationContext(), HfmbActivity006.class);
-				break;
-			}
-			
-			if (inFlag) {
-				startActivity(intent);
-			} else {
-				openDialogAlert(message);//진행불가.
-			}
-		}
-	};
-	
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar ab = getActionBar();
-			ab.setDisplayHomeAsUpEnabled(false);
-			ab.hide();
-		}
-	}
-	
-	//이미지정보 수정화면을 팝업한다.
-	List<HashMap<String, String>> rowItems;
-	DialogListAdapter listAdapter;
-	AlertDialog subMenu;
-	View convertView;
-	public void openDial() {
-        LayoutInflater mInflater = (LayoutInflater)this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);  
-		convertView = mInflater.inflate(R.layout.dialog_01, null);
-		
-        if (subMenu != null) {
-        	subMenu.dismiss();
-        }
-        
-        ListView list = (ListView)convertView.findViewById(R.id.list);
-        listAdapter = new DialogListAdapter(this, rowItems, R.layout.diallog_listview);
-        list.setAdapter(listAdapter);
-        
-        list.setOnItemClickListener(mOnItemClickListener);
-        
-        LinearLayout dial_linearlayout = (LinearLayout)convertView.findViewById(R.id.dial_linearlayout);
-        dial_linearlayout.setVisibility(View.GONE);
-        
-        subMenu = new AlertDialog.Builder(this)
-        .setTitle("복수 회원사로 다음에서 선택하세요.")
-        .setNeutralButton("선택", new DialogInterface.OnClickListener() {
+	public void openDialogAlert1(String title) {
+		//확인 다이얼로그
+		new AlertDialog.Builder(MainActivity.this)
+        .setTitle(title)
+		.setPositiveButton( "확인", new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(DialogInterface dialog, int which){
-				int selPosition = listAdapter.getSelectedPosition();
-				selectedLogin(rowItems.get(selPosition));
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				finishApp();
 			}
 		})
-//        .setNegativeButton( "취소", new DialogInterface.OnClickListener() {
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				// TODO Auto-generated method stub
-//			}
-//		})
-		.setView(convertView)
-        .create();
-        
-        subMenu.show();
+        .show();
 	}
 	
-	//list view 에서 item을 선택하였을때.
-	private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
-		@Override    
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			//goLogin(position);
-			selectedLogin(rowItems.get(position));
-	    }
-	};
-	
-//	public void goLogin(int position) {
-//		selectedLogin(rowItems.get(position));
-//	}
-    
-    /* Start.................
-     * Debugging .... Test 하기 위함. (개발자를 위함)
-     */
-    public EditText phonenumEditText;
-	public void openDialogDebug() {
-		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE); //inflater 생성
-		View viewInDialog = inflater.inflate(R.layout.daillog_login, null); //inflater로 View 객체에 레이아웃 넣기
-		
-		DataUtil.phoneNum = "01036252271";
-		
-		phonenumEditText = (EditText)viewInDialog.findViewById(R.id.pwmes0001_value01);
-		phonenumEditText.setText(DataUtil.phoneNum);
-		
-		new AlertDialog.Builder(MainActivity.this)
-	        .setTitle("Debugging")
-	  		.setPositiveButton( "Ok", new DialogInterface.OnClickListener() {
-	  			@Override
-	  			public void onClick(DialogInterface dialog, int which) {
-	  				// TODO Auto-generated method stub
-	  				checkLogin();
-	  			}
-	  		})
-	  		.setView(viewInDialog)
-	  		.show();
+	public void finishApp() {
+		this.finish();
+//		android.os.Process.killProcess(android.os.Process.myPid());
+		//System.exit(0);
 	}
-    	
-	//로그인 정보를 체크한다.//테스트...
-	public void checkLogin() {
-		String phonenum = phonenumEditText.getText().toString();
-	
-		DataUtil.flag = false;
-		if (phonenum == null || phonenum.equals("")) {
-			
-		} else {
-			Log.i("Input Data", "phonenum: " + phonenum);
-			
-			DataUtil.phoneNum = "0" + phonenum.substring(phonenum.indexOf("1"));
-			
-			Log.i("Input Data", "telNum: " + DataUtil.phoneNum);
-			
-			if (DataUtil.phoneNum.equals("01063344115")) {
-				Log.i("BRAND", "telNum: " + phonenum);
-				Log.i("BRAND", "BRAND: " + Build.BRAND);
-	  		}
-			
-			startAsyncTask();
-		}
-	}
-	/* End.............
-     * Debugging .... Test 하기 위함. (개발자를 위함)
-     */
 }
-
