@@ -10,4 +10,8 @@
     <string name="meeting_cd"></string>
     <string name="meeting_nm"></string>
     <string name="company_cd"></string>
+    
+    <string name="url">http://14.55.208.110/gwangjuapp/</string>
+    <string name="urltest">http://nezrats.synology.me:7070/kwangjuapp/</string>
+    <string name="home">main</string>
 </resources>
