@@ -85,7 +85,7 @@ public class Ntpbm0103Activity extends Activity implements OnItemClickListener, 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		// TODO Auto-generated method stub
-		if (arg2 == 5) {
+		if (arg2 == parseredDataList.size()-1) {
     		//보관함일떄만 호출된다.
     		Intent intent = new Intent(this, Ntpbm0108Activity.class);
 			startActivity(intent);
