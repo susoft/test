@@ -123,7 +123,7 @@ public class Ntpbm0109Activity extends Activity {
 			HashMap<String, String> parseredData = null;
 			for(int i = 0; i < parseredDataList.size(); i++) {
 				parseredData = parseredDataList.get(i);
-				((EditText)findViewById(R.id.ntpbm_0109_edit02)).setText(parseredData.get(jsonName[3]));//담당자명
+				((TextView)findViewById(R.id.ntpbm_0109_txtNm_0200)).setText("담당자명 : " + parseredData.get(jsonName[3]));//담당자명
 			}
 		}
 	}

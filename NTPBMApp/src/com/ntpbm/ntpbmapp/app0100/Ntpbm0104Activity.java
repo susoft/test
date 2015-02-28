@@ -8,7 +8,10 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +27,6 @@ import com.ntpbm.ntpbmapp.MainActivity;
 import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
-import com.ntpbm.ntpbmapp.Util;
 
 /*
  * 설치장치의 설치장소
@@ -77,7 +79,7 @@ public class Ntpbm0104Activity extends Activity {
 		
 		Log.i("json:", resultInfo.toString());
 		
-		Util.DialogSimple("처리결과", "정상처리되었습니다.", this);
+		DialogSimple("처리결과", "정상처리되었습니다.", this);
 	}
 	
 	/** 
@@ -166,6 +168,31 @@ public class Ntpbm0104Activity extends Activity {
     	Log.i("", msg);
 	}
 	
+
+	/*
+	 * 팝업창 (결과처리)
+	 */
+	public void DialogSimple(String title, String message, Context context) {
+	    AlertDialog.Builder alt_bld = new AlertDialog.Builder(context);
+	    alt_bld.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	        	dialog.dismiss();     //닫기
+	        	close();
+	        }
+	    });
+	    
+	    AlertDialog alert = alt_bld.create();
+	    alert.setTitle(title);
+	    alert.setMessage(message);
+	    alert.setCanceledOnTouchOutside(true);
+	    alert.show();
+	}
+	
+	public void close() {
+		this.finish();
+	}
+
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
 

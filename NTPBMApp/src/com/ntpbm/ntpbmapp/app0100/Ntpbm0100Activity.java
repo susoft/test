@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.ntpbm.ntpbmapp.HttpConnectServer;
 import com.ntpbm.ntpbmapp.MainActivity;
 import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
@@ -67,12 +69,12 @@ public class Ntpbm0100Activity extends Activity implements OnClickListener {
 			mPage1.setVisibility(View.VISIBLE);
 			
 			//instantiate ZXing integration class
-			//IntentIntegrator scanIntegrator = new IntentIntegrator(Ntpbm0100Activity.this);
+			IntentIntegrator scanIntegrator = new IntentIntegrator(Ntpbm0100Activity.this);
 			//start scanning
-			//scanIntegrator.initiateScan();
+			scanIntegrator.initiateScan();
 			
-			Intent scanIntent = new Intent("com.google.zxing.client.android.SCAN");
-			startActivityForResult(scanIntent, 0);
+			//Intent scanIntent = new Intent("com.google.zxing.client.android.SCAN");
+			//startActivityForResult(scanIntent, 0);
 			
 			break;
 		case R.id.ntpbm_0100_btn02://직접입력 버튼.
@@ -96,7 +98,7 @@ public class Ntpbm0100Activity extends Activity implements OnClickListener {
 	//바코드인식 프로그램에서 데이터 받음...
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		
-		if (requestCode == 0) {
+		/*if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
 				scanContent = intent.getStringExtra("SCAN_RESULT");
 				scanFormat = intent.getStringExtra("SCAN_RESULT_FORMAT");
@@ -110,8 +112,8 @@ public class Ntpbm0100Activity extends Activity implements OnClickListener {
 			//invalid scan data or scan canceled
 			Toast toast = Toast.makeText(getApplicationContext(), "No scan data received!", Toast.LENGTH_SHORT);
 			toast.show();
-		}
-		/*//retrieve result of scanning - instantiate ZXing object
+		}*/
+		//retrieve result of scanning - instantiate ZXing object
 		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		//check we have a valid result
 		if (scanningResult != null) {
@@ -123,13 +125,13 @@ public class Ntpbm0100Activity extends Activity implements OnClickListener {
 			formatTxt.setText("FORMAT: "+scanFormat);
 			contentTxt.setText("CONTENT: "+scanContent);
 			
-			searchBarCode(scanFormat);
+			searchBarCode(scanContent);
 		}
 		else{
 			//invalid scan data or scan canceled
 			Toast toast = Toast.makeText(getApplicationContext(), "No scan data received!", Toast.LENGTH_SHORT);
 			toast.show();
-		}*/
+		}
 	}
 	
 	/** 

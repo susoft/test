@@ -78,21 +78,47 @@ public class Ntpbm0101Activity extends Activity implements OnItemClickListener {
 		
 		if (position == 1) {//설치장소
 			intent = new Intent(this, Ntpbm0104Activity.class);
+			intent.putExtra("barcode", barcode);
+			startActivity(intent);
+			
 		} else if (position == 2) {//현장사진
 			intent = new Intent(this, Ntpbm0105Activity.class);
+			intent.putExtra("barcode", barcode);
+			startActivity(intent);
+			
 		} else if (position == 3) {//메모	
 			intent = new Intent(this, Ntpbm0106Activity.class);
+			intent.putExtra("barcode", barcode);
+			startActivity(intent);
+			
 		} else if (position == 4) {//설치확인
 			intent = new Intent(this, Ntpbm0107Activity.class);
 			intent.putExtra(MainActivity.EXTRA_MESSAGE, MainActivity.ntpbm_0107);
+			intent.putExtra("barcode", barcode);
+			startActivity(intent);
+			
 		} else if (position == 5) {//전송
 			intent = new Intent(this, Ntpbm0107Activity.class);
 			intent.putExtra(MainActivity.EXTRA_MESSAGE, MainActivity.ntpbm_01071);
+			intent.putExtra("barcode", barcode);
+			startActivity(intent);
+			
 		} else {//악세사리
-			intent = new Intent(this, Ntpbm0103Activity.class);
+			Intent intent1 = new Intent(this, Ntpbm0103Activity.class);
+			intent1.putExtra("barcode", barcode);
+			startActivityForResult(intent1, 100);
+			
 		}
-		intent.putExtra("barcode", barcode);
-		startActivity(intent);
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 * 사진촬영후 리턴 - 저장....
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		searchNtpbm0101Info();//데이터 조회하기.
 	}
 	
 	/** 
@@ -149,7 +175,7 @@ public class Ntpbm0101Activity extends Activity implements OnItemClickListener {
 					((TextView)findViewById(R.id.serverTxtNm02)).setText(parseredData.get(jsonName[2]));//브랜드
 					((TextView)findViewById(R.id.serverTxtNm04)).setText(parseredData.get(jsonName[3]));//모델명
 					((TextView)findViewById(R.id.serverTxtNm06)).setText(parseredData.get(jsonName[4]));//식별자
-					((TextView)findViewById(R.id.serverTxtNm08)).setText(parseredData.get(jsonName[5]));//시리얼번호
+					
 				}
 				//체크확인 건수 알아야함.
 				if (parseredData.get(jsonName[7]).equals("1")) checkCount++;
@@ -158,6 +184,7 @@ public class Ntpbm0101Activity extends Activity implements OnItemClickListener {
 			descriptions[0] = checkCount + "/" + (listCount);
 		}
 		
+		((TextView)findViewById(R.id.serverTxtNm08)).setText(barcode);//시리얼번호
 		setDisplay();//리스트뷰를 생성한다.
 	}
 

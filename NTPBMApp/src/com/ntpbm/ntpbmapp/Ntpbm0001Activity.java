@@ -32,6 +32,9 @@ public class Ntpbm0001Activity extends Activity implements OnClickListener {
 		Intent intent = getIntent();
 		message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 		
+		((EditText)findViewById(R.id.idVal)).setPrivateImeOptions("defaultInputmode=english;");
+		((EditText)findViewById(R.id.idVal)).setPrivateImeOptions("defaultInputmode=english;");
+		
 		findViewById(R.id.loginBtn).setOnClickListener(this);
 		findViewById(R.id.cancelBtn).setOnClickListener(this);
 		
