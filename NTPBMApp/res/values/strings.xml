@@ -88,11 +88,13 @@
 	
 	<string name="title_activity_ntpbm0300">재고조회</string>
 	<string name="ntpbm_0300_btn01">조회</string>
-	<string name="ntpbm_0300_txtNm01">중분류</string>
-	<string name="ntpbm_0300_txtNm02">소분류</string>
-	<string name="ntpbm_0300_trtxtnm01">품명</string>
-	<string name="ntpbm_0300_trtxtnm02">모델명</string>
-	<string name="ntpbm_0300_trtxtnm03">수량</string>
+	<string name="ntpbm_0300_txtNm01">품목그룹</string>
+	<string name="ntpbm_0300_txtNm02">품목구분</string>
+	<string name="ntpbm_0300_txtNm03">품목명</string>
+	<string name="ntpbm_0300_trtxtnm01">품목코드</string>
+	<string name="ntpbm_0300_trtxtnm02">품목명</string>
+	<string name="ntpbm_0300_trtxtnm03">모델명</string>
+	<string name="ntpbm_0300_trtxtnm04">수량</string>
 	
 	<string name="title_activity_ntpbm0400">견적서</string>
 	<string name="ntpbm_0400_txtNm00">견적업체</string>
@@ -141,10 +143,13 @@
     <string name="ntpbm_0104_update">ntpbm0104_update.jsp</string>
     <string name="ntpbm_0105_add">ntpbm0105_fileadd.jsp</string>
     <string name="ntpbm_0105_del">ntpbm0105_del.jsp</string>
+    <string name="ntpbm_0106_update">ntpbm0106_update.jsp</string>
     <string name="ntpbm_0109_sign">ntpbm0109_sign.jsp</string>
     
     <string name="ntpbmPath0300">NtpbmWebService/ntpbmWeb/ntpbm0300/</string>
     <string name="ntpbm_0300">ntpbm0300.jsp</string>
+    <string name="ntpbm0300_cls">ntpbm0300_cls.jsp</string>
+    <string name="ntpbm0300_dvs">ntpbm0300_dvs.jsp</string>
     
     <string name="ntpbmPath0400">NtpbmWebService/ntpbmWeb/ntpbm0400/</string>
     <string name="ntpbm_0400">ntpbm0400.jsp</string>
