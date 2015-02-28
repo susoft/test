@@ -29,7 +29,7 @@
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:text="@string/title_activity_ntpbm0106" />
-			<ImageButton 
+			<!-- <ImageButton 
 			    android:id="@+id/ntpbm_0106_imgbtn01"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
@@ -37,12 +37,12 @@
 		        android:layout_alignParentRight="true"
 		        android:layout_marginRight="10dp"
 		        android:contentDescription="@string/ntpbm_0106_imgbtn01"
-		        android:src="@drawable/pencil" />
+		        android:src="@drawable/pencil" /> -->
         </RelativeLayout>
         
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
 	        android:orientation="vertical" >
 		    
             <EditText
@@ -51,7 +51,9 @@
 		        android:layout_height="0dp"
 		        android:layout_weight="1"
 		        android:ems="10"
-		        android:inputType="text"
+		        android:lines="5"
+			    android:gravity="top|left"
+			    android:inputType="textMultiLine"
 		        style="@style/text15dp" >
 		    </EditText>
         </LinearLayout>
@@ -79,7 +81,7 @@
         </LinearLayout>
     </LinearLayout>
 	
-	<TableLayout
+	<!-- <TableLayout
 		android:id="@+id/ntpbm_0106_table"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -87,7 +89,7 @@
 		android:layout_below="@id/linearlayout01"
 		android:background="@android:color/black" >
 		
-	</TableLayout>
+	</TableLayout> -->
     
 </RelativeLayout>
 </ScrollView>

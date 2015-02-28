@@ -10,4 +10,11 @@
 	    android:background="@android:color/white"
 	    android:textColor="@android:color/black"
 	    style="@style/text17dp" />
+	<TextView 
+	    android:id="@+id/ntpbm_0106_tv_seq"
+		android:layout_weight="1"
+	    android:background="@android:color/white"
+	    android:textColor="@android:color/black"
+	    android:visibility="gone"
+	    style="@style/text17dp" />
 </TableRow>
