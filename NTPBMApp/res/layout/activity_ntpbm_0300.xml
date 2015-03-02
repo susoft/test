@@ -23,17 +23,7 @@
                 android:text="@string/ntpbm_0300_txtNm01"
                 android:textStyle="bold"
                 style="@style/text17dp" />
-			<!-- <EditText
-		        android:id="@+id/ntpbm_0300_edit01"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_weight="0.5"
-		        android:layout_marginLeft="20dp"
-		        android:text=""
-		        android:ems="12"
-		        android:inputType="text"
-		        style="@style/text15dp" >
-	        </EditText> -->
+			
             <Spinner
                 android:id="@+id/ntpbm_0300_spnr01"
                 android:layout_width="match_parent"
@@ -58,17 +48,7 @@
                 android:text="@string/ntpbm_0300_txtNm02"
                 android:textStyle="bold"
                 style="@style/text17dp" />
-			<!-- <EditText
-		        android:id="@+id/ntpbm_0300_edit02"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_weight="0.5"
-		        android:layout_marginLeft="20dp"
-		        android:text=""
-		        android:ems="12"
-		        android:inputType="text"
-		        style="@style/text15dp" >
-	        </EditText> -->
+			
             <Spinner
                 android:id="@+id/ntpbm_0300_spnr02"
                 android:layout_width="match_parent"
@@ -110,63 +90,14 @@
 
     </LinearLayout>
     
-    <TableLayout
-		android:id="@+id/header"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="5dp"
-		android:layout_marginRight="2dp"
-		android:layout_marginLeft="2dp"
-		android:background="@android:color/black"
-		android:layout_below="@id/ntpbm_0300_linearLayout02">
-		<TableRow
-		    android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="1dp"
-			android:layout_marginBottom="1dp"
-			android:background="@android:color/black" >
-			
-			<TextView
-			    android:textColor="@android:color/black"
-			    android:gravity="center_horizontal"
-			    android:layout_width="100dp"
-			    android:layout_marginRight="1dp"
-			    android:background="#ffcccccc"
-			    android:text="@string/ntpbm_0300_trtxtnm01" />
-			<TextView
-			    android:textColor="@android:color/black"
-			    android:gravity="center_horizontal"
-			    android:layout_weight="1"
-			    android:layout_marginRight="1dp"
-			    android:background="#ffcccccc"
-			    android:text="@string/ntpbm_0300_trtxtnm02" />
-			<TextView
-			    android:textColor="@android:color/black"
-			    android:gravity="center_horizontal"
-			    android:layout_width="60dp"
-			    android:background="#ffcccccc"
-			    android:text="@string/ntpbm_0300_trtxtnm04" />
-		</TableRow>
-	</TableLayout>
- 
-    <ScrollView
-		android:id="@+id/table_scroll"
+    <ListView android:id="@+id/list0300"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:layout_marginRight="2dp"
-		android:layout_marginLeft="2dp"
 		android:layout_marginTop="5dp"
-		android:layout_below="@id/header" >
-		
-		<TableLayout
-			android:id="@+id/maintable"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:shrinkColumns="*"
-			android:background="@android:color/black" >
-   					
-			
-		</TableLayout>
-				
-    </ScrollView>
+		android:layout_below="@id/ntpbm_0300_linearLayout02"
+		android:fastScrollEnabled="true"
+        android:footerDividersEnabled="true"
+        android:dividerHeight="2dp"
+ 		android:divider="#b5b5ae" />
+    
 </RelativeLayout>

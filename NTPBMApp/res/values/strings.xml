@@ -145,6 +145,7 @@
     <string name="ntpbm_0105_del">ntpbm0105_del.jsp</string>
     <string name="ntpbm_0106_update">ntpbm0106_update.jsp</string>
     <string name="ntpbm_0109_sign">ntpbm0109_sign.jsp</string>
+    <string name="ntpbm_0109_sign_custom">ntpbm0109_sign_custom.jsp</string>
     
     <string name="ntpbmPath0300">NtpbmWebService/ntpbmWeb/ntpbm0300/</string>
     <string name="ntpbm_0300">ntpbm0300.jsp</string>

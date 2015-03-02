@@ -40,8 +40,18 @@
 	        android:layout_marginTop="10dp"
 	        android:layout_marginBottom="10dp"
 	        android:layout_centerHorizontal="true"
+	        android:background="@android:color/white"
 	        android:orientation="horizontal" >
 	    </LinearLayout>
+	    <Button
+	        android:id="@+id/ntpbm_0109_btn04"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_weight="1"
+	        android:text="@string/ntpbm_0109_btn03"
+	        android:onClick="reset1"
+	        style="@style/btnStyleBeige" />
     </LinearLayout>
     
     <LinearLayout
@@ -58,25 +68,14 @@
 	        android:layout_centerVertical="true"
 	        android:text="담당자명"
 	        style="@style/textTitle20dp_2" />
-        <!-- <EditText
-	        android:id="@+id/ntpbm_0109_edit02"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:layout_marginLeft="20dp"
-	        android:text=""
-	        android:ems="12"
-	        android:inputType="text"
-	        android:enabled="true"
-	        style="@style/text15dp" >
-        </EditText> -->
         <LinearLayout
 	        android:id="@+id/ntpbm_0109_linearLayout00"
 	        android:layout_width="fill_parent"
-	        android:layout_height="200dp"
+	        android:layout_height="100dp"
 	        android:layout_marginTop="10dp"
 	        android:layout_marginBottom="10dp"
 	        android:layout_centerHorizontal="true"
+	        android:background="@android:color/white"
 	        android:orientation="horizontal" >
 	    </LinearLayout>
     </LinearLayout>

@@ -54,6 +54,7 @@
 		        android:layout_marginLeft="20dp"
 		        android:ems="10"
 		        android:maxLength="20"
+		        android:text="js"
 		        android:inputType="text"
 		        style="@style/text15dp" >
 		    </EditText>
@@ -78,6 +79,7 @@
 		        android:layout_marginLeft="20dp"
 		        android:ems="10"
 		        android:maxLength="10"
+		        android:text="0"
 		        android:inputType="textPassword"
 		        style="@style/text15dp" >
 				
