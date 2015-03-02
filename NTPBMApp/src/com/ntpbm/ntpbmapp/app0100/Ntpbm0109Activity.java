@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -46,13 +47,13 @@ public class Ntpbm0109Activity extends Activity {
 	
 	//납품업자
 	private DrawView1 drawView1;
-	ArrayList<Vertex1> arVertex1;
-	LinearLayout linear1;
+	private ArrayList<Vertex1> arVertex1;
+	private LinearLayout linear1;
 	
 	//고객
 	private DrawView2 drawView2;
-	ArrayList<Vertex2> arVertex2;
-	LinearLayout linear2;
+	private ArrayList<Vertex2> arVertex2;
+	private LinearLayout linear2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,7 @@ public class Ntpbm0109Activity extends Activity {
 		// Do something in response to button
 		
 		String fname = barcode + "_custom_" + ".jpg";
+		String fname1 = barcode + "_isp_" + ".jpg";
 		
 		File myDir = new File(Util.path + "Draw");
 		if (!myDir.isDirectory()) myDir.mkdirs();
@@ -144,23 +146,40 @@ public class Ntpbm0109Activity extends Activity {
         File myDir1 = new File(Util.path + "Draw/" + barcode);
         if (!myDir1.isDirectory()) myDir1.mkdirs();
         
+        //고객용 서명 파일 체크.
         File file = new File (myDir1, fname);
         if (file.exists ()) file.delete ();
         
+        //납품자용 서명 파일 체크.
+        File file1 = new File (myDir1, fname1);
+        if (file1.exists ()) file1.delete ();
+        
         String fnamepath = file.getAbsolutePath ();
+        String fnamepath1 = file1.getAbsolutePath ();
         
         FileOutputStream fos = null;
+        FileOutputStream fos1 = null;
         try {
+        	//고객용 서명 처리.
             fos = new FileOutputStream (fnamepath);
             
             linear2.buildDrawingCache();
             Bitmap bitmap = linear2.getDrawingCache();
-            bitmap.compress (CompressFormat.JPEG, 100, fos);
             
-            //sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+            //Bitmap resizedbitmap = Bitmap.createScaledBitmap(bitmap, 125, 45, true);
+            bitmap.compress (CompressFormat.JPEG, 50, fos);
             
+            //납품자용 서명 처리.
+            fos1 = new FileOutputStream (fnamepath1);
+            
+            linear1.buildDrawingCache();
+            Bitmap bitmap1 = linear1.getDrawingCache();
+            
+            //Bitmap resizedbitmap1 = Bitmap.createScaledBitmap(bitmap1, 125, 45, true);
+            bitmap1.compress (CompressFormat.JPEG, 50, fos1);
+
             //서버에 서명 전송하기.
-            updateSign(fname, myDir1.toString());
+            updateSign(fname, fname1, myDir1.toString());
 
             //sending file name..
             Intent intent = getIntent();
@@ -183,17 +202,19 @@ public class Ntpbm0109Activity extends Activity {
 	 */ 
 	public void reset(View view) {
 		// Do something in response to button
-		drawView2 = new DrawView2(this);
-		
-		linear2 = (LinearLayout)findViewById(R.id.ntpbm_0109_linearLayout00);
-		
-		linear2.addView(drawView2);
-		
+		drawView2.bitmap = null;
 		arVertex2 = new ArrayList<Vertex2>();
-		
-		linear2.invalidate();
-		linear2.postInvalidate();
-		//linear2.notifyAll();
+		drawView2.invalidate();
+	}
+	/** 
+	 * Called when the user clicks the reset button 
+	 * 납품자 서명 초기화..
+	 */ 
+	public void reset1(View view) {
+		// Do something in response to button
+		drawView1.bitmap = null;
+		arVertex1 = new ArrayList<Vertex1>();
+		drawView1.invalidate();
 	}
 	
 	/** 
@@ -205,7 +226,8 @@ public class Ntpbm0109Activity extends Activity {
 		this.finish();
 	}
 	
-	private void updateSign(String filename, String filepath) {
+	//납품업자 업로드...
+	private void updateSign(String filename, String filename1, String filepath) {
 		StringBuffer urlbuf = new StringBuffer();
     	HashMap<String, String> params = new HashMap<String, String>();
     	
@@ -222,16 +244,43 @@ public class Ntpbm0109Activity extends Activity {
 		urlbuf.append(urlStr);
     	
     	HttpConnectServer server = new HttpConnectServer();
+    	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, filepath + File.separator + filename1);
+    	
+    	Log.i("json:result", resultInfo.toString().trim());
+    	
+    	updateSignCustom(filename, filepath);
+    	//MainActivity.logView(getApplicationContext(), "정상처리되었습니다.");
+    	//DialogSimple("처리결과", "정상처리되었습니다.");
+	}
+	
+	//고객 업로드...
+	private void updateSignCustom(String filename, String filepath) {
+		StringBuffer urlbuf = new StringBuffer();
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	
+    	String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    	
+    	params.put("sn_cd", barcode);
+    	params.put("isp_date", timeStamp);//설치일자
+    	params.put("dlv_nm", ((TextView)findViewById(R.id.ntpbm_0109_edit01)).getText().toString());//납품자명
+
+    	Log.i("json: before", params.get("isp_date"));
+    	Log.i("json: before", params.get("dlv_nm"));
+    	
+    	String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0109_sign_custom).toString();
+		urlbuf.append(urlStr);
+    	
+    	HttpConnectServer server = new HttpConnectServer();
     	StringBuffer resultInfo = server.HttpFileUpload(urlbuf.toString(), params, filepath + File.separator + filename);
     	
     	Log.i("json:result", resultInfo.toString().trim());
     	
     	MainActivity.logView(getApplicationContext(), "정상처리되었습니다.");
-    	//DialogSimple("처리결과", "정상처리되었습니다.");
+    	//Util.DialogSimple("처리결과", resultInfo.toString().trim(), this);
 	}
 	
 	///////////납품자 서명
-	public class Vertex1 {
+	private  class Vertex1 {
 		float x;
 		float y;
 		boolean Draw;
@@ -249,20 +298,33 @@ public class Ntpbm0109Activity extends Activity {
 		Paint mPaint;
 	    boolean clear;
 	    int co;
+	    Bitmap bitmap;
+	    Canvas canvas;
 	    public DrawView1(Context context) {
 	        super(context);
 	        
 	        // Paint 객체 미리 초기화
 			mPaint = new Paint();
-			mPaint.setStrokeWidth(3); //두께 설정
+			mPaint.setStrokeWidth(5); //두께 설정
 			mPaint.setAntiAlias(true); //부드러운 표현
 	  
 			clear = false;
 			co=Color.BLACK;
+			
+	    	//고객의 사인 존재여부 체크(시리얼번호별로 처리함)
+			String fname = barcode + "_isp_" + ".jpg";
+			String fullpath = Util.path + Util.draw_path + File.separator + barcode + File.separator;
+			File file = new File (fullpath, fname);
+	        if (file.exists()) {
+	        	bitmap = BitmapFactory.decodeFile(fullpath + fname);
+	        	//bitmap = Bitmap.createScaledBitmap(resizedbitmap1, 300, 200, true);
+	        }
 	    }
-	    public void onDraw(Canvas canvas) {
-	    	canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
-	  
+	    
+	    public void onDraw(Canvas canvass) {
+	    	this.canvas = canvass;
+	    	//canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
+	    	canvas.drawColor(Color.TRANSPARENT); 
 	    	// 정점을 순회하면서 선분으로 잇는다.
 	    	for (int i=0;i<arVertex1.size();i++) {
 	    		if (arVertex1.get(i).Draw) {
@@ -271,6 +333,11 @@ public class Ntpbm0109Activity extends Activity {
 	    			canvas.drawLine(arVertex1.get(i-1).x, arVertex1.get(i-1).y, 
 	    					arVertex1.get(i).x, arVertex1.get(i).y, mPaint);
 	    		}
+	    	}
+	    	
+	    	//그림 존재여부 체크하여 존재하면 그림을 보여준다.
+	    	if (bitmap != null) {
+	    		canvas.drawBitmap(bitmap, 0, 0, null);
 	    	}
 	    }
 	    
@@ -289,8 +356,10 @@ public class Ntpbm0109Activity extends Activity {
 	    }
 	}
 
-	//고객 서명
-	public class Vertex2 {
+	/*
+	 * 고객 서명 vertex 정보
+	 */
+	private  class Vertex2 {
 		float x;
 		float y;
 		boolean Draw;
@@ -303,25 +372,40 @@ public class Ntpbm0109Activity extends Activity {
 			this.color=color;
 		}
 	}
-	
+	/*
+	 * 고객 서명 draw view
+	 */
 	protected class DrawView2 extends View {
 		Paint mPaint;
 	    boolean clear;
 	    int co;
+	    Bitmap bitmap;
+	    Canvas canvas;
 	    public DrawView2(Context context) {
 	        super(context);
 	        
 	        // Paint 객체 미리 초기화
 			mPaint = new Paint();
-			mPaint.setStrokeWidth(3); //두께 설정
+			mPaint.setStrokeWidth(5); //두께 설정
 			mPaint.setAntiAlias(true); //부드러운 표현
 	  
 			clear = false;
 			co=Color.BLACK;
+			
+			//고객의 사인 존재여부 체크(시리얼번호별로 처리함)
+			String fname = barcode + "_custom_" + ".jpg";
+			String fullpath = Util.path + Util.draw_path + File.separator + barcode + File.separator;
+			File file = new File (fullpath, fname);
+	        if (file.exists()) {
+	        	bitmap = BitmapFactory.decodeFile(fullpath + fname);
+	        	//bitmap = Bitmap.createScaledBitmap(resizedbitmap1, 300, 200, true);
+	        }
 	    }
-	    public void onDraw(Canvas canvas) {
-	    	canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
-	  
+	    public void onDraw(Canvas canvass) {
+	    	this.canvas = canvass;
+	    	//canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
+	    	canvas.drawColor(Color.TRANSPARENT); 
+	    	//canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 	    	// 정점을 순회하면서 선분으로 잇는다.
 	    	for (int i=0;i<arVertex2.size();i++) {
 	    		if (arVertex2.get(i).Draw) {
@@ -330,6 +414,11 @@ public class Ntpbm0109Activity extends Activity {
 	    			canvas.drawLine(arVertex2.get(i-1).x, arVertex2.get(i-1).y, 
 	    					arVertex2.get(i).x, arVertex2.get(i).y, mPaint);
 	    		}
+	    	}
+	    	
+	    	//그림 존재여부 체크하여 존재하면 그림을 보여준다.
+	    	if (bitmap != null) {
+	    		canvas.drawBitmap(bitmap, 0, 0, null);
 	    	}
 	    }
 	    

@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 	
 	public static int loginYn = -1;
 	
-	public static final String[] titles = new String[] { "설치확인", "장비조회", "재고조회", "견적서" };       
+	public static final String[] titles = new String[] { "설치확인", "장비조회", "재고조회" };       //, "견적서"
 	public static final String[] descriptions = new String[] {"", "", "", "" };
 	public static final Integer[] images = { R.drawable.ntpbm_0100, R.drawable.ntpbm_0200, R.drawable.ntpbm_0300, R.drawable.ntpbm_0400 };
 	

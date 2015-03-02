@@ -1,5 +1,6 @@
 package com.ntpbm.ntpbmapp.app0300;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,28 +18,20 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import com.ntpbm.ntpbmapp.HttpConnectServer;
+import com.ntpbm.ntpbmapp.ListItem0300Adapter;
 import com.ntpbm.ntpbmapp.MainActivity;
 import com.ntpbm.ntpbmapp.Ntpbm0001Activity;
 import com.ntpbm.ntpbmapp.Ntpbm0002Activity;
 import com.ntpbm.ntpbmapp.R;
 import com.ntpbm.ntpbmapp.SpinnerAdapter;
 
-public class Ntpbm0300Activity extends Activity implements OnItemSelectedListener, OnClickListener {
+public class Ntpbm0300Activity extends Activity implements OnClickListener {
 	
-	TableLayout tl;
-	TableRow tr[];
-	
-//	ArrayList<String> arrayList01;
-//	ArrayAdapter<String> adspin01;
-//	
-//	ArrayList<String> arrayList02;
-//	ArrayAdapter<String> adspin02;
+	private ListView listView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +41,6 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 		srchSpinFirst();//콤보박스 생성....
 		
 		findViewById(R.id.ntpbm_0300_btn01).setOnClickListener(this);
-		
-		/*String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		((EditText)findViewById(R.id.ntpbm_0300_edit01)).setText(timeStamp);//납일일자, 현재일자*/	
-	
-		tl = (TableLayout)findViewById(R.id.maintable);
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
@@ -75,6 +62,7 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 		}
 	}
 	
+	public int positionSecond;//두번째 콤보박스 선택 인덱스..
 	//품목코드, 품목명, 규격, 재고량
 	private String[] jsonName = {"IT_CD", "IT_NM", "STD", "STK_SU"};
 	private List<HashMap<String, String>> parseredDataList;
@@ -85,21 +73,18 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 	 */ 
 	public void srchItem() {
 		// Do something in response to button
-		//String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		Log.i("srchItem", "srchItem");
-		int itd_cd = ((Spinner)findViewById(R.id.ntpbm_0300_spnr02)).getSelectedItemPosition();
 		String it_nm = ((EditText)findViewById(R.id.nameEdtVal)).getText().toString();
 		
-		if (itd_cd < 0) {
-			if (parseredDataList_dvs != null && parseredDataList_dvs.size() < 1) {
-				return;
-			}
-			itd_cd = 1;
+		if (parseredDataList_dvs != null && parseredDataList_dvs.size() < 1) {
+			return;
+		}
+		if (positionSecond < 0) {
+			positionSecond = 0;
 		}
 		
 		//조회한다.
 		StringBuffer strbuf = new StringBuffer();
-		strbuf.append("itd_cd=" + parseredDataList_dvs.get(itd_cd).get("ITD_CD"));
+		strbuf.append("itd_cd=" + parseredDataList_dvs.get(positionSecond).get("ITD_CD"));
 		strbuf.append("&it_nm=" + it_nm);
 		
 		Log.i("json:before", strbuf.toString());
@@ -124,40 +109,23 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 	 * 서버에서 조회한 정보를 화면에 보여준다.
 	 */
 	private void setData() {
-		//init tablelayout info...
-		if (tl.getChildCount() > 0) {
-			tl.removeAllViews();
+		if (parseredDataList == null) {
+			parseredDataList = new ArrayList<HashMap<String, String>>();
 		}
 		
-		TextView tv1 = new TextView(this);
-		TextView tv2 = new TextView(this);
-		TextView tv3 = new TextView(this);
-		//TextView tv4 = new TextView(this);
-		LayoutInflater inflater = getLayoutInflater();
+		/*MainActivity.logView(getApplicationContext(), "setData.....");
 		
-		if (parseredDataList != null) {
-			HashMap<String, String> parseredData = null;
-			for(int i = 0; i < parseredDataList.size(); i++) {
-				parseredData = parseredDataList.get(i);
-				
-				TableRow tr = (TableRow)inflater.inflate(R.layout.ntpbm_0300_tablerow, tl, false);
-				//trList.add(tr);
-				
-				tv1 = (TextView)tr.findViewById(R.id.ntpbm_0300_tv1);
-				tv1.setText(parseredData.get(jsonName[0]));
-				
-				tv2 = (TextView)tr.findViewById(R.id.ntpbm_0300_tv2);
-				tv2.setText(parseredData.get(jsonName[1]));
-				
-				tv3 = (TextView)tr.findViewById(R.id.ntpbm_0300_tv3);
-				tv3.setText(parseredData.get(jsonName[3]));
-				
-				/*tv4 = (TextView)tr.findViewById(R.id.ntpbm_0300_tv4);
-				tv4.setText(parseredData.get(jsonName[1]));*/
-				
-				tl.addView(tr);
-			}
-		}
+		HashMap<String, String> temp = new HashMap<String, String>();
+		temp.put("IT_CD", "11111");
+		temp.put("IT_NM", "testsetsetse");
+		temp.put("STK_SU", "11");
+		parseredDataList.add(temp);
+		
+		MainActivity.logView(getApplicationContext(), "setData....." + parseredDataList.size());*/
+		
+		listView = (ListView) findViewById(R.id.list0300);         
+		ListItem0300Adapter adapter = new ListItem0300Adapter(this, parseredDataList, R.layout.list_view0300);         
+		listView.setAdapter(adapter);
 	}
 	
 	
@@ -212,27 +180,26 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 		spin1.setPrompt("품목그룹을 선택하세요.");
 		spin1.setAdapter(a13Adapter);
 		
-		spin1.setOnItemSelectedListener(this);
+		spin1.setOnItemSelectedListener(mOnItemSelectedListener_First);
 	}
 	
 	/** 
 	 * Called when the user clicks the first spinner item  
 	 * 콤보박스 생성 두번쨰.
 	 */ 
-	public void srchSpinSecond() {
+	public void srchSpinSecond(int position) {
 		// Do something in response to button
 		//Server connecting...
-		int itc_cd = ((Spinner)findViewById(R.id.ntpbm_0300_spnr02)).getSelectedItemPosition();
-		if (itc_cd < 0) {
+		if (position < 0) {
 			if (parseredDataList_cls != null && parseredDataList_cls.size() < 1) {
 				return;
 			}
-			itc_cd = 1;
+			position = 0;
 		}
 		
 		//조회한다.
 		StringBuffer strbuf = new StringBuffer();
-		strbuf.append("itc_cd=" + parseredDataList_cls.get(itc_cd).get("ITC_CD"));
+		strbuf.append("itc_cd=" + parseredDataList_cls.get(position).get("ITC_CD"));
 		
 		Log.i("json:before", strbuf.toString());
 		
@@ -266,18 +233,33 @@ public class Ntpbm0300Activity extends Activity implements OnItemSelectedListene
 		Spinner spin1 = (Spinner)findViewById(R.id.ntpbm_0300_spnr02);
 		spin1.setPrompt("품목구분을 선택하세요.");
 		spin1.setAdapter(a13Adapter);
+		
+		spin1.setOnItemSelectedListener(mOnItemSelectedListener_Second);
 	}
 	
-	@Override    
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		//Server connecting...
-		srchSpinSecond();
-	}
-	
-	@Override    
-	public void onNothingSelected(AdapterView<?> parent) {
-		//Nothing....
-	}
+	//첫번째 콤보박스 선택 이벤트
+	public OnItemSelectedListener mOnItemSelectedListener_First = new OnItemSelectedListener() {
+		@Override    
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			srchSpinSecond(position);
+		}
+		@Override    
+		public void onNothingSelected(AdapterView<?> parent) {
+			//Nothing....
+		}
+	};
+
+	//두번째 콤보박스 선택 이벤트
+	public OnItemSelectedListener mOnItemSelectedListener_Second = new OnItemSelectedListener() {
+		@Override    
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			positionSecond = position;
+		}
+		@Override    
+		public void onNothingSelected(AdapterView<?> parent) {
+			//Nothing....
+		}
+	};
 	
 	
 	//////////////////////////////////////////////////////

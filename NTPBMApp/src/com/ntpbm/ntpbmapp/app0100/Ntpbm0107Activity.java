@@ -1,6 +1,9 @@
 package com.ntpbm.ntpbmapp.app0100;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +14,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,8 +42,6 @@ public class Ntpbm0107Activity extends Activity {
 	private String message;
 	private String barcode;
 	
-	//private View mImgBtn01, mImgBtn02, mImgBtn03, mImgBtn04, mImgBtn05, mImgBtn06;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,96 +61,34 @@ public class Ntpbm0107Activity extends Activity {
 			findViewById(R.id.ntpbm_0107_btn02).setVisibility(View.GONE);
 		} else if (message.equals(MainActivity.ntpbm_0107)) {
 			//설치확인 - 고객확인 을 보이게 한다.
-			findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.GONE);
+			//findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.GONE);
 			findViewById(R.id.ntpbm_0107_btn02).setVisibility(View.GONE);
 			
 			//고객사인정보를 보여준다.(있다면...)
 			File myDir1 = new File(Environment.getExternalStorageDirectory().getPath() + "/ntpbm/Draw/" + barcode);
 			
-			String resultStr_fname = barcode + "_custom_" + ".png";
+			String resultStr_fname = barcode + "_custom_" + ".jpg";
 			String resultStr_myDir = myDir1.toString();
 			
-			findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.VISIBLE);
+			Log.i("resultStr_myDir", resultStr_myDir);
+			Log.i("resultStr_fname", resultStr_fname);
 			
-			BitmapFactory.Options bo = new BitmapFactory.Options();  
-			bo.inSampleSize = 8;
-			Bitmap bmp = BitmapFactory.decodeFile(resultStr_myDir + File.separator + resultStr_fname);
-			
-			((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bmp);
+			setSign(resultStr_myDir, resultStr_fname);
 			
 		} else if (message.equals(MainActivity.ntpbm_01071)) {
 			//전송 - 사인, 전송 을 보이게 한다.
+			
+			//고객사인정보를 보여준다.(있다면...)
+			File myDir1 = new File(Environment.getExternalStorageDirectory().getPath() + "/ntpbm/Draw/" + barcode);
+			
+			String resultStr_fname = barcode + "_custom_" + ".jpg";
+			String resultStr_myDir = myDir1.toString();
+			
 			findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.GONE);
 			findViewById(R.id.ntpbm_0107_btn01).setVisibility(View.GONE);
+			
+			setSign(resultStr_myDir, resultStr_fname);
 		}
-		
-		/*mImgBtn01 = findViewById(R.id.ntpbm_0107_linearLayout01);
-		ImageButton imgBtn01 = (ImageButton)findViewById(R.id.ntpbm_0107_img01);
-		imgBtn01.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn01.getVisibility() == View.VISIBLE) {
-					mImgBtn01.setVisibility(View.GONE);
-				} else {
-					mImgBtn01.setVisibility(View.VISIBLE);
-				}
-			}
-		});*/
-		
-		/*mImgBtn02 = findViewById(R.id.ntpbm_0107_linearLayout02);
-		ImageButton imgBtn02 = (ImageButton)findViewById(R.id.ntpbm_0107_img02);
-		imgBtn02.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn02.getVisibility() == View.VISIBLE)
-					mImgBtn02.setVisibility(View.GONE);
-				else 
-					mImgBtn02.setVisibility(View.VISIBLE);
-			}
-		});*/
-		
-		/*mImgBtn03 = findViewById(R.id.ntpbm_0107_linearLayout03);
-		ImageButton imgBtn03 = (ImageButton)findViewById(R.id.ntpbm_0107_img03);
-		imgBtn03.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn03.getVisibility() == View.VISIBLE)
-					mImgBtn03.setVisibility(View.GONE);
-				else 
-					mImgBtn03.setVisibility(View.VISIBLE);
-			}
-		});*/
-		
-		/*mImgBtn04 = findViewById(R.id.ntpbm_0107_linearLayout04);
-		ImageButton imgBtn04 = (ImageButton)findViewById(R.id.ntpbm_0107_img04);
-		imgBtn04.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn04.getVisibility() == View.VISIBLE)
-					mImgBtn04.setVisibility(View.GONE);
-				else 
-					mImgBtn04.setVisibility(View.VISIBLE);
-			}
-		});*/
-		
-		//제품정보 - 악세사리목록...
-		/*mImgBtn05 = findViewById(R.id.ntpbm_0107_linearLayout05);
-		ImageButton imgBtn05 = (ImageButton)findViewById(R.id.ntpbm_0107_img05);
-		imgBtn05.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn05.getVisibility() == View.VISIBLE)
-					mImgBtn05.setVisibility(View.GONE);
-				else 
-					mImgBtn05.setVisibility(View.VISIBLE);
-			}
-		});*/
-		
-		/*mImgBtn06 = findViewById(R.id.ntpbm_0107_linearLayout06);
-		ImageButton imgBtn06 = (ImageButton)findViewById(R.id.ntpbm_0107_img06);
-		imgBtn06.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				if (mImgBtn06.getVisibility() == View.VISIBLE)
-					mImgBtn06.setVisibility(View.GONE);
-				else 
-					mImgBtn06.setVisibility(View.VISIBLE);
-			}
-		});*/
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
@@ -230,6 +169,8 @@ public class Ntpbm0107Activity extends Activity {
 		setData_0103();
 		
 		setDisplay();
+		
+		searchNtpbm0107Info_0104();
 	}
 
 	/*
@@ -293,36 +234,156 @@ public class Ntpbm0107Activity extends Activity {
 		startActivityForResult(intent, 1);
 	}
 	
+	private String email_id;
+	//private String cumstom_nm;
+	
 	/** 
 	 * Called when the user clicks the sendEmail button 
 	 * 이메일 전송한다.
 	 */ 
 	public void sendEmail(View view) {
 		// Do something in response to button
+		/*try {
+			screenshot(findViewById(R.id.ntpbm_0107_scrollview));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
 		
-		//SERVER CONNECTING...
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("<h2>설치완료 확인 메일</h2>");
+		strbuf.append("<p>");
 		
-		//SEND MAIL....
+		if (parseredDataList_0107 != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList_0107.size(); i++) {
+				parseredData = parseredDataList_0107.get(i);
+				
+				//서버에서 파일을 다운로드 하여 로컬에 저장한다.
+				strbuf.append("제조사정보 : " + parseredData.get(jsonName_0107[0]) + "<br>");
+				strbuf.append("구매처정보 : " + parseredData.get(jsonName_0107[1]) + "<br>");
+				strbuf.append("설치장소 : " + parseredData.get(jsonName_0107[2]) + "<br>");
+				strbuf.append("제품정보 " + "<br>");
+			}
+		}
+		
+		if (parseredDataList_0103 != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList_0103.size(); i++) {
+				parseredData = parseredDataList_0103.get(i);
+				strbuf.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				strbuf.append(parseredData.get(jsonName_0103[2]) + "&nbsp;&nbsp;&nbsp;&nbsp;" + (parseredData.get(jsonName_0103[7]).equals("1") ? "확인" : "미확인") + "<br>");
+			}
+		}
+		
+		/*strbuf.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		strbuf.append("<table>");
+		
+		if (parseredDataList_0103 != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList_0103.size(); i++) {
+				parseredData = parseredDataList_0103.get(i);
+
+				strbuf.append("<tr>");
+				
+				strbuf.append("<td>");
+				strbuf.append(parseredData.get(jsonName_0103[2]));
+				strbuf.append("</td>");
+				
+				strbuf.append("<td>");
+				strbuf.append((parseredData.get(jsonName_0103[7]).equals("1") ? "확인" : "미확인"));
+				strbuf.append("</td>");
+				
+				strbuf.append("</tr>");
+			}
+		}
+		strbuf.append("</table>");*/
 		
 		Intent email = new Intent(Intent.ACTION_SEND);
+		email.setType("text/html");
 		
-		email.putExtra(Intent.EXTRA_EMAIL, new String[]{"ouyoungdm@lycos.co.kr"});
-	    email.putExtra(Intent.EXTRA_SUBJECT, "testing mail..");
-	    email.putExtra(Intent.EXTRA_TEXT, "sending.... mail... ");
+		email.putExtra(Intent.EXTRA_EMAIL, new String[]{email_id});
+	    email.putExtra(Intent.EXTRA_SUBJECT, "설치완료 확인 메일");
+	    email.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(strbuf.toString()));
 	    
-	    String fileName = "test.html";
-		String sendFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ntpbm" + File.separator + "mail" + File.separator + fileName;
-		File f = new File(sendFilePath);
+	    /*String filename = barcode + "_form.jpg";
+		String filepath = Environment.getExternalStorageDirectory().getPath() + "/ntpbm/email/" + barcode;
+		
+		File f = new File(filepath + File.separator + filename);
 		if (f.exists()) {
-//			MainActivity.logView(getApplicationContext(), "첨부파일이 생성되지 않앗습니다.");
 			final Uri fileUri = Uri.fromFile(f);
 			email.putExtra(Intent.EXTRA_STREAM, fileUri);
-		}
+		}*/
 	    
 	    //need this to prompts email client only
-	    email.setType("message/rfc822");
+	    //email.setType("message/rfc822");
 	    
-	    startActivity(Intent.createChooser(email, "Choose an Email client :"));
+	    startActivity(Intent.createChooser(email, "Email :"));
+	}
+	
+	/*
+	 * 스크린샷 저장하기... 
+	 */
+	public void screenshot(View view) throws Exception {
+		
+		String filename = barcode + "_form.jpg";
+		String filepath = Environment.getExternalStorageDirectory().getPath() + "/ntpbm/email/" + barcode;
+		
+		File myDir1 = new File(Environment.getExternalStorageDirectory().getPath() + "/ntpbm/email");
+		if (!myDir1.isDirectory()) myDir1.mkdir();
+		
+		File myDir = new File(filepath);
+		if (!myDir.isDirectory()) myDir.mkdir();
+		
+		File file = new File (myDir, filename);
+        if (file.exists ()) file.delete ();
+		
+		view.setDrawingCacheEnabled(true);
+		Bitmap screenshot = view.getDrawingCache();
+		
+		try {
+			File f = new File(filepath, filename);
+			f.createNewFile();
+			OutputStream outStream = new FileOutputStream(f);
+			screenshot.compress(Bitmap.CompressFormat.JPEG, 50, outStream);
+			outStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		view.setDrawingCacheEnabled(false);
+	}
+	
+	//설치장소, 설치주소, 설치상세주소, 담당자, 전화번호, 휴대전화, 이메일, 우편번호, 주소 + 상세주소
+	private String[] jsonName_0104 = {"CHA_PLACE", "CHA_ADDR", "CHA_ADDR_DTI", "CHA_NM", "CHA_TEL", "CHA_HP", "CHA_E_MAIL", "CHA_ZIP_NUM", "CHA_ADDRESS"};
+	private List<HashMap<String, String>> parseredDataList_0104;
+	/** 
+	 * 바코드(sn_cd)를 이용한 데이터조회  server connecting... search barcode... 
+	 */ 
+	private void searchNtpbm0107Info_0104() {
+		StringBuffer strbuf = new StringBuffer();
+		strbuf.append("sn_cd=" + barcode);
+		
+		//서버 url 경로를 xml에서 가져온다.
+		String urlStr = MainActivity.domainUrl + MainActivity.ntpbmPath0100 + getText(R.string.ntpbm_0104).toString();
+		
+		//server connecting... login check...
+		HttpConnectServer server = new HttpConnectServer();
+		StringBuffer resultInfo = server.sendByHttp(strbuf, urlStr);
+		
+		Log.i("json:", resultInfo.toString());
+		
+		//서버에서 받은 결과정보를 hashmap 형태로 변환한다.
+		parseredDataList_0104 = server.jsonParserArrayList(resultInfo.toString(), jsonName_0104);
+
+		//서버에서 조회한 정보를 화면에 보여준다.
+		if (parseredDataList_0104 != null) {
+			HashMap<String, String> parseredData = null;
+			for(int i = 0; i < parseredDataList_0104.size(); i++) {
+				parseredData = parseredDataList_0104.get(i);
+				
+				email_id = parseredData.get(jsonName_0104[6]);//고객이메일...
+				//cumstom_nm = parseredData.get(jsonName_0104[3]);//고객명...
+			}
+		}
 	}
 	
 	/*
@@ -339,14 +400,26 @@ public class Ntpbm0107Activity extends Activity {
 			String resultStr_fname = data.getStringExtra("ntpbm0109_regi_fname");
 			String resultStr_myDir = data.getStringExtra("ntpbm0109_regi_myDir");
 			
-			findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.VISIBLE);
-			
-			BitmapFactory.Options bo = new BitmapFactory.Options();  
-			bo.inSampleSize = 8;
-			Bitmap bmp = BitmapFactory.decodeFile(resultStr_myDir + File.separator + resultStr_fname);
-			
-			((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bmp);
+			setSign(resultStr_myDir, resultStr_fname);
 		}
+	}
+	
+	/*
+	 * 고객확인 사인이 존재하면 보여준다.
+	 */
+	private void setSign(String path, String filename) {
+		findViewById(R.id.ntpbm_0107_linearLayout07).setVisibility(View.VISIBLE);
+		
+		File file = new File(path + File.separator + filename);
+		if (!file.isFile()) return; 
+		else Log.i("file", "----------------- is");
+		
+		BitmapFactory.Options bo = new BitmapFactory.Options();  
+		bo.inSampleSize = 8;
+		Bitmap bmp = BitmapFactory.decodeFile(path + File.separator + filename, bo);
+		//Bitmap resizedbitmap1 = Bitmap.createScaledBitmap(bmp, 300, 200, true);
+		
+		((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bmp);
 	}
 	
 	

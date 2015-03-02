@@ -202,7 +202,7 @@ public class Ntpbm0105Activity extends Activity {
 
 	    try{
 	    	
-	    	Log.i("selPositionImg", "selPositionImg = " + selPositionImg);
+	    	//Log.i("selPositionImg", "selPositionImg = " + selPositionImg);
 	    	
 	    	for(int i = 0; i < adapter.pictures.length; i++) {
 				if (adapter.pictures[i].startsWith(adapter.picture[selPositionImg]) ) {
@@ -214,12 +214,12 @@ public class Ntpbm0105Activity extends Activity {
 	    	
 		    File f = createImageFile();
 		    
-	    	Log.i("f.getName()", "f.getName() = " + f.getName());
+	    	//Log.i("f.getName()", "f.getName() = " + f.getName());
 	    	
 		    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)); // set the image file name
 		    tempfilename = f.getName();
 		    
-		    Log.i("tempfilename", "tempfilename     ----------- = " + tempfilename);
+		    //Log.i("tempfilename", "tempfilename     ----------- = " + tempfilename);
 	
 		    // start the image capture Intent
 		    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -256,7 +256,7 @@ public class Ntpbm0105Activity extends Activity {
 		if(resultCode!=0){//-1 일경우 정상처리...
 			try{
 				
-				Log.i("tempfilename-0", "tempfilename = " + tempfilename);
+				//Log.i("tempfilename-0", "tempfilename = " + tempfilename);
 				
 				//압축한 파일을 저장한다.
 				BitmapFactory.Options bo = new BitmapFactory.Options();  
@@ -264,12 +264,12 @@ public class Ntpbm0105Activity extends Activity {
 				Bitmap bitmap = BitmapFactory.decodeFile(fullpath + tempfilename, bo);
 				Util.saveBitmapToFileCache(bitmap, tempfilename.substring(0,8) + ".jpg", fullpath, 100);
 				
-				Log.i("tempfilename-1", "tempfilename = " + tempfilename);
+				//Log.i("tempfilename-1", "tempfilename = " + tempfilename);
 				
 				File file = new File(fullpath + tempfilename);
 				file.delete();
 				
-				Log.i("tempfilename-2", "tempfilename = " + tempfilename);
+				//Log.i("tempfilename-2", "tempfilename = " + tempfilename);
 				
 				adapter = new ImageAdapter(Ntpbm0105Activity.this, fullpath);
 				grid.setAdapter(adapter);
@@ -282,7 +282,7 @@ public class Ntpbm0105Activity extends Activity {
 					}
 				}
 				
-				Log.i("tempfilename-3", "tempfilename = " + tempfilename);
+				//Log.i("tempfilename-3", "tempfilename = " + tempfilename);
 				
 				//사진 저장 서버에 전송하기.... 추가해야 함.
 				addNtpbm0105Info();
