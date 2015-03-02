@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    
+    android:layout_width="fill_parent"    
+    android:layout_height="fill_parent" >       
+    
+    <ImageView        
+        android:id="@+id/list_view0300_imgview"        
+        android:layout_width="60dp"        
+        android:layout_height="60dp" 
+        android:layout_alignParentLeft="true"
+        android:contentDescription="@string/image"        
+        android:paddingLeft="5dp"        
+        android:paddingRight="5dp" />       
+    <LinearLayout
+        android:id="@+id/list_view0300_linear01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/list_view0300_imgview"
+        android:orientation="vertical" >
+           
+	    <TextView
+	        android:id="@+id/list_view0300_label01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="textStart"
+	        android:text="품목코드 : "
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view0300_label02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="center"
+	        android:text="품목명 : "
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view0300_label03"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="viewEnd"
+	        android:text="재고량 : "
+	        style="@style/text15dp" />
+	</LinearLayout>
+	<LinearLayout
+        android:id="@+id/list_view0300_linear02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/list_view0300_linear01"
+        android:orientation="vertical" >
+           
+	    <TextView
+	        android:id="@+id/list_view0300_txt01"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="textStart"
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view0300_txt02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="center"
+	        style="@style/text15dp" />
+	    <TextView
+	        android:id="@+id/list_view0300_txt03"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAlignment="viewEnd"
+	        style="@style/text15dp" />
+	</LinearLayout>
+</RelativeLayout>
