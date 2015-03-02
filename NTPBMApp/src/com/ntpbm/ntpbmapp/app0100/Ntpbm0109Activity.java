@@ -324,6 +324,7 @@ public class Ntpbm0109Activity extends Activity {
 	    public void onDraw(Canvas canvass) {
 	    	this.canvas = canvass;
 	    	//canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
+	    	//canvas.drawColor(Color.WHITE);
 	    	canvas.drawColor(Color.TRANSPARENT); 
 	    	// 정점을 순회하면서 선분으로 잇는다.
 	    	for (int i=0;i<arVertex1.size();i++) {
@@ -404,6 +405,7 @@ public class Ntpbm0109Activity extends Activity {
 	    public void onDraw(Canvas canvass) {
 	    	this.canvas = canvass;
 	    	//canvas.drawColor(0xffe0e0e0);//배경 하얀색으로 덮어(도화지 배경을 하얗게 칠함)
+	    	//canvas.drawColor(Color.WHITE); 
 	    	canvas.drawColor(Color.TRANSPARENT); 
 	    	//canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 	    	// 정점을 순회하면서 선분으로 잇는다.
